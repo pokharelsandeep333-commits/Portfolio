@@ -83,6 +83,7 @@ export default function Experience() {
               period={edu.period}
               title={edu.degree}
               subtitle={`${edu.school} · ${edu.location}`}
+              bullets={edu.bullets}
               note={edu.note}
               isLast={i === education.length - 1}
             />

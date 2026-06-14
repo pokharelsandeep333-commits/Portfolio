@@ -152,6 +152,10 @@ export default function ResumeView({ onClose }) {
               <p className="resume-entry-org">
                 Dakota State University &nbsp;|&nbsp; Madison, South Dakota
               </p>
+              <ul className="resume-bullets text-gray-400 break-words whitespace-normal">
+                <li>Sophomore pursuing a B.S. in Computer Science with a minor in Mathematics, maintaining a 4.0 GPA.</li>
+                <li>Focused on foundational software engineering, algorithmic problem-solving, and system optimization.</li>
+              </ul>
             </div>
           </section>
 

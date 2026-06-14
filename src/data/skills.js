@@ -81,7 +81,10 @@ export const education = [
     school: "Dakota State University",
     period: "Fall 2025 – Present",
     location: "Madison, SD",
-    note: "Focus: Software Engineering · Cybersecurity · ML/AI",
+    bullets: [
+      "Sophomore pursuing a B.S. in Computer Science with a minor in Mathematics, maintaining a 4.0 GPA.",
+      "Focused on foundational software engineering, algorithmic problem-solving, and system optimization."
+    ],
   },
 ];
 
