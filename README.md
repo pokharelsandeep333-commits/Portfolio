@@ -1,16 +1,47 @@
-# React + Vite
+# Personal Portfolio
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+> **Live Site:** [Insert Vercel Deployment Link Here]
 
-Currently, two official plugins are available:
+A modern, highly interactive personal portfolio website engineered to showcase projects, skills, and professional experience. Built with a focus on performance and dynamic user experiences, the platform provides a responsive, mobile-first design tailored for technical hiring managers and recruiters.
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Oxc](https://oxc.rs)
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/)
+## Tech Stack
 
-## React Compiler
+- **Framework:** [React](https://react.dev/) – Component-based architecture for scalable UI.
+- **Build Tool:** [Vite](https://vitejs.dev/) – Lightning-fast HMR and optimized production builds.
+- **Styling:** [Tailwind CSS](https://tailwindcss.com/) & Custom Vanilla CSS – Utility-first CSS alongside custom design tokens and styles for complex UI states.
+- **Animations:** [GSAP](https://gsap.com/) – Robust, performant scroll-based and micro-interactions.
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+## Key Features
 
-## Expanding the ESLint configuration
+- **Responsive Mobile-First Design:** Optimized layouts and components (such as a swipeable navigation menu) that seamlessly adapt from desktop down to mobile viewports.
+- **Interactive UI Components:** Cinematic auto-playing video backgrounds, smooth scrolling navigation, custom modal overlays, and engaging hover states.
+- **Secure Contact Form:** Integrated [Formspree](https://formspree.io/) endpoint, fully decoupled and secured via environment variables to prevent exposing sensitive URLs in the source code.
 
-If you are developing a production application, we recommend using TypeScript with type-aware lint rules enabled. Check out the [TS template](https://github.com/vitejs/vite/tree/main/packages/create-vite/template-react-ts) for information on how to integrate TypeScript and [`typescript-eslint`](https://typescript-eslint.io) in your project.
+## Local Setup
+
+To run this project locally on your machine, follow these steps:
+
+1. **Clone the repository:**
+   ```bash
+   git clone <your-repository-url>
+   cd <your-repository-directory>
+   ```
+
+2. **Install dependencies:**
+   ```bash
+   npm install
+   ```
+
+3. **Configure Environment Variables:**
+   Create a `.env` file at the root of the project and add your Formspree URL:
+   ```env
+   VITE_FORMSPREE_URL=https://formspree.io/f/your_form_id
+   ```
+
+4. **Run the development server:**
+   ```bash
+   npm run dev
+   ```
+
+5. **View the application:**
+   Open your browser and navigate to the localhost URL provided in your terminal (typically `http://localhost:5173`).
