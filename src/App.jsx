@@ -1,5 +1,4 @@
 import { useState } from 'react'
-import CustomCursor from './components/CustomCursor'
 import Hero from './components/Hero'
 import Navbar from './components/Navbar'
 import About from './components/About'
@@ -25,9 +24,6 @@ export default function App() {
 
   return (
     <div className="min-h-screen bg-[#050e1f] text-white font-inter overflow-x-hidden">
-      {/* Physics-based custom cursor — fixed overlay */}
-      <CustomCursor />
-
       {/* Floating pill nav */}
       <Navbar onOpenResume={openResume} />
 
