@@ -11,7 +11,7 @@ export default function Footer() {
           <span className="font-outfit font-bold text-white">
             Sandeep<span className="text-dsuGold">.</span>
           </span>
-          <span className="text-white/20 text-xs font-inter">
+          <span className="text-white/35 text-xs font-inter">
             · Built with Vite · React · GSAP · Tailwind CSS
           </span>
         </div>
@@ -51,7 +51,7 @@ export default function Footer() {
           </a>
         </div>
 
-        <p className="text-white/20 text-xs font-inter">
+        <p className="text-white/35 text-xs font-inter">
           © {new Date().getFullYear()} Sandeep Pokharel
         </p>
       </div>

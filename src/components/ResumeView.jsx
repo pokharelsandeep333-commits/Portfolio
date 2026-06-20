@@ -1,4 +1,4 @@
-import { useEffect } from 'react'
+import { useEffect, useState, useCallback } from 'react'
 import { about, skills } from '../data/skills'
 import { projects } from '../data/projects'
 
@@ -10,6 +10,14 @@ const PrintIcon = () => (
   </svg>
 )
 
+const DownloadIcon = () => (
+  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+    <path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/>
+    <polyline points="7 10 12 15 17 10"/>
+    <line x1="12" y1="15" x2="12" y2="3"/>
+  </svg>
+)
+
 const CloseIcon = () => (
   <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
     <line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/>
@@ -17,35 +25,46 @@ const CloseIcon = () => (
 )
 
 export default function ResumeView({ onClose }) {
+  const [isClosing, setIsClosing] = useState(false)
+
+  const handleClose = useCallback(() => {
+    setIsClosing(true)
+    setTimeout(onClose, 280) // matches CSS exit animation duration
+  }, [onClose])
 
   useEffect(() => {
-    const handleKey = (e) => { if (e.key === 'Escape') onClose() }
+    const handleKey = (e) => { if (e.key === 'Escape') handleClose() }
     document.addEventListener('keydown', handleKey)
     document.body.style.overflow = 'hidden'
     return () => {
       document.removeEventListener('keydown', handleKey)
       document.body.style.overflow = ''
     }
-  }, [onClose])
+  }, [handleClose])
 
   return (
     <div
       id="resume-overlay"
-      className="resume-overlay"
+      className={`resume-overlay ${isClosing ? 'resume-overlay--exit' : 'resume-overlay--enter'}`}
       role="dialog"
       aria-modal="true"
       aria-label="Resume"
-      onClick={(e) => { if (e.target.id === 'resume-overlay') onClose() }}
+      onClick={(e) => { if (e.target.id === 'resume-overlay') handleClose() }}
     >
       {/* ── Control bar (hidden in print) ─────────────────────────────────────── */}
       <div className="resume-controls no-print">
-        <button onClick={onClose} className="resume-ctrl-btn" aria-label="Back to Portfolio">
+        <button onClick={handleClose} className="resume-ctrl-btn" aria-label="Back to Portfolio">
           <CloseIcon /> Back to Portfolio
         </button>
         <span className="resume-ctrl-title">Sandeep Pokharel — Resume</span>
-        <button onClick={() => window.print()} className="resume-ctrl-btn resume-ctrl-btn--primary" aria-label="Download PDF">
-          <PrintIcon /> Download PDF
-        </button>
+        <div className="flex items-center gap-2">
+          <a href="/resume.pdf" download="Sandeep_Pokharel_Resume.pdf" className="resume-ctrl-btn" aria-label="Download Resume PDF">
+            <DownloadIcon /> Download
+          </a>
+          <button onClick={() => window.print()} className="resume-ctrl-btn resume-ctrl-btn--primary" aria-label="Print Resume">
+            <PrintIcon /> Print
+          </button>
+        </div>
       </div>
 
       {/* ── Scrollable resume container ─────────────────────────────────────────── */}

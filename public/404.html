@@ -1,0 +1,83 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>404 — Page Not Found | Sandeep Pokharel</title>
+  <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;700;800&family=Inter:wght@400;500&display=swap" rel="stylesheet" />
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html, body { height: 100%; }
+    body {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-direction: column;
+      background: #050e1f;
+      color: #fff;
+      font-family: 'Inter', system-ui, sans-serif;
+      text-align: center;
+      padding: 2rem;
+    }
+    .code {
+      font-family: 'Outfit', sans-serif;
+      font-size: clamp(5rem, 15vw, 10rem);
+      font-weight: 800;
+      background: linear-gradient(135deg, #FFC72C 0%, #ffe27a 50%, #FFC72C 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      line-height: 1;
+      margin-bottom: 0.5rem;
+    }
+    .msg {
+      font-size: 1.1rem;
+      color: rgba(255,255,255,0.5);
+      max-width: 420px;
+      line-height: 1.6;
+      margin-bottom: 2rem;
+    }
+    .back-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      background: #FFC72C;
+      color: #002D62;
+      font-family: 'Outfit', sans-serif;
+      font-weight: 700;
+      font-size: 0.95rem;
+      padding: 0.8rem 2rem;
+      border-radius: 999px;
+      text-decoration: none;
+      transition: transform 0.2s ease, box-shadow 0.2s ease;
+    }
+    .back-btn:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 8px 24px rgba(255,199,44,0.4);
+    }
+    .divider {
+      width: 60px;
+      height: 3px;
+      background: linear-gradient(90deg, transparent, rgba(255,199,44,0.5), transparent);
+      border-radius: 2px;
+      margin-bottom: 1.5rem;
+    }
+  </style>
+</head>
+<body>
+  <div class="code">404</div>
+  <div class="divider"></div>
+  <p class="msg">
+    This page doesn't exist. It may have been moved, or you may have mistyped the URL.
+  </p>
+  <a href="/" class="back-btn">
+    <svg width="15" height="15" viewBox="0 0 16 16" fill="none" aria-hidden="true">
+      <path d="M13 8H3M7 4L3 8l4 4" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
+    </svg>
+    Back to Portfolio
+  </a>
+</body>
+</html>

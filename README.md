@@ -1,6 +1,6 @@
 # Personal Portfolio
 
-> **Live Site:** [Insert Vercel Deployment Link Here]
+> **Live Site:** [portfolio-phi-pearl-16.vercel.app](https://portfolio-phi-pearl-16.vercel.app/)
 
 A modern, highly interactive personal portfolio website engineered to showcase projects, skills, and professional experience. Built with a focus on performance and dynamic user experiences, the platform provides a responsive, mobile-first design tailored for technical hiring managers and recruiters.
 

@@ -495,6 +495,36 @@ body {
   overflow: hidden;
 }
 
+/* Entrance animation */
+.resume-overlay--enter {
+  animation: resumeEnter 0.35s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+@keyframes resumeEnter {
+  from {
+    opacity: 0;
+    transform: translateY(24px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Exit animation */
+.resume-overlay--exit {
+  animation: resumeExit 0.28s cubic-bezier(0.4, 0, 1, 1) forwards;
+}
+@keyframes resumeExit {
+  from {
+    opacity: 1;
+    transform: translateY(0);
+  }
+  to {
+    opacity: 0;
+    transform: translateY(16px);
+  }
+}
+
 .resume-controls {
   flex-shrink: 0;
   display: flex;
