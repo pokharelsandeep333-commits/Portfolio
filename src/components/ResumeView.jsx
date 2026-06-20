@@ -57,14 +57,9 @@ export default function ResumeView({ onClose }) {
           <CloseIcon /> Back to Portfolio
         </button>
         <span className="resume-ctrl-title">Sandeep Pokharel — Resume</span>
-        <div className="flex items-center gap-2">
-          <a href="/resume.pdf" download="Sandeep_Pokharel_Resume.pdf" className="resume-ctrl-btn" aria-label="Download Resume PDF">
-            <DownloadIcon /> Download
-          </a>
-          <button onClick={() => window.print()} className="resume-ctrl-btn resume-ctrl-btn--primary" aria-label="Print Resume">
-            <PrintIcon /> Print
-          </button>
-        </div>
+        <button onClick={() => window.print()} className="resume-ctrl-btn resume-ctrl-btn--primary" aria-label="Download PDF">
+          <DownloadIcon /> Download PDF
+        </button>
       </div>
 
       {/* ── Scrollable resume container ─────────────────────────────────────────── */}
