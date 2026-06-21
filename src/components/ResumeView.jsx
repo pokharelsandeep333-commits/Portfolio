@@ -1,14 +1,6 @@
 import { useEffect, useState, useCallback } from 'react'
-import { about, skills } from '../data/skills'
+import { about, skills, experience, education, certifications } from '../data/skills'
 import { projects } from '../data/projects'
-
-const PrintIcon = () => (
-  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
-    <polyline points="6 9 6 2 18 2 18 9"/>
-    <path d="M6 18H4a2 2 0 01-2-2v-5a2 2 0 012-2h16a2 2 0 012 2v5a2 2 0 01-2 2h-2"/>
-    <rect x="6" y="14" width="12" height="8"/>
-  </svg>
-)
 
 const DownloadIcon = () => (
   <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
@@ -23,6 +15,9 @@ const CloseIcon = () => (
     <line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/>
   </svg>
 )
+
+// Helper: extract display hostname from a URL for cleaner resume links
+const displayUrl = (url) => url.replace(/^https?:\/\/(www\.)?/, '').replace(/\/$/, '')
 
 export default function ResumeView({ onClose }) {
   const [isClosing, setIsClosing] = useState(false)
@@ -56,7 +51,7 @@ export default function ResumeView({ onClose }) {
         <button onClick={handleClose} className="resume-ctrl-btn" aria-label="Back to Portfolio">
           <CloseIcon /> Back to Portfolio
         </button>
-        <span className="resume-ctrl-title">Sandeep Pokharel — Resume</span>
+        <span className="resume-ctrl-title">{about.name} — Resume</span>
         <button onClick={() => window.print()} className="resume-ctrl-btn resume-ctrl-btn--primary" aria-label="Download PDF">
           <DownloadIcon /> Download PDF
         </button>
@@ -72,56 +67,59 @@ export default function ResumeView({ onClose }) {
         <div id="resume-print-area" className="resume-paper">
 
           {/* ═══════════════════════════════════════════════════════════════════
-              HEADER
+              HEADER — dynamic from about{}
           ═══════════════════════════════════════════════════════════════════ */}
-          <h1 className="resume-name">Sandeep Pokharel</h1>
+          <h1 className="resume-name">{about.name}</h1>
           <p className="resume-title-line">
-            IT Support Desk Technician &nbsp;|&nbsp; Computer Science, Dakota State University
+            {about.title} &nbsp;|&nbsp; {about.subtitle}
           </p>
           {/* Contact info — plain text, no icons, ATS-safe */}
           <p className="resume-contact-row">
-            <a href="mailto:pokharelsandeep333@gmail.com" className="resume-contact-link">
-              pokharelsandeep333@gmail.com
+            <a href={`mailto:${about.contact.email}`} className="resume-contact-link">
+              {about.contact.email}
             </a>
             {' | '}
-            <a href="https://www.linkedin.com/in/sandeeppokharel333" className="resume-contact-link">
-              linkedin.com/in/sandeeppokharel333
+            <a href={about.contact.linkedin} className="resume-contact-link">
+              {displayUrl(about.contact.linkedin)}
             </a>
             {' | '}
-            <a href="https://github.com/pokharelsandeep333-commits" className="resume-contact-link">
-              github.com/pokharelsandeep333-commits
+            <a href={about.contact.github} className="resume-contact-link">
+              {displayUrl(about.contact.github)}
             </a>
             {' | '}
-            Madison, SD
+            {about.contact.location}
           </p>
 
           <div className="resume-rule" />
 
           {/* ═══════════════════════════════════════════════════════════════════
-              EXPERIENCE
+              EXPERIENCE — dynamic from experience[]
           ═══════════════════════════════════════════════════════════════════ */}
           <section className="resume-section">
             <h2 className="resume-section-title">Experience</h2>
 
-            <div className="resume-entry">
-              <div className="resume-entry-header">
-                <span className="resume-entry-role">IT Support Desk Technician</span>
-                <span className="resume-entry-date">May 2026 – Present</span>
+            {experience.map((job) => (
+              <div key={job.role + job.period} className="resume-entry">
+                <div className="resume-entry-header">
+                  <span className="resume-entry-role">{job.role}</span>
+                  <span className="resume-entry-date">{job.period}</span>
+                </div>
+                <p className="resume-entry-org">
+                  {job.org} &nbsp;|&nbsp; {job.location}
+                </p>
+                {job.bullets && (
+                  <ul className="resume-bullets">
+                    {job.bullets.map((b, i) => <li key={i}>{b}</li>)}
+                  </ul>
+                )}
               </div>
-              <p className="resume-entry-org">
-                DSU Information Technology Services &nbsp;|&nbsp; Madison, South Dakota
-              </p>
-              <ul className="resume-bullets">
-                <li>Provide front-line IT support including hardware deployment, OS configuration, network troubleshooting, and device imaging for students and faculty.</li>
-                <li>Manage MDM enrollment and maintain the TDNext ticketing system to track and resolve support requests across the university.</li>
-              </ul>
-            </div>
+            ))}
           </section>
 
           <div className="resume-rule" />
 
           {/* ═══════════════════════════════════════════════════════════════════
-              PROJECTS
+              PROJECTS — dynamic from projects[]
           ═══════════════════════════════════════════════════════════════════ */}
           <section className="resume-section">
             <h2 className="resume-section-title">Projects</h2>
@@ -154,29 +152,57 @@ export default function ResumeView({ onClose }) {
           <div className="resume-rule" />
 
           {/* ═══════════════════════════════════════════════════════════════════
-              EDUCATION
+              EDUCATION — dynamic from education[]
           ═══════════════════════════════════════════════════════════════════ */}
           <section className="resume-section">
             <h2 className="resume-section-title">Education</h2>
-            <div className="resume-entry">
-              <div className="resume-entry-header">
-                <span className="resume-entry-role">Bachelor of Science, Computer Science</span>
-                <span className="resume-entry-date">Fall 2025 – Present</span>
+
+            {education.map((edu) => (
+              <div key={edu.degree + edu.period} className="resume-entry">
+                <div className="resume-entry-header">
+                  <span className="resume-entry-role">{edu.degree}</span>
+                  <span className="resume-entry-date">{edu.period}</span>
+                </div>
+                <p className="resume-entry-org">
+                  {edu.school} &nbsp;|&nbsp; {edu.location}
+                </p>
+                {edu.bullets && (
+                  <ul className="resume-bullets">
+                    {edu.bullets.map((b, i) => <li key={i}>{b}</li>)}
+                  </ul>
+                )}
               </div>
-              <p className="resume-entry-org">
-                Dakota State University &nbsp;|&nbsp; Madison, South Dakota
-              </p>
-              <ul className="resume-bullets text-gray-400 break-words whitespace-normal">
-                <li>Sophomore pursuing a B.S. in Computer Science with a minor in Mathematics, maintaining a 4.0 GPA.</li>
-                <li>Focused on foundational software engineering, algorithmic problem-solving, and system optimization.</li>
-              </ul>
-            </div>
+            ))}
           </section>
 
           <div className="resume-rule" />
 
           {/* ═══════════════════════════════════════════════════════════════════
-              SKILLS
+              CERTIFICATIONS — dynamic from certifications[]
+          ═══════════════════════════════════════════════════════════════════ */}
+          {certifications.length > 0 && (
+            <>
+              <section className="resume-section">
+                <h2 className="resume-section-title">Certifications & Courses</h2>
+                <div className="resume-skills-grid">
+                  {certifications.map((cert) => (
+                    <p key={cert.name} className="resume-skill-row">
+                      <strong className="resume-skill-label">{cert.name}</strong>
+                      {' '}
+                      <span className="resume-skill-items">
+                        {cert.issuer} — {cert.date}
+                      </span>
+                    </p>
+                  ))}
+                </div>
+              </section>
+
+              <div className="resume-rule" />
+            </>
+          )}
+
+          {/* ═══════════════════════════════════════════════════════════════════
+              SKILLS — dynamic from skills[]
               Plain-text rows only — no icons, bars, or SVGs (ATS-safe).
           ═══════════════════════════════════════════════════════════════════ */}
           <section className="resume-section">
