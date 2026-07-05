@@ -2,7 +2,6 @@ import { useLayoutEffect, useRef } from 'react'
 import { gsap } from 'gsap'
 import { ScrollTrigger } from 'gsap/ScrollTrigger'
 import { projects } from '../data/projects'
-import DQASimulator from './DQASimulator'
 
 const GitHubIcon = () => (
   <svg width="15" height="15" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
@@ -132,10 +131,6 @@ export default function Projects() {
                 ))}
               </div>
 
-              {/* Interactive Simulator Component for DQA */}
-              {p.title === "DQA Automation Suite" && (
-                <DQASimulator />
-              )}
             </article>
           ))}
         </div>
