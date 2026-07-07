@@ -7,7 +7,7 @@ const INTERACTIVE = 'a, button, input, textarea, select, [role="button"], label'
 export default function CustomCursor() {
   const ringRef = useRef(null)
   const dotRef  = useRef(null)
-  const [isVisible, setIsVisible] = useState(false)
+  const [, setIsVisible] = useState(false)
 
   useEffect(() => {
     // Don't render on touch-only devices

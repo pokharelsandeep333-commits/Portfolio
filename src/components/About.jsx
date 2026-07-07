@@ -1,6 +1,5 @@
 import { useLayoutEffect, useRef } from 'react'
 import { gsap } from 'gsap'
-import { ScrollTrigger } from 'gsap/ScrollTrigger'
 import { about } from '../data/skills'
 
 // Reusable scroll-triggered fade-up helper

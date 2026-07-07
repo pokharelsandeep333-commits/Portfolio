@@ -1,6 +1,5 @@
 import { useLayoutEffect, useRef } from 'react'
 import { gsap } from 'gsap'
-import { ScrollTrigger } from 'gsap/ScrollTrigger'
 import { experience, education } from '../data/skills'
 
 export default function Experience() {
