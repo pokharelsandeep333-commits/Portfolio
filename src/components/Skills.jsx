@@ -54,10 +54,10 @@ export default function Skills() {
           </h2>
         </div>
 
-        {/* 2 × 2 grid */}
+        {/* Skill category grid */}
         <div
           ref={gridRef}
-          className="grid grid-cols-1 sm:grid-cols-2 gap-5"
+          className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5"
         >
           {skills.map((group) => (
             <div key={group.category} className="glass-card p-8">

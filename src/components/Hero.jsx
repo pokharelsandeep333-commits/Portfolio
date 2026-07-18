@@ -230,8 +230,7 @@ export default function Hero({ onOpenResume }) {
           className="font-inter text-white/65 mt-5 mb-10 max-w-2xl leading-relaxed"
           style={{ fontSize: 'clamp(1rem, 2.2vw, 1.2rem)' }}
         >
-          Building systems that improve operational efficiency —
-          from WPF automation tools to ML classifiers.
+          IT Support Technician by day, building web apps and cloud infrastructure by night.
         </p>
 
         {/* CTA Buttons — stopPropagation so clicking buttons doesn't toggle mute */}

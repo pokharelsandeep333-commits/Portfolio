@@ -7,8 +7,8 @@
 </p>
 
 <p align="center">
-  <img src="https://img.shields.io/badge/React-20232A?style=for-the-badge&logo=react&logoColor=61DAFB" alt="React" />
-  <img src="https://img.shields.io/badge/Vite-B73BFE?style=for-the-badge&logo=vite&logoColor=FFD62E" alt="Vite" />
+  <img src="https://img.shields.io/badge/React_19-20232A?style=for-the-badge&logo=react&logoColor=61DAFB" alt="React 19" />
+  <img src="https://img.shields.io/badge/Vite_8-B73BFE?style=for-the-badge&logo=vite&logoColor=FFD62E" alt="Vite 8" />
   <img src="https://img.shields.io/badge/Tailwind_CSS-38B2AC?style=for-the-badge&logo=tailwind-css&logoColor=white" alt="Tailwind CSS" />
   <img src="https://img.shields.io/badge/GSAP-88CE02?style=for-the-badge&logo=greensock&logoColor=white" alt="GSAP" />
   <img src="https://img.shields.io/badge/Docker-2CA5E0?style=for-the-badge&logo=docker&logoColor=white" alt="Docker" />
@@ -20,37 +20,33 @@
 
 A modern, highly interactive personal portfolio website engineered to showcase projects, skills, and professional experience. Built with a focus on performance, premium aesthetics, and dynamic user experiences, the platform provides a responsive, mobile-first design tailored for technical hiring managers and recruiters.
 
-This project embodies a "premium feel" by utilizing advanced frontend techniques including cinematic auto-playing video backgrounds, custom magnetic UI components, and fluid scroll-based animations.
+## ✨ Featured Projects
 
-## ✨ Key Features
+This portfolio showcases five production-grade projects:
 
-- **Cinematic Hero Section:** Engaging video backgrounds and modern typography setup using custom CSS tokens.
-- **Custom UI Interactions:** Includes a globally available `CustomCursor` and smooth `MagneticButton`s that react to user mouse movements.
-- **Advanced Animations:** Robust, performant scroll-based and micro-interactions powered by `GSAP` and `@gsap/react`.
-- **Interactive Tools:** Contains dynamic components such as a `DQASimulator` and a specialized `ResumeView`.
-- **Responsive Mobile-First Design:** Optimized layouts (like a swipeable navigation menu) that seamlessly adapt from desktop down to mobile viewports.
-- **Secure Contact Form:** Integrated [Formspree](https://formspree.io/) endpoint, fully decoupled and secured via environment variables.
+| Project | Stack | Description |
+|---|---|---|
+| **Molecular Zettelkasten** | Next.js 16, Gemini API, Firebase, Docker, AWS EC2 | AI-powered knowledge management platform with Semantic RAG, deployed via GitHub Actions CI/CD |
+| **SandeepCloud** | AWS EC2, Docker Compose, Nginx, MariaDB, Cloudflare | Self-hosted Nextcloud cloud storage with enterprise-grade SSL and CDN |
+| **DQA Automation Suite** | PowerShell 5.1, WPF/XAML, WMI/CIM, SQLite | Zero-prompt hardware QA tool iterated through 11 versions at DSU IT |
+| **LLM-Wiki** | Python, Obsidian, AI Agents, Git | AI-agent-powered personal knowledge base with 125+ concept notes |
+| **This Portfolio** | React 19, Vite 8, GSAP, Tailwind CSS, Docker | Cinematic hero, custom cursor, magnetic buttons, scroll animations |
 
 ## 🛠️ Tech Stack
 
 ### Frontend & UI
 - **[React 19](https://react.dev/)** – Component-based architecture for scalable UI.
-- **[Tailwind CSS 3.4](https://tailwindcss.com/)** – Utility-first CSS framework for rapid styling.
-- **Vanilla CSS** – Custom design tokens for complex UI states located in `index.css`.
-
-### Animation & Motion
-- **[GSAP](https://gsap.com/) & [@gsap/react](https://www.npmjs.com/package/@gsap/react)** – Industry-standard animation library for intricate UI motion.
-
-### Build & Tooling
 - **[Vite 8](https://vitejs.dev/)** – Lightning-fast HMR and optimized production builds.
-- **[ESLint](https://eslint.org/)** – Strict linting rules for React hooks and code quality.
+- **[Tailwind CSS](https://tailwindcss.com/)** & Custom Vanilla CSS – Utility-first CSS alongside custom design tokens.
+- **[GSAP](https://gsap.com/)** – Robust, performant scroll-based and micro-interactions.
 
 ### Testing & Analytics
 - **[Vitest](https://vitest.dev/)** & **jsdom** – Fast unit testing framework.
-- **[@vercel/analytics](https://vercel.com/analytics)** – Production web analytics tracking.
+- **[@vercel/analytics](https://vercel.com/analytics)** – Production web analytics.
 
-### Deployment & DevOps
-- **[Docker](https://www.docker.com/)** – Multi-stage containerization using Alpine Node and Nginx.
+### Deployment
+- **[Docker](https://www.docker.com/)** – Multi-stage containerization (Alpine Node + Nginx).
+- **[Vercel](https://vercel.com/)** – Primary hosting with edge CDN.
 
 ## 📁 Project Structure
 
@@ -83,8 +79,6 @@ src/
 
 ## 🚀 Local Setup
 
-To run this project locally on your machine, follow these steps:
-
 ### Prerequisites
 - [Node.js](https://nodejs.org/) (v22 recommended)
 - [Git](https://git-scm.com/)
@@ -92,7 +86,7 @@ To run this project locally on your machine, follow these steps:
 
 ### 1. Clone the repository
 ```bash
-git clone <your-repository-url>
+git clone https://github.com/pokharelsandeep333-commits/Portfolio.git
 cd Portfolio
 ```
 
@@ -115,14 +109,11 @@ Open your browser and navigate to `http://localhost:5173`.
 
 ## 🧪 Testing
 
-This project uses Vitest. To run the test suite:
 ```bash
 npm run test
 ```
 
 ## 🐳 Docker Deployment
-
-The project includes a multi-stage `Dockerfile` to build and serve the production app using Nginx.
 
 ```bash
 # Build the Docker image
@@ -131,7 +122,6 @@ docker build -t portfolio-app .
 # Run the container on port 8080
 docker run -p 8080:80 -d portfolio-app
 ```
-Then navigate to `http://localhost:8080` in your browser.
 
 ---
 *Built with ❤️ and React.*
