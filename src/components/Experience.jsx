@@ -67,7 +67,18 @@ export default function Experience() {
               dot="work"
               period={job.period}
               title={job.role}
-              subtitle={`${job.org} · ${job.location}`}
+              subtitle={
+                <>
+                  {job.orgLink ? (
+                    <a href={job.orgLink} target="_blank" rel="noopener noreferrer" className="hover:text-dsuGold transition-colors underline decoration-white/20 underline-offset-4">
+                      {job.org}
+                    </a>
+                  ) : (
+                    job.org
+                  )}
+                  {` · ${job.location}`}
+                </>
+              }
               badge={job.type}
               bullets={job.bullets}
               isLast={i === experience.length - 1 && education.length === 0}

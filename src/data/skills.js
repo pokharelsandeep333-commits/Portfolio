@@ -65,6 +65,7 @@ export const about = {
     email: "pokharelsandeep333@gmail.com",
     linkedin: "https://www.linkedin.com/in/sandeeppokharel333",
     github: "https://github.com/pokharelsandeep333-commits",
+    portfolio: "https://portfolio.sandeeppokharel.com.np/",
     location: "Madison, South Dakota",
   },
 };
@@ -76,6 +77,7 @@ export const experience = [
   {
     role: "IT Support Desk Technician",
     org: "DSU Information Technology Services",
+    orgLink: "https://support.dsu.edu/",
     period: "May 2026 – Present",
     location: "Madison, SD",
     type: "Part-time",
@@ -107,28 +109,5 @@ export const education = [
 //  DATA — Certifications & Courses (UNTOUCHED per user request)
 // ============================================================
 export const certifications = [
-  {
-    name: "CompTIA A+",
-    issuer: "CompTIA",
-    status: "in-progress",
-    date: "Expected 2026",
-    icon: "🏅",
-    href: null,
-  },
-  {
-    name: "Google IT Support",
-    issuer: "Google / Coursera",
-    status: "in-progress",
-    date: "In Progress",
-    icon: "🔧",
-    href: null,
-  },
-  {
-    name: "Hugging Face NLP Course",
-    issuer: "Hugging Face",
-    status: "in-progress",
-    date: "In Progress",
-    icon: "🤗",
-    href: "https://huggingface.co/learn/nlp-course/",
-  },
+  // Removed certifications for now as requested.
 ];
