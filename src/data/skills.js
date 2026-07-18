@@ -50,12 +50,12 @@ export const about = {
   subtitle: "Computer Science · Dakota State University",
   bio: [
     "I am a Computer Science sophomore at Dakota State University, originally from Kathmandu, Nepal. I have a strong passion for problem-solving and building systems that improve operational efficiency.",
-    "In my current role as an IT Support Desk Technician for DSU Information Technology Services, I provide front-line technical support — deploying hardware, troubleshooting connectivity, configuring operating systems, and ensuring students and faculty have reliable access to university resources.",
+    "In my current role as an IT Support Desk Technician for DSU Information Technology Services, I provide front-line technical support: deploying hardware, troubleshooting connectivity, configuring operating systems, and ensuring students and faculty have reliable access to university resources.",
     "Outside of work, I enjoy building personal projects involving web development, cloud infrastructure, and AI integration. My projects section below showcases the tools and platforms I've built and deployed on my own time.",
   ],
   details: [
-    { label: "Education", val: "B.S. Computer Science", sub: "Dakota State University · Fall 2025–Present" },
-    { label: "Current Role", val: "IT Support Desk Technician", sub: "DSU Information Technology Services · May 2026–Present" },
+    { label: "Education", val: "B.S. Computer Science", sub: "Dakota State University · Fall 2025 to Present" },
+    { label: "Current Role", val: "IT Support Desk Technician", sub: "DSU Information Technology Services · May 2026 to Present" },
     { label: "Location", val: "Madison, South Dakota", sub: "Originally from Kathmandu, Nepal" },
     { label: "Languages", val: "English · Nepali · Hindi", sub: "Trilingual" },
     { label: "Interests", val: "Web Development · Cloud · AI", sub: "Building and shipping personal projects" },
@@ -78,11 +78,11 @@ export const experience = [
     role: "IT Support Desk Technician",
     org: "DSU Information Technology Services",
     orgLink: "https://support.dsu.edu/",
-    period: "May 2026 – Present",
+    period: "May 2026 to Present",
     location: "Madison, SD",
     type: "Part-time",
     bullets: [
-      "Provide front-line technical support for students and faculty — hardware deployment, OS configuration, and network troubleshooting.",
+      "Provide front-line technical support for students and faculty: hardware deployment, OS configuration, and network troubleshooting.",
       "Manage device enrollment through Microsoft Intune, maintain Active Directory accounts, and assist with remote desktop sessions.",
       "Troubleshoot connectivity issues, configure BIOS settings, and ensure reliable access to university IT resources.",
     ],
@@ -96,7 +96,7 @@ export const education = [
   {
     degree: "B.S. Computer Science",
     school: "Dakota State University",
-    period: "Fall 2025 – Present",
+    period: "Fall 2025 to Present",
     location: "Madison, SD",
     bullets: [
       "Sophomore pursuing a B.S. in Computer Science with a minor in Mathematics, maintaining a 4.0 GPA.",

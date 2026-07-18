@@ -158,7 +158,7 @@ export default function Hero({ onOpenResume }) {
         loop
         playsInline
         preload="auto"
-        fetchpriority="low"
+        fetchPriority="low"
         aria-hidden="true"
         className="absolute inset-0 w-full h-full object-cover"
         style={{ zIndex: 0 }}

@@ -51,7 +51,7 @@ export default function ResumeView({ onClose }) {
         <button onClick={handleClose} className="resume-ctrl-btn" aria-label="Back to Portfolio">
           <CloseIcon /> Back to Portfolio
         </button>
-        <span className="resume-ctrl-title">{about.name} — Resume</span>
+        <span className="resume-ctrl-title">{about.name} | Resume</span>
         <button onClick={() => window.print()} className="resume-ctrl-btn resume-ctrl-btn--primary" aria-label="Download PDF">
           <DownloadIcon /> Download PDF
         </button>
@@ -160,8 +160,8 @@ export default function ResumeView({ onClose }) {
                       )}
                     </span>
                   </div>
-                  {p.description && (
-                    <p className="resume-entry-desc">{p.description}</p>
+                  {(p.resumeDescription || p.description) && (
+                    <p className="resume-entry-desc">{p.resumeDescription || p.description}</p>
                   )}
                   {bullets && bullets.length > 0 && (
                     <ul className="resume-bullets">
@@ -217,7 +217,7 @@ export default function ResumeView({ onClose }) {
                       <strong className="resume-skill-label">{cert.name}</strong>
                       {' '}
                       <span className="resume-skill-items">
-                        {cert.issuer} — {cert.date}
+                        {cert.issuer}, {cert.date}
                       </span>
                     </p>
                   ))}

@@ -764,7 +764,7 @@ body {
     display: block !important;
     background: #fff !important;
     color: #000 !important;
-    font-family: Arial, Helvetica, sans-serif !important;
+    font-family: 'Inter', sans-serif !important;
     font-size: 9pt !important; /* Compressed base font size */
     line-height: 1.25 !important; /* Tighter line height */
     -webkit-print-color-adjust: exact;
@@ -808,7 +808,7 @@ body {
     max-width: 100% !important;
     width: 100% !important;
     margin: 0 !important;
-    padding: 0.15in 0.15in !important;
+    padding: 0.5in 0.5in !important;
     box-sizing: border-box !important;
     border-radius: 0 !important;
     display: block !important;
