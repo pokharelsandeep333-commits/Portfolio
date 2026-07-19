@@ -1,5 +1,6 @@
 import { useState, useRef, useEffect } from 'react';
 import gsap from 'gsap';
+import ReactMarkdown from 'react-markdown';
 
 const Terminal = () => {
   const [messages, setMessages] = useState([]);
@@ -65,7 +66,9 @@ const Terminal = () => {
                 <span className="text-[#64ffda]">$</span> {msg.content}
               </div>
             ) : (
-              <div className="text-[#e6f1ff]">{msg.content}</div>
+              <div className="text-[#e6f1ff] [&>p]:mb-2 [&>ul]:list-disc [&>ul]:ml-4 [&>ol]:list-decimal [&>ol]:ml-4 [&_a]:text-[#64ffda] [&_a]:underline">
+                <ReactMarkdown>{msg.content}</ReactMarkdown>
+              </div>
             )}
           </div>
         ))}
