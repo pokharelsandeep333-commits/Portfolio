@@ -2,6 +2,8 @@
 import { vi, describe, it, expect, beforeEach, afterEach } from 'vitest';
 import handler from './chat.js';
 
+export const getGenerativeModelMock = vi.fn();
+
 vi.mock('@google/generative-ai', () => {
   const generateContentMock = vi.fn().mockResolvedValue({
     response: {
@@ -11,7 +13,9 @@ vi.mock('@google/generative-ai', () => {
 
   class GoogleGenerativeAI {
     constructor() {}
-    getGenerativeModel() {
+    getGenerativeModel(args) {
+      // We'll call a globally available mock function to verify arguments
+      getGenerativeModelMock(args);
       return { generateContent: generateContentMock };
     }
   }
@@ -50,12 +54,22 @@ describe('API Route /api/chat', () => {
     req.body = {};
     await handler(req, res);
     expect(res.status).toHaveBeenCalledWith(400);
-    expect(res.json).toHaveBeenCalledWith({ error: 'Message is required' });
+    expect(res.json).toHaveBeenCalledWith({ error: 'Invalid input: expected string, received undefined' });
   });
 
   it('should call Gemini API and return response', async () => {
     await handler(req, res);
     expect(res.status).toHaveBeenCalledWith(200);
     expect(res.json).toHaveBeenCalledWith({ response: 'Mocked Gemini Response' });
+    
+    // Assert systemInstruction and maxOutputTokens were passed to Gemini
+    expect(getGenerativeModelMock).toHaveBeenCalledWith(
+      expect.objectContaining({
+        systemInstruction: expect.any(String),
+        generationConfig: {
+          maxOutputTokens: 800,
+        }
+      })
+    );
   });
 });

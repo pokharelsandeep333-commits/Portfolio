@@ -1,5 +1,6 @@
 /* global process */
 import { GoogleGenerativeAI } from '@google/generative-ai';
+import { z } from 'zod';
 
 const systemPrompt = `You are "Digital Sandeep", an AI assistant representing Sandeep Pokharel on his personal portfolio website. 
 You must answer questions strictly based on Sandeep's skills, experience, and projects. 
@@ -22,21 +23,30 @@ export default async function handler(req, res) {
     return res.status(405).json({ error: 'Method not allowed' });
   }
 
-  const { message } = req.body;
+  const ChatRequestSchema = z.object({
+    message: z.string({ required_error: 'Message is required', invalid_type_error: 'Message is required' }).min(1, 'Message is required').max(1000, 'Message is too long')
+  });
+
+  const parsed = ChatRequestSchema.safeParse(req.body);
   
-  if (!message) {
-    return res.status(400).json({ error: 'Message is required' });
+  if (!parsed.success) {
+    return res.status(400).json({ error: parsed.error.issues[0].message });
   }
+
+  const { message } = parsed.data;
 
   try {
     const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY);
     const model = genAI.getGenerativeModel({ 
       model: 'gemini-1.5-flash',
-      systemInstruction: systemPrompt 
+      systemInstruction: systemPrompt,
+      generationConfig: {
+        maxOutputTokens: 800,
+      }
     });
 
     const result = await model.generateContent(message);
-    const response = await result.response;
+    const response = result.response;
     const text = response.text();
 
     return res.status(200).json({ response: text });
