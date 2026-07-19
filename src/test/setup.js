@@ -1,6 +1,8 @@
 import '@testing-library/jest-dom'
 import { vi } from 'vitest'
 
+window.HTMLElement.prototype.scrollIntoView = vi.fn();
+
 // Mock matchMedia for JSDOM
 Object.defineProperty(window, 'matchMedia', {
   writable: true,
