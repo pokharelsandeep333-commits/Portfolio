@@ -99,6 +99,12 @@ describe('API Route /api/chat', () => {
     expect(res.json).toHaveBeenCalledWith({ error: 'Too many requests' });
   });
 
+  it('should parse x-forwarded-for header and use the first IP', async () => {
+    req.headers['x-forwarded-for'] = '192.168.1.1, 10.0.0.1';
+    await handler(req, res);
+    expect(ratelimitLimitMock).toHaveBeenCalledWith('192.168.1.1');
+  });
+
   it('should call Gemini API and return response', async () => {
     await handler(req, res);
     expect(res.status).toHaveBeenCalledWith(200);

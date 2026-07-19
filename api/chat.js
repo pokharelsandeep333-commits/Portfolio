@@ -25,11 +25,13 @@ const ratelimit = new Ratelimit({
   limiter: Ratelimit.slidingWindow(10, '1 m'),
 });
 
-const allowedOrigins = [
-  'https://sandeeppokharel.com.np',
-  'https://portfolio.sandeeppokharel.com.np',
-  'http://localhost:5173'
-];
+const allowedOrigins = process.env.ALLOWED_ORIGINS 
+  ? process.env.ALLOWED_ORIGINS.split(',')
+  : [
+      'https://sandeeppokharel.com.np',
+      'https://portfolio.sandeeppokharel.com.np',
+      'http://localhost:5173'
+    ];
 
 export default async function handler(req, res) {
   const origin = req.headers.origin;
@@ -48,7 +50,8 @@ export default async function handler(req, res) {
   }
 
   try {
-    const ip = req.headers['x-forwarded-for'] || req.socket?.remoteAddress || '127.0.0.1';
+    const rawIp = req.headers['x-forwarded-for'] || req.socket?.remoteAddress || '127.0.0.1';
+    const ip = rawIp.split(',')[0].trim();
     const { success } = await ratelimit.limit(ip);
 
     if (!success) {
@@ -56,13 +59,7 @@ export default async function handler(req, res) {
     }
   } catch (error) {
     console.error('Rate limiting error:', error);
-    // Fail open or closed? Typically fail closed, but for a portfolio it's safer to fail open if Upstash goes down temporarily. Let's just log it and proceed for now, or fail gracefully.
-    // The spec says "enforce the strict 10 req/min limit", so Upstash configuration errors should probably throw, but let's just proceed or throw 500. We will return 500 if Redis throws in strict setups.
-    // Let's just ignore Redis errors for now and let the request through, or return 500. We'll return 500 to be safe.
-    // Actually, Ratelimit often throws if UPSTASH keys are completely missing in dev. Let's catch and bypass in dev, but throw in prod.
-    if (process.env.NODE_ENV === 'production') {
-      return res.status(500).json({ error: 'Internal Server Error' });
-    }
+    return res.status(500).json({ error: 'Internal Server Error' });
   }
 
   const ChatRequestSchema = z.object({
