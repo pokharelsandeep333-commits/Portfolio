@@ -2,7 +2,7 @@ import { useState, useRef, useEffect } from 'react';
 import gsap from 'gsap';
 
 const Terminal = () => {
-  const [history, setHistory] = useState([]);
+  const [messages, setMessages] = useState([]);
   const [input, setInput] = useState('');
   const [isLoading, setIsLoading] = useState(false);
   const endOfMessagesRef = useRef(null);
@@ -10,13 +10,13 @@ const Terminal = () => {
 
   useEffect(() => {
     endOfMessagesRef.current?.scrollIntoView({ behavior: 'smooth' });
-  }, [history, isLoading]);
+  }, [messages, isLoading]);
 
   const handleKeyDown = async (e) => {
     if (e.key === 'Enter' && input.trim()) {
       const userMessage = input.trim();
       setInput('');
-      setHistory(prev => [...prev, { role: 'user', content: userMessage }]);
+      setMessages(prev => [...prev, { role: 'user', content: userMessage }]);
       setIsLoading(true);
 
       try {
@@ -30,9 +30,9 @@ const Terminal = () => {
 
         const data = await response.json();
         
-        setHistory(prev => [...prev, { role: 'bot', content: data.response || data.error || 'Error' }]);
+        setMessages(prev => [...prev, { role: 'bot', content: data.response || data.error || 'Error' }]);
       } catch {
-        setHistory(prev => [...prev, { role: 'bot', content: 'Network Error' }]);
+        setMessages(prev => [...prev, { role: 'bot', content: 'Network Error' }]);
       } finally {
         setIsLoading(false);
       }
@@ -40,25 +40,25 @@ const Terminal = () => {
   };
 
   useEffect(() => {
-    if (messagesRef.current && history.length > 0) {
-      const lastMessage = messagesRef.current.children[history.length - 1];
+    if (messagesRef.current && messages.length > 0) {
+      const lastMessage = messagesRef.current.children[messages.length - 1];
       if (lastMessage) {
         gsap.fromTo(lastMessage, { opacity: 0, y: 10 }, { opacity: 1, y: 0, duration: 0.3 });
       }
     }
-  }, [history]);
+  }, [messages]);
 
   return (
     <div className="w-full max-w-2xl mx-auto p-4 bg-[#0a192f] rounded-lg shadow-2xl border border-[#1d2d50] font-mono text-sm text-[#8892b0]">
       <div className="flex items-center space-x-2 mb-4 pb-2 border-b border-[#1d2d50]">
-        <div className="w-3 h-3 rounded-full bg-red-500"></div>
-        <div className="w-3 h-3 rounded-full bg-yellow-500"></div>
-        <div className="w-3 h-3 rounded-full bg-green-500"></div>
+        {['bg-red-500', 'bg-yellow-500', 'bg-green-500'].map((colorClass, i) => (
+          <div key={i} className={`w-3 h-3 rounded-full ${colorClass}`}></div>
+        ))}
         <span className="ml-2 text-xs font-semibold">guest@sandeeppokharel: ~</span>
       </div>
       
       <div className="h-64 overflow-y-auto mb-4 scrollbar-thin scrollbar-thumb-[#1d2d50]" ref={messagesRef}>
-        {history.map((msg, index) => (
+        {messages.map((msg, index) => (
           <div key={index} className="mb-2">
             {msg.role === 'user' ? (
               <div>
@@ -78,7 +78,7 @@ const Terminal = () => {
         <div ref={endOfMessagesRef} />
       </div>
 
-      <div className="flex items-center relative">
+      <div className="flex items-center">
         <span className="text-[#64ffda] mr-2">$</span>
         <input
           type="text"
@@ -90,9 +90,6 @@ const Terminal = () => {
           autoFocus
           disabled={isLoading}
         />
-        {!input && !isLoading && (
-          <span className="w-2 h-4 bg-[#64ffda] animate-pulse absolute left-4 pointer-events-none"></span>
-        )}
       </div>
     </div>
   );
