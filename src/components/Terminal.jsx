@@ -21,13 +21,19 @@ const Terminal = () => {
       setIsLoading(true);
 
       try {
-        const response = await fetch('/api/chat', {
+        const apiUrl = import.meta.env.VITE_API_URL || '/api/chat';
+        const response = await fetch(apiUrl, {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
           },
           body: JSON.stringify({ message: userMessage }),
         });
+
+        if (response.status === 429) {
+          setMessages(prev => [...prev, { role: 'bot', content: 'Too many requests. Please slow down and try again in a minute.' }]);
+          return;
+        }
 
         const data = await response.json();
         

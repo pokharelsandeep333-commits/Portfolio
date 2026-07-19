@@ -14,7 +14,6 @@ vi.mock('@google/generative-ai', () => {
   class GoogleGenerativeAI {
     constructor() {}
     getGenerativeModel(args) {
-      // We'll call a globally available mock function to verify arguments
       getGenerativeModelMock(args);
       return { generateContent: generateContentMock };
     }
@@ -22,6 +21,25 @@ vi.mock('@google/generative-ai', () => {
 
   return { GoogleGenerativeAI };
 });
+
+export const ratelimitLimitMock = vi.fn();
+
+vi.mock('@upstash/redis', () => ({
+  Redis: {
+    fromEnv: vi.fn(),
+  }
+}));
+
+vi.mock('@upstash/ratelimit', () => ({
+  Ratelimit: class RatelimitMock {
+    static slidingWindow() {
+      return vi.fn();
+    }
+    limit(ip) {
+      return ratelimitLimitMock(ip);
+    }
+  }
+}));
 
 describe('API Route /api/chat', () => {
   let req;
@@ -31,23 +49,39 @@ describe('API Route /api/chat', () => {
     req = {
       method: 'POST',
       body: { message: 'Tell me about Sandeep' },
+      headers: {
+        'x-forwarded-for': '127.0.0.1'
+      }
     };
     res = {
       status: vi.fn().mockReturnThis(),
       json: vi.fn(),
+      setHeader: vi.fn(),
+      end: vi.fn()
     };
     process.env.GEMINI_API_KEY = 'test_key';
+    
+    // Default mock behavior for rate limiting (success)
+    ratelimitLimitMock.mockResolvedValue({ success: true });
   });
 
   afterEach(() => {
     vi.clearAllMocks();
   });
 
-  it('should return 405 if method is not POST', async () => {
+  it('should return 405 if method is not POST or OPTIONS', async () => {
     req.method = 'GET';
     await handler(req, res);
     expect(res.status).toHaveBeenCalledWith(405);
     expect(res.json).toHaveBeenCalledWith({ error: 'Method not allowed' });
+  });
+  
+  it('should handle OPTIONS preflight', async () => {
+    req.method = 'OPTIONS';
+    await handler(req, res);
+    expect(res.status).toHaveBeenCalledWith(200);
+    expect(res.end).toHaveBeenCalled();
+    expect(res.setHeader).toHaveBeenCalledWith('Access-Control-Allow-Methods', 'POST, OPTIONS');
   });
 
   it('should handle missing message in body', async () => {
@@ -56,13 +90,20 @@ describe('API Route /api/chat', () => {
     expect(res.status).toHaveBeenCalledWith(400);
     expect(res.json).toHaveBeenCalledWith({ error: 'Invalid input: expected string, received undefined' });
   });
+  
+  it('should return 429 if rate limit is exceeded', async () => {
+    ratelimitLimitMock.mockResolvedValueOnce({ success: false });
+    await handler(req, res);
+    expect(ratelimitLimitMock).toHaveBeenCalledWith('127.0.0.1');
+    expect(res.status).toHaveBeenCalledWith(429);
+    expect(res.json).toHaveBeenCalledWith({ error: 'Too many requests' });
+  });
 
   it('should call Gemini API and return response', async () => {
     await handler(req, res);
     expect(res.status).toHaveBeenCalledWith(200);
     expect(res.json).toHaveBeenCalledWith({ response: 'Mocked Gemini Response' });
     
-    // Assert systemInstruction and maxOutputTokens were passed to Gemini
     expect(getGenerativeModelMock).toHaveBeenCalledWith(
       expect.objectContaining({
         systemInstruction: expect.any(String),

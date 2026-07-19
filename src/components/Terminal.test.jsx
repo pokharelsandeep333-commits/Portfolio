@@ -38,4 +38,23 @@ describe('Terminal UI', () => {
       expect(screen.getByText('Hello')).toBeInTheDocument();
     });
   });
+
+  it('displays rate limit error on 429 response', async () => {
+    globalThis.fetch = vi.fn(() =>
+      Promise.resolve({
+        status: 429,
+        json: () => Promise.resolve({ error: 'Too many requests' }),
+      })
+    );
+
+    render(<Terminal />);
+    
+    const input = screen.getByRole('textbox');
+    fireEvent.change(input, { target: { value: 'rate limit test' } });
+    fireEvent.keyDown(input, { key: 'Enter', code: 'Enter' });
+    
+    await waitFor(() => {
+      expect(screen.getByText('Too many requests. Please slow down and try again in a minute.')).toBeInTheDocument();
+    });
+  });
 });

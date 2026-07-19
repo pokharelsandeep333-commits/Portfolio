@@ -4,11 +4,11 @@
 
 **Blocked by:** 02 — Gemini AI Integration & System Prompt
 
-**Status:** ready-for-agent
+**Status:** done
 
-- [ ] Upstash Redis client is configured in `api/chat.js`.
-- [ ] The API enforces a 10 requests/minute global rate limit per IP.
-- [ ] The Terminal UI detects HTTP 429 and displays a user-friendly error message.
-- [ ] The API sets CORS headers accepting requests from the EC2 origin.
-- [ ] The React app uses `VITE_API_URL` for the API endpoint path.
-- [ ] Backend tests mock the Redis client to verify the rate-limiting logic.
+- [x] Upstash Redis client is configured in `api/chat.js`.
+- [x] The API enforces a 10 requests/minute global rate limit per IP.
+- [x] The Terminal UI detects HTTP 429 and displays a user-friendly error message.
+- [x] The API sets CORS headers accepting requests from the EC2 origin.
+- [x] The React app uses `VITE_API_URL` for the API endpoint path.
+- [x] Backend tests mock the Redis client to verify the rate-limiting logic.

@@ -1,6 +1,8 @@
 /* global process */
 import { GoogleGenerativeAI } from '@google/generative-ai';
 import { z } from 'zod';
+import { Redis } from '@upstash/redis';
+import { Ratelimit } from '@upstash/ratelimit';
 
 const systemPrompt = `You are "Digital Sandeep", an AI assistant representing Sandeep Pokharel on his personal portfolio website. 
 You must answer questions strictly based on Sandeep's skills, experience, and projects. 
@@ -18,9 +20,49 @@ Here is the facts about Sandeep:
 
 If a user asks about anything unrelated to Sandeep, politely decline and steer the conversation back to his IT and development experience.`;
 
+const ratelimit = new Ratelimit({
+  redis: Redis.fromEnv(),
+  limiter: Ratelimit.slidingWindow(10, '1 m'),
+});
+
+const allowedOrigins = [
+  'https://sandeeppokharel.com.np',
+  'https://portfolio.sandeeppokharel.com.np',
+  'http://localhost:5173'
+];
+
 export default async function handler(req, res) {
+  const origin = req.headers.origin;
+  if (allowedOrigins.includes(origin)) {
+    res.setHeader('Access-Control-Allow-Origin', origin);
+  }
+  res.setHeader('Access-Control-Allow-Methods', 'POST, OPTIONS');
+  res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
+
+  if (req.method === 'OPTIONS') {
+    return res.status(200).end();
+  }
+
   if (req.method !== 'POST') {
     return res.status(405).json({ error: 'Method not allowed' });
+  }
+
+  try {
+    const ip = req.headers['x-forwarded-for'] || req.socket?.remoteAddress || '127.0.0.1';
+    const { success } = await ratelimit.limit(ip);
+
+    if (!success) {
+      return res.status(429).json({ error: 'Too many requests' });
+    }
+  } catch (error) {
+    console.error('Rate limiting error:', error);
+    // Fail open or closed? Typically fail closed, but for a portfolio it's safer to fail open if Upstash goes down temporarily. Let's just log it and proceed for now, or fail gracefully.
+    // The spec says "enforce the strict 10 req/min limit", so Upstash configuration errors should probably throw, but let's just proceed or throw 500. We will return 500 if Redis throws in strict setups.
+    // Let's just ignore Redis errors for now and let the request through, or return 500. We'll return 500 to be safe.
+    // Actually, Ratelimit often throws if UPSTASH keys are completely missing in dev. Let's catch and bypass in dev, but throw in prod.
+    if (process.env.NODE_ENV === 'production') {
+      return res.status(500).json({ error: 'Internal Server Error' });
+    }
   }
 
   const ChatRequestSchema = z.object({
