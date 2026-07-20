@@ -18,7 +18,7 @@ const VolumeOffIcon = () => (
   </svg>
 )
 
-export default function Hero({ onOpenResume }) {
+export default function Hero({ onOpenResume, onOpenTerminal }) {
   const sectionRef   = useRef(null)
   const videoRef     = useRef(null)
   const contentRef   = useRef(null)
@@ -252,6 +252,29 @@ export default function Hero({ onOpenResume }) {
               <polyline points="14 2 14 8 20 8"/>
             </svg>
             View Resume
+          </MagneticButton>
+
+          {/* Force new row for Chat button */}
+          <div className="w-full h-1"></div>
+
+          <MagneticButton 
+            as="button" 
+            onClick={onOpenTerminal} 
+            id="hero-cta-chat" 
+            className="btn-outline group relative overflow-hidden"
+            style={{
+              borderColor: 'rgba(255,199,44,0.5)',
+              color: 'var(--clr-gold)',
+              boxShadow: '0 0 20px rgba(255,199,44,0.15)',
+              background: 'rgba(10,25,47,0.4)',
+            }}
+          >
+            <span className="absolute inset-0 bg-gradient-to-r from-transparent via-[rgba(255,199,44,0.1)] to-transparent group-hover:translate-x-full duration-1000 -translate-x-full transition-transform"></span>
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true" className="drop-shadow-[0_0_8px_rgba(255,199,44,0.8)]">
+              <polyline points="4 17 10 11 4 5"></polyline>
+              <line x1="12" y1="19" x2="20" y2="19"></line>
+            </svg>
+            Chat with Digital Sandeep
           </MagneticButton>
         </div>
       </div>

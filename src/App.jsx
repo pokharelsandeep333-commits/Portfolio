@@ -9,9 +9,11 @@ import Certifications from './components/Certifications'
 import Contact from './components/Contact'
 import Footer from './components/Footer'
 import ResumeView from './components/ResumeView'
+import Terminal from './components/Terminal'
 
 export default function App() {
   const [isResumeOpen, setIsResumeOpen] = useState(false)
+  const [isTerminalOpen, setIsTerminalOpen] = useState(false)
 
   const openResume = () => {
     setIsResumeOpen(true)
@@ -24,11 +26,14 @@ export default function App() {
 
   return (
     <div className="min-h-screen bg-[#050e1f] text-white font-inter overflow-x-hidden">
-      {/* Floating pill nav */}
-      <Navbar onOpenResume={openResume} />
+      
+      {/* Main Content Wrapper - shrinks when terminal is open */}
+      <div className={`transition-all duration-300 ease-in-out ${isTerminalOpen ? 'lg:pr-[28rem]' : ''}`}>
+        {/* Floating pill nav */}
+      <Navbar onOpenResume={openResume} onOpenTerminal={() => setIsTerminalOpen(true)} />
 
       {/* Page sections */}
-      <Hero onOpenResume={openResume} />
+      <Hero onOpenResume={openResume} onOpenTerminal={() => setIsTerminalOpen(true)} />
       <About />
       <Experience />
       <Skills />
@@ -39,6 +44,10 @@ export default function App() {
 
       {/* Dynamic resume modal — rendered on demand */}
       {isResumeOpen && <ResumeView onClose={closeResume} />}
+      </div>
+      
+      {/* Terminal Sidebar Modal */}
+      <Terminal isOpen={isTerminalOpen} onClose={() => setIsTerminalOpen(false)} />
     </div>
   )
 }

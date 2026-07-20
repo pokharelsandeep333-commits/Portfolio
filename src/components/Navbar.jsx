@@ -9,7 +9,7 @@ const NAV_LINKS = [
   { label: 'Contact',        id: 'contact'        },
 ]
 
-export default function Navbar({ onOpenResume }) {
+export default function Navbar({ onOpenResume, onOpenTerminal }) {
   const navRef = useRef(null)
   const [activeSection, setActiveSection] = useState('')
 
@@ -101,6 +101,21 @@ export default function Navbar({ onOpenResume }) {
         </svg>
         Resume
       </button>
+
+      {/* Chat Terminal CTA */}
+      <button
+        onClick={onOpenTerminal}
+        className="text-xs font-outfit font-medium text-white/60 hover:text-dsuGold transition-colors shrink-0 flex items-center gap-1.5"
+        aria-label="Open Terminal Chat"
+      >
+        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+          <polyline points="4 17 10 11 4 5"></polyline>
+          <line x1="12" y1="19" x2="20" y2="19"></line>
+        </svg>
+        Chat AI
+      </button>
+
+      <div className="w-px h-4 bg-white/10" />
 
       {/* Hire Me CTA */}
       <a
