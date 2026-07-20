@@ -30,14 +30,15 @@ const allowedOrigins = process.env.ALLOWED_ORIGINS
   : [
       'https://sandeeppokharel.com.np',
       'https://portfolio.sandeeppokharel.com.np',
+      'https://portfolio-phi-pearl-16.vercel.app',
       'http://localhost:5173'
     ];
 
 export default async function handler(req, res) {
   const origin = req.headers.origin;
   
-  // Allow whitelisted origins, same-origin requests (!origin), and any Vercel preview URL
-  if (!origin || allowedOrigins.includes(origin) || origin.endsWith('.vercel.app')) {
+  // Allow whitelisted origins and same-origin requests (!origin)
+  if (!origin || allowedOrigins.includes(origin)) {
     res.setHeader('Access-Control-Allow-Origin', origin || '*');
   }
   res.setHeader('Access-Control-Allow-Methods', 'POST, OPTIONS');
@@ -93,6 +94,6 @@ export default async function handler(req, res) {
     return res.status(200).json({ response: text });
   } catch (error) {
     console.error('Error generating content:', error);
-    return res.status(500).json({ error: 'Failed to generate response' });
+    return res.status(500).json({ error: `Gemini Error: ${error.message || 'Unknown error'}` });
   }
 }
