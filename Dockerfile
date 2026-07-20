@@ -8,6 +8,9 @@ COPY package*.json ./
 RUN npm ci
 # Copy the rest of the application code
 COPY . .
+# Pass in the Vercel API URL from GitHub Actions
+ARG VITE_API_URL
+ENV VITE_API_URL=$VITE_API_URL
 # Build the React application into static HTML/JS files
 RUN npm run build
 
