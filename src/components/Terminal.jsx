@@ -3,23 +3,59 @@ import gsap from 'gsap';
 import ReactMarkdown from 'react-markdown';
 
 const Terminal = ({ isOpen, onClose }) => {
-  const [messages, setMessages] = useState([
-    { role: 'bot', content: 'Hi there! I am Digital Sandeep. Ask me anything about Sandeep\'s skills, projects, or experience.' }
-  ]);
+  const [messages, setMessages] = useState(() => {
+    try {
+      const saved = localStorage.getItem('chatHistory');
+      if (saved) {
+        let parsed = JSON.parse(saved);
+        if (Array.isArray(parsed)) {
+          // Migrate legacy cached messages to the new schema to prevent Zod API validation errors
+          return parsed.map(msg => ({
+            role: msg.role || (msg.isBot ? 'bot' : 'user'),
+            content: msg.content || msg.text || ''
+          }));
+        }
+      }
+    } catch (error) {
+      console.error("Failed to parse chat history", error);
+    }
+    return [
+      { role: 'bot', content: 'Hi there! I am Digital Sandeep. Ask me anything about Sandeep\'s skills, projects, or experience.' }
+    ];
+  });
   const [input, setInput] = useState('');
   const [isLoading, setIsLoading] = useState(false);
   const endOfMessagesRef = useRef(null);
   const messagesRef = useRef(null);
 
+  // Force migration on mount/HMR if state somehow retained old structure
   useEffect(() => {
+    if (messages.some(msg => !msg.content && msg.text)) {
+      setMessages(prev => prev.map(msg => ({
+        role: msg.role || (msg.isBot ? 'bot' : 'user'),
+        content: msg.content || msg.text || ''
+      })));
+    }
+  }, [messages]);
+
+  useEffect(() => {
+    localStorage.setItem('chatHistory', JSON.stringify(messages));
     endOfMessagesRef.current?.scrollIntoView({ behavior: 'smooth' });
   }, [messages, isLoading]);
+
+  const clearChat = () => {
+    const initial = [{ role: 'bot', content: 'Hi there! I am Digital Sandeep. Ask me anything about Sandeep\'s skills, projects, or experience.' }];
+    setMessages(initial);
+    localStorage.setItem('chatHistory', JSON.stringify(initial));
+  };
 
   const handleKeyDown = async (e) => {
     if (e.key === 'Enter' && input.trim()) {
       const userMessage = input.trim();
       setInput('');
-      setMessages(prev => [...prev, { role: 'user', content: userMessage }]);
+      
+      const newMessages = [...messages, { role: 'user', content: userMessage }];
+      setMessages(newMessages);
       setIsLoading(true);
 
       try {
@@ -29,7 +65,7 @@ const Terminal = ({ isOpen, onClose }) => {
           headers: {
             'Content-Type': 'application/json',
           },
-          body: JSON.stringify({ message: userMessage }),
+          body: JSON.stringify({ messages: newMessages }),
         });
 
         if (response.status === 429) {
@@ -61,59 +97,77 @@ const Terminal = ({ isOpen, onClose }) => {
     <>
       {/* Sidebar panel */}
       <div 
-        className={`fixed right-0 top-0 h-full w-full max-w-md bg-[#0a192f] shadow-2xl border-l border-[#1d2d50] z-50 flex flex-col font-mono text-sm text-[#8892b0] transition-transform duration-300 ${isOpen ? 'translate-x-0' : 'translate-x-full'}`}
+        className={`fixed right-0 top-0 h-full w-full sm:w-80 bg-[#050e1f]/40 backdrop-blur-2xl shadow-[-20px_0_40px_rgba(0,0,0,0.6)] border-l border-white/10 z-50 flex flex-col text-sm text-[#e6f1ff] transition-transform duration-700 ease-[cubic-bezier(0.16,1,0.3,1)] ${isOpen ? 'translate-x-0' : 'translate-x-full'}`}
       >
-        <div className="flex items-center justify-between p-4 border-b border-[#1d2d50]">
-          <div className="flex items-center space-x-2">
-            <span className="text-xs font-semibold">guest@sandeeppokharel: ~</span>
+        <div className="flex items-center justify-between p-4 border-b border-white/10 bg-white/5">
+          <div className="flex items-center space-x-2 text-white">
+            <span className="font-semibold text-[#FFC72C]">Digital Sandeep (AI)</span>
           </div>
-          <button 
-            onClick={onClose}
-            className="text-[#8892b0] hover:text-[#FFC72C] transition-colors"
-            aria-label="Close terminal"
-          >
-            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-              <line x1="18" y1="6" x2="6" y2="18"></line>
-              <line x1="6" y1="6" x2="18" y2="18"></line>
-            </svg>
-          </button>
+          <div className="flex items-center space-x-3">
+            <button 
+              onClick={clearChat}
+              className="text-white/50 hover:text-red-400 transition-colors"
+              aria-label="Clear chat"
+              title="Clear Chat History"
+            >
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                <path d="M3 6h18"></path>
+                <path d="M19 6v14c0 1-1 2-2 2H7c-1 0-2-1-2-2V6"></path>
+                <path d="M8 6V4c0-1 1-2 2-2h4c1 0 2 1 2 2v2"></path>
+              </svg>
+            </button>
+            <button 
+              onClick={onClose}
+              className="text-white/50 hover:text-[#FFC72C] transition-colors"
+              aria-label="Close chat"
+            >
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                <line x1="18" y1="6" x2="6" y2="18"></line>
+                <line x1="6" y1="6" x2="18" y2="18"></line>
+              </svg>
+            </button>
+          </div>
         </div>
         
-        <div className="flex-1 overflow-y-auto p-4 scrollbar-thin scrollbar-thumb-[#1d2d50]" ref={messagesRef}>
+        <div className="flex-1 overflow-y-auto p-4 scrollbar-thin scrollbar-thumb-white/10 space-y-4" ref={messagesRef}>
         {messages.map((msg, index) => (
-          <div key={index} className="mb-2">
-            {msg.role === 'user' ? (
-              <div>
-                <span className="text-[#FFC72C]">$</span> {msg.content}
-              </div>
-            ) : (
-              <div className="text-[#e6f1ff] [&>p]:mb-2 [&>ul]:list-disc [&>ul]:ml-4 [&>ol]:list-decimal [&>ol]:ml-4 [&_a]:text-[#FFC72C] [&_a]:underline">
-                <ReactMarkdown>{msg.content}</ReactMarkdown>
-              </div>
-            )}
+          <div key={index} className={`flex ${msg.role === 'user' ? 'justify-end' : 'justify-start'}`}>
+            <div className={`max-w-[85%] rounded-2xl p-3.5 ${msg.role === 'user' ? 'bg-gradient-to-br from-[#FFC72C] to-[#d4a017] text-[#050e1f] rounded-tr-sm shadow-md shadow-[#FFC72C]/20 font-medium' : 'bg-white/10 backdrop-blur-md border border-white/10 text-[#e6f1ff] rounded-tl-sm shadow-lg'}`}>
+              {msg.role === 'user' ? (
+                <div>
+                  {msg.content}
+                </div>
+              ) : (
+                <div className="[&>p]:mb-2 last:[&>p]:mb-0 [&>ul]:list-disc [&>ul]:ml-4 [&>ol]:list-decimal [&>ol]:ml-4 [&_a]:text-[#FFC72C] [&_a]:underline">
+                  <ReactMarkdown>{msg.content}</ReactMarkdown>
+                </div>
+              )}
+            </div>
           </div>
         ))}
         {isLoading && (
-          <div className="text-[#e6f1ff] flex items-center">
-            <span>thinking</span>
-            <span className="w-2 h-4 bg-[#FFC72C] ml-1 animate-pulse"></span>
+          <div className="flex justify-start">
+            <div className="bg-white/10 backdrop-blur-md border border-white/10 text-[#e6f1ff] max-w-[85%] rounded-2xl rounded-tl-sm p-4 flex items-center space-x-2 shadow-lg">
+              <div className="w-2 h-2 bg-[#FFC72C] rounded-full animate-bounce" style={{ animationDelay: '0ms' }}></div>
+              <div className="w-2 h-2 bg-[#FFC72C] rounded-full animate-bounce" style={{ animationDelay: '150ms' }}></div>
+              <div className="w-2 h-2 bg-[#FFC72C] rounded-full animate-bounce" style={{ animationDelay: '300ms' }}></div>
+            </div>
           </div>
         )}
         <div ref={endOfMessagesRef} />
       </div>
 
-        <div className="flex items-center border-t border-[#1d2d50] p-4 bg-[#050e1f]">
-          <span className="text-[#FFC72C] mr-2">$</span>
+        <div className="border-t border-white/10 p-4 bg-white/5 backdrop-blur-xl">
           <input
             type="text"
             role="textbox"
             value={input}
             onChange={(e) => setInput(e.target.value)}
             onKeyDown={handleKeyDown}
-            className="flex-1 bg-transparent outline-none text-[#e6f1ff]"
+            className="w-full bg-[#050e1f]/50 border border-white/10 rounded-full px-4 py-3 outline-none text-[#e6f1ff] placeholder-white/40 focus:border-[#FFC72C]/50 focus:ring-1 focus:ring-[#FFC72C]/50 transition-all shadow-inner"
             autoFocus
             disabled={isLoading}
-            placeholder="Type a message..."
+            placeholder="Type your message..."
           />
         </div>
       </div>

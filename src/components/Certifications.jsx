@@ -15,6 +15,8 @@ export default function Certifications() {
   const gridRef    = useRef(null)
 
   useLayoutEffect(() => {
+    if (!certifications || certifications.length === 0) return
+
     const ctx = gsap.context(() => {
       gsap.fromTo(
         headingRef.current,
@@ -39,6 +41,8 @@ export default function Certifications() {
 
     return () => ctx.revert()
   }, [])
+
+  if (!certifications || certifications.length === 0) return null
 
   return (
     <section

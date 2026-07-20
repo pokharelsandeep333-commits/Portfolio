@@ -2,6 +2,26 @@
 @tailwind components;
 @tailwind utilities;
 
+html {
+  overflow: hidden;
+}
+
+body {
+  height: 100vh;
+  overflow-y: auto;
+  overflow-x: hidden;
+  transition: margin-right 0.7s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+@media (min-width: 640px) {
+  body.chat-open {
+    margin-right: 20rem; /* w-80 width */
+  }
+  body.chat-open .navbar-pill {
+    margin-left: -10rem; /* Shift half of the drawer width to keep it centered */
+  }
+}
+
 /* ============================================================
    GLOBAL DESIGN TOKENS
    ============================================================ */
@@ -418,7 +438,7 @@ body {
   box-shadow: 0 8px 32px rgba(0,0,0,0.4);
   opacity: 0;
   pointer-events: none;
-  transition: opacity 0.4s ease;
+  transition: opacity 0.4s ease, margin-left 0.7s cubic-bezier(0.16, 1, 0.3, 1);
   white-space: nowrap;
   max-width: 92vw;
   overflow-x: auto;
@@ -870,13 +890,13 @@ body {
   .resume-name {
     font-size: 14pt !important; /* Drastically reduced header size */
     font-weight: bold !important;
-    margin-bottom: 1pt !important;
+    margin-bottom: 3pt !important;
     display: block !important;
   }
   .resume-title-line {
     font-size: 8.5pt !important;
     display: block !important;
-    margin-bottom: 1pt !important;
+    margin-bottom: 2pt !important;
   }
   .resume-section-title {
     font-size: 9pt !important;
@@ -884,37 +904,37 @@ body {
     text-transform: uppercase !important;
     letter-spacing: 0.05em !important;
     border-bottom: 1px solid #000 !important;
-    padding-bottom: 1pt !important;
-    margin-bottom: 2pt !important; /* Tighter gap below section headers */
+    padding-bottom: 3pt !important;
+    margin-bottom: 6pt !important; /* Increased gap below section headers */
     display: block !important;
   }
   .resume-entry {
-    margin-bottom: 2pt !important; /* Tighter gap between jobs/projects */
+    margin-bottom: 7pt !important; /* Increased gap between jobs/projects */
   }
   .resume-entry-org {
     font-size: 8.5pt !important;
     font-style: italic !important;
     display: block !important;
-    margin-bottom: 1pt !important;
+    margin-bottom: 3pt !important;
   }
   .resume-entry-desc {
     font-size: 8.5pt !important;
     display: block !important;
-    margin-bottom: 1pt !important;
+    margin-bottom: 3pt !important;
   }
   .resume-bullets {
     font-size: 8.5pt !important;
     padding-left: 1.2em !important;
     list-style: disc !important;
-    margin: 1pt 0 !important;
+    margin: 3pt 0 !important;
   }
   .resume-bullets li { 
-    margin-bottom: 1pt !important; /* Minimum gap between bullets */
+    margin-bottom: 3pt !important; /* Increased gap between bullets */
   }
   .resume-stack {
     font-size: 8pt !important;
     display: block !important;
-    margin-top: 1pt !important;
+    margin-top: 3pt !important;
   }
   .resume-project-link {
     font-size: 8.5pt !important;
@@ -932,7 +952,7 @@ body {
   .resume-rule {
     border: none !important;
     border-top: 1px solid #000 !important;
-    margin: 5pt 0 !important; /* Drastically tighter margins on rules */
+    margin: 12pt 0 !important; /* Larger margins on rules to fill page */
     display: block !important;
   }
 

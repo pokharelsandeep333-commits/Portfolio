@@ -66,7 +66,12 @@ export default async function handler(req, res) {
   }
 
   const ChatRequestSchema = z.object({
-    message: z.string({ required_error: 'Message is required', invalid_type_error: 'Message is required' }).min(1, 'Message is required').max(1000, 'Message is too long')
+    messages: z.array(
+      z.object({
+        role: z.enum(['user', 'bot']),
+        content: z.string().min(1).max(2000)
+      })
+    ).min(1, 'At least one message is required')
   });
 
   const parsed = ChatRequestSchema.safeParse(req.body);
@@ -75,7 +80,7 @@ export default async function handler(req, res) {
     return res.status(400).json({ error: parsed.error.issues[0].message });
   }
 
-  const { message } = parsed.data;
+  const { messages } = parsed.data;
 
   try {
     const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY);
@@ -87,7 +92,17 @@ export default async function handler(req, res) {
       }
     });
 
-    const result = await model.generateContent(message);
+    const latestMessage = messages[messages.length - 1];
+    const history = messages.slice(0, -1).map(msg => ({
+      role: msg.role === 'bot' ? 'model' : 'user',
+      parts: [{ text: msg.content }]
+    }));
+
+    const chat = model.startChat({
+      history: history
+    });
+
+    const result = await chat.sendMessage(latestMessage.content);
     const response = result.response;
     const text = response.text();
 

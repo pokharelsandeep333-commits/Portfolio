@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import Hero from './components/Hero'
 import Navbar from './components/Navbar'
 import About from './components/About'
@@ -15,6 +15,25 @@ export default function App() {
   const [isResumeOpen, setIsResumeOpen] = useState(false)
   const [isTerminalOpen, setIsTerminalOpen] = useState(false)
 
+  useEffect(() => {
+    if (isTerminalOpen) {
+      document.body.classList.add('chat-open')
+    } else {
+      document.body.classList.remove('chat-open')
+    }
+  }, [isTerminalOpen])
+
+  useEffect(() => {
+    const handleKeyDown = (e) => {
+      if (e.ctrlKey && e.key === '\\') {
+        e.preventDefault()
+        setIsTerminalOpen((prev) => !prev)
+      }
+    }
+    window.addEventListener('keydown', handleKeyDown)
+    return () => window.removeEventListener('keydown', handleKeyDown)
+  }, [])
+
   const openResume = () => {
     setIsResumeOpen(true)
     document.dispatchEvent(new CustomEvent('hero-video:pause'))
@@ -24,30 +43,35 @@ export default function App() {
     document.dispatchEvent(new CustomEvent('hero-video:resume'))
   }
 
+  const closeTerminal = () => {
+    if (isTerminalOpen) setIsTerminalOpen(false)
+  }
+
   return (
     <div className="min-h-screen bg-[#050e1f] text-white font-inter overflow-x-hidden">
       
-      {/* Main Content Wrapper - shrinks when terminal is open */}
-      <div className={`transition-all duration-300 ease-in-out ${isTerminalOpen ? 'lg:pr-[28rem]' : ''}`}>
+      {/* Main Content Wrapper */}
+      <div className="w-full" onClick={closeTerminal}>
         {/* Floating pill nav */}
-      <Navbar onOpenResume={openResume} onOpenTerminal={() => setIsTerminalOpen(true)} />
+        <Navbar onOpenResume={openResume} onOpenTerminal={() => setIsTerminalOpen(true)} isChatOpen={isTerminalOpen} />
 
-      {/* Page sections */}
-      <Hero onOpenResume={openResume} onOpenTerminal={() => setIsTerminalOpen(true)} />
-      <About />
-      <Experience />
-      <Skills />
-      <Projects />
-      <Certifications />
-      <Contact />
-      <Footer />
+        {/* Page sections */}
+        <Hero onOpenResume={openResume} onOpenTerminal={() => setIsTerminalOpen(true)} />
+        <About />
+        <Experience />
+        <Skills />
+        <Projects />
+        <Certifications />
+        <Contact />
+        <Footer />
 
-      {/* Dynamic resume modal — rendered on demand */}
-      {isResumeOpen && <ResumeView onClose={closeResume} />}
       </div>
       
       {/* Terminal Sidebar Modal */}
       <Terminal isOpen={isTerminalOpen} onClose={() => setIsTerminalOpen(false)} />
+
+      {/* Dynamic resume modal — rendered on demand */}
+      {isResumeOpen && <ResumeView onClose={closeResume} />}
     </div>
   )
 }

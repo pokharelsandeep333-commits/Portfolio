@@ -277,29 +277,30 @@ export default function Hero({ onOpenResume, onOpenTerminal }) {
             Chat with Digital Sandeep
           </MagneticButton>
         </div>
-      </div>
 
-      {/* ── Audio hint — fades in at 0.8s, auto-fades out at 4.5s, instant on click ── */}
-      <div
-        ref={hintRef}
-        aria-hidden="true"
-        className="absolute bottom-28 left-1/2 -translate-x-1/2 z-10 pointer-events-none"
-        style={{ opacity: 0 }}
-      >
+        {/* ── Audio hint — fades in at 0.8s, auto-fades out at 4.5s, instant on click ── */}
         <div
-          className="flex items-center gap-2.5 px-5 py-2.5 rounded-full font-inter text-white/55 select-none"
-          style={{
-            fontSize: 12,
-            background: 'rgba(0,0,0,0.42)',
-            backdropFilter: 'blur(14px)',
-            border: '1px solid rgba(255,255,255,0.10)',
-            whiteSpace: 'nowrap',
-          }}
+          ref={hintRef}
+          aria-hidden="true"
+          className="mt-8 pointer-events-none"
+          style={{ opacity: 0 }}
         >
-          <VolumeOffIcon />
-          Click anywhere on screen to enable audio
+          <div
+            className="flex items-center gap-2.5 px-5 py-2.5 rounded-full font-inter text-white/55 select-none"
+            style={{
+              fontSize: 12,
+              background: 'rgba(0,0,0,0.42)',
+              backdropFilter: 'blur(14px)',
+              border: '1px solid rgba(255,255,255,0.10)',
+              whiteSpace: 'nowrap',
+            }}
+          >
+            <VolumeOffIcon />
+            Click anywhere on screen to enable audio
+          </div>
         </div>
       </div>
+
 
       {/* ── Volume indicator — bottom-right ──────────────────────────────────── */}
       <div

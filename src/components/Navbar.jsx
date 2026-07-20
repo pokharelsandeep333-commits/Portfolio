@@ -1,11 +1,12 @@
 import { useEffect, useRef, useState } from 'react'
+import { certifications } from '../data/skills'
 
 const NAV_LINKS = [
   { label: 'About',          id: 'about'          },
   { label: 'Experience',     id: 'experience'     },
   { label: 'Skills',         id: 'skills'         },
   { label: 'Projects',       id: 'projects'       },
-  { label: 'Certifications', id: 'certifications' },
+  ...(certifications && certifications.length > 0 ? [{ label: 'Credentials', id: 'certifications' }] : []),
   { label: 'Contact',        id: 'contact'        },
 ]
 
@@ -26,8 +27,8 @@ export default function Navbar({ onOpenResume, onOpenTerminal }) {
       }
     }
 
-    window.addEventListener('scroll', showHide, { passive: true })
-    return () => window.removeEventListener('scroll', showHide)
+    document.body.addEventListener('scroll', showHide, { passive: true })
+    return () => document.body.removeEventListener('scroll', showHide)
   }, [])
 
   // Active section: reliable scroll-position approach
@@ -35,7 +36,7 @@ export default function Navbar({ onOpenResume, onOpenTerminal }) {
   // has its top <= that line is considered active.
   useEffect(() => {
     const getActive = () => {
-      const readingLine = window.scrollY + window.innerHeight * 0.35
+      const readingLine = document.body.scrollTop + window.innerHeight * 0.35
 
       let current = ''
       for (const { id } of NAV_LINKS) {
@@ -47,9 +48,9 @@ export default function Navbar({ onOpenResume, onOpenTerminal }) {
       setActiveSection(current)
     }
 
-    window.addEventListener('scroll', getActive, { passive: true })
+    document.body.addEventListener('scroll', getActive, { passive: true })
     getActive() // set immediately on mount
-    return () => window.removeEventListener('scroll', getActive)
+    return () => document.body.removeEventListener('scroll', getActive)
   }, [])
 
   const scrollTo = (id) =>
@@ -59,7 +60,7 @@ export default function Navbar({ onOpenResume, onOpenTerminal }) {
     <nav ref={navRef} className="navbar-pill" aria-label="Main navigation">
       {/* Logo mark */}
       <button
-        onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}
+        onClick={() => document.body.scrollTo({ top: 0, behavior: 'smooth' })}
         className="font-outfit font-bold text-white text-sm tracking-wider mr-2 hover:text-dsuGold transition-colors shrink-0"
         aria-label="Scroll to top"
       >
@@ -86,7 +87,7 @@ export default function Navbar({ onOpenResume, onOpenTerminal }) {
         </button>
       ))}
 
-      <div className="w-px h-4 bg-white/10" />
+      <div className="w-px h-4 bg-white/10 shrink-0" />
 
       {/* Resume — opens dynamic modal */}
       <button
@@ -112,10 +113,10 @@ export default function Navbar({ onOpenResume, onOpenTerminal }) {
           <polyline points="4 17 10 11 4 5"></polyline>
           <line x1="12" y1="19" x2="20" y2="19"></line>
         </svg>
-        Chat AI
+        Ask AI
       </button>
 
-      <div className="w-px h-4 bg-white/10" />
+      <div className="w-px h-4 bg-white/10 shrink-0" />
 
       {/* Hire Me CTA */}
       <a
