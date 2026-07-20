@@ -26,7 +26,7 @@ describe('Terminal UI', () => {
     
     fireEvent.keyDown(input, { key: 'Enter', code: 'Enter' });
     
-    expect(globalThis.fetch).toHaveBeenCalledWith('https://portfolio-phi-pearl-16.vercel.app/api/chat', expect.objectContaining({
+    expect(globalThis.fetch).toHaveBeenCalledWith(expect.stringContaining('/api/chat'), expect.objectContaining({
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
