@@ -28,15 +28,6 @@ const Terminal = ({ isOpen, onClose }) => {
   const endOfMessagesRef = useRef(null);
   const messagesRef = useRef(null);
 
-  // Force migration on mount/HMR if state somehow retained old structure
-  useEffect(() => {
-    if (messages.some(msg => !msg.content && msg.text)) {
-      setMessages(prev => prev.map(msg => ({
-        role: msg.role || (msg.isBot ? 'bot' : 'user'),
-        content: msg.content || msg.text || ''
-      })));
-    }
-  }, [messages]);
 
   useEffect(() => {
     localStorage.setItem('chatHistory', JSON.stringify(messages));

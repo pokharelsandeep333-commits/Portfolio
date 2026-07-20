@@ -5,7 +5,7 @@ import handler from './chat.js';
 export const getGenerativeModelMock = vi.fn();
 
 vi.mock('@google/generative-ai', () => {
-  const generateContentMock = vi.fn().mockResolvedValue({
+  const sendMessageMock = vi.fn().mockResolvedValue({
     response: {
       text: () => 'Mocked Gemini Response',
     },
@@ -15,7 +15,9 @@ vi.mock('@google/generative-ai', () => {
     constructor() {}
     getGenerativeModel(args) {
       getGenerativeModelMock(args);
-      return { generateContent: generateContentMock };
+      return { 
+        startChat: vi.fn(() => ({ sendMessage: sendMessageMock })) 
+      };
     }
   }
 
@@ -48,7 +50,7 @@ describe('API Route /api/chat', () => {
   beforeEach(() => {
     req = {
       method: 'POST',
-      body: { message: 'Tell me about Sandeep' },
+      body: { messages: [{ role: 'user', content: 'Tell me about Sandeep' }] },
       headers: {
         'x-forwarded-for': '127.0.0.1'
       }
@@ -88,7 +90,7 @@ describe('API Route /api/chat', () => {
     req.body = {};
     await handler(req, res);
     expect(res.status).toHaveBeenCalledWith(400);
-    expect(res.json).toHaveBeenCalledWith({ error: 'Invalid input: expected string, received undefined' });
+    expect(res.json).toHaveBeenCalledWith({ error: 'Invalid input: expected array, received undefined' });
   });
   
   it('should return 429 if rate limit is exceeded', async () => {

@@ -93,10 +93,15 @@ export default async function handler(req, res) {
     });
 
     const latestMessage = messages[messages.length - 1];
-    const history = messages.slice(0, -1).map(msg => ({
+    let history = messages.slice(0, -1).map(msg => ({
       role: msg.role === 'bot' ? 'model' : 'user',
       parts: [{ text: msg.content }]
     }));
+
+    // Gemini API strict requirement: history must start with a user message
+    while (history.length > 0 && history[0].role === 'model') {
+      history.shift();
+    }
 
     const chat = model.startChat({
       history: history

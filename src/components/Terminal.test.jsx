@@ -26,12 +26,17 @@ describe('Terminal UI', () => {
     
     fireEvent.keyDown(input, { key: 'Enter', code: 'Enter' });
     
-    expect(globalThis.fetch).toHaveBeenCalledWith('/api/chat', expect.objectContaining({
+    expect(globalThis.fetch).toHaveBeenCalledWith('https://portfolio-phi-pearl-16.vercel.app/api/chat', expect.objectContaining({
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
       },
-      body: JSON.stringify({ message: 'test message' })
+      body: JSON.stringify({ 
+        messages: [
+          { role: 'bot', content: 'Hi there! I am Digital Sandeep. Ask me anything about Sandeep\'s skills, projects, or experience.' },
+          { role: 'user', content: 'test message' }
+        ] 
+      })
     }));
     
     await waitFor(() => {
