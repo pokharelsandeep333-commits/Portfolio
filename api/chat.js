@@ -78,6 +78,13 @@ export default async function handler(req, res) {
   const { message } = parsed.data;
 
   try {
+    if (message === 'LIST_MODELS') {
+      const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models?key=${process.env.GEMINI_API_KEY}`);
+      const data = await response.json();
+      const modelNames = data.models ? data.models.map(m => m.name).join(', ') : 'No models found';
+      return res.status(200).json({ response: `Available models: ${modelNames}` });
+    }
+
     const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY);
     const model = genAI.getGenerativeModel({ 
       model: 'gemini-1.5-flash-latest',
