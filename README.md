@@ -18,7 +18,7 @@
 
 ## 📖 Overview
 
-A modern, highly interactive personal portfolio website engineered to showcase projects, skills, and professional experience. Built with a focus on performance, premium aesthetics, and dynamic user experiences, the platform provides a responsive, mobile-first design tailored for technical hiring managers and recruiters.
+A modern, highly interactive personal portfolio website engineered to showcase projects, skills, and professional experience. Built with a focus on performance, premium aesthetics, and dynamic user experiences, the platform integrates a custom AI assistant ("Digital Sandeep") to answer visitor queries in real-time. It provides a responsive, mobile-first design tailored for technical hiring managers and recruiters.
 
 ## ✨ Featured Projects
 
@@ -30,7 +30,7 @@ This portfolio showcases five production-grade projects:
 | **SandeepCloud** | AWS EC2, Docker Compose, Nginx, MariaDB, Cloudflare | Self-hosted Nextcloud cloud storage with enterprise-grade SSL and CDN |
 | **DQA Automation Suite** | PowerShell 5.1, WPF/XAML, WMI/CIM, SQLite | Zero-prompt hardware QA tool iterated through 11 versions at DSU IT |
 | **LLM-Wiki** | Python, Obsidian, AI Agents, Git | AI-agent-powered personal knowledge base with 125+ concept notes |
-| **This Portfolio** | React 19, Vite 8, GSAP, Tailwind CSS, Docker | Cinematic hero, custom cursor, magnetic buttons, scroll animations |
+| **This Portfolio** | React 19, Vite 8, GSAP, Tailwind CSS, Docker | Cinematic hero, integrated AI assistant, custom cursor, scroll animations |
 
 ## 🛠️ Tech Stack
 
@@ -66,7 +66,9 @@ src/
 │   ├── Navbar.jsx
 │   ├── Projects.jsx
 │   ├── ResumeView.jsx
-│   └── Skills.jsx
+│   ├── Skills.jsx
+│   ├── Terminal.jsx
+│   └── Terminal.test.jsx
 ├── data/            # Static datasets used in components
 │   ├── projects.js
 │   └── skills.js
