@@ -40,17 +40,27 @@ This portfolio showcases five production-grade projects:
 - **[Tailwind CSS](https://tailwindcss.com/)** & Custom Vanilla CSS – Utility-first CSS alongside custom design tokens.
 - **[GSAP](https://gsap.com/)** – Robust, performant scroll-based and micro-interactions.
 
+### Backend & AI
+- **[Vercel Serverless](https://vercel.com/docs/functions)** – Hosts the `/api/chat` serverless backend.
+- **[Google Gemini API](https://ai.google.dev/)** – `gemini-3.5-flash` model for the AI chatbot.
+- **[Upstash Redis](https://upstash.com/)** – Handles IP-based rate limiting for the chat API.
+- **[Zod](https://zod.dev/)** – Strict schema validation for chat requests.
+
 ### Testing & Analytics
 - **[Vitest](https://vitest.dev/)** & **jsdom** – Fast unit testing framework.
 - **[@vercel/analytics](https://vercel.com/analytics)** – Production web analytics.
 
-### Deployment
-- **[Docker](https://www.docker.com/)** – Multi-stage containerization (Alpine Node + Nginx).
-- **[Vercel](https://vercel.com/)** – Primary hosting with edge CDN.
+### Architecture & Deployment
+This project utilizes a **hybrid deployment architecture**:
+- **AWS EC2 / Docker** – The frontend UI is containerized using a multi-stage Docker build (Alpine Node + Nginx) and hosted on AWS EC2.
+- **Vercel Serverless** – The AI backend (`/api/chat`) runs as a Vercel Serverless Function to abstract API keys and offload processing from the EC2 instance.
+- **GitHub Actions CI/CD** – Automatically injects the `VITE_API_URL` secret during the Docker build so the EC2 static site can communicate with the Vercel backend.
 
 ## 📁 Project Structure
 
 ```text
+api/                 # Vercel Serverless Functions (AI Backend)
+├── chat.js          # Gemini LLM integration & rate limiting
 src/
 ├── assets/          # Static media (images, videos, fonts)
 ├── components/      # React functional components
@@ -98,9 +108,21 @@ npm install
 ```
 
 ### 3. Configure Environment Variables
-Create a `.env` file at the root of the project and add your Formspree URL:
+Create a `.env` file at the root of the project. Note that production AI keys are securely stored in Vercel. For local development, you only need `VITE_API_URL` if you want to point your local frontend to a live Vercel backend. If you are testing the serverless functions locally (e.g., via Vercel CLI), you will also need the AI API keys:
 ```env
+# Contact Form
 VITE_FORMSPREE_URL=https://formspree.io/f/your_form_id
+
+# AI API Keys (Only required if running the serverless backend locally)
+GEMINI_API_KEY=your_gemini_api_key
+UPSTASH_REDIS_REST_URL=your_upstash_url
+UPSTASH_REDIS_REST_TOKEN=your_upstash_token
+
+# Vercel Backend Security (Comma-separated URLs for strict CORS)
+ALLOWED_ORIGINS=https://your-frontend-domain.com,http://localhost:5173
+
+# Vercel Serverless URL (Optional: points local frontend to remote Vercel backend)
+VITE_API_URL=https://your-project.vercel.app/api/chat
 ```
 
 ### 4. Run the development server
