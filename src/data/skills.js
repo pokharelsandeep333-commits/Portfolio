@@ -49,9 +49,9 @@ export const about = {
   title: "IT Support Desk Technician",
   subtitle: "Computer Science · Dakota State University",
   bio: [
-    "I am a Computer Science sophomore at Dakota State University, originally from Kathmandu, Nepal. I have a strong passion for problem-solving and building systems that improve operational efficiency.",
-    "In my current role as an IT Support Desk Technician for DSU Information Technology Services, I provide front-line technical support: deploying hardware, troubleshooting connectivity, configuring operating systems, and ensuring students and faculty have reliable access to university resources.",
-    "Outside of work, I enjoy building personal projects involving web development, cloud infrastructure, and AI integration. My projects section below showcases the tools and platforms I've built and deployed on my own time.",
+    "Computer Science sophomore at Dakota State University, originally from Kathmandu, Nepal. I like building things that work and figuring out why things break.",
+    "My day job is IT Support at DSU \u2014 deploying hardware, troubleshooting networks, managing Intune enrollment, and making sure students and faculty can actually get work done. It's hands-on, fast-paced, and I learn something new every shift.",
+    "After hours, I build my own infrastructure. Self-hosted cloud storage on AWS, an AI platform that talks to my personal notes, automation tools for the helpdesk \u2014 all containerized, all deployed on servers I manage. The projects section below has the details.",
   ],
   details: [
     { label: "Education", val: "B.S. Computer Science", sub: "Dakota State University · Fall 2025 to Present" },
