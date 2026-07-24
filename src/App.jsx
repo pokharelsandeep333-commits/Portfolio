@@ -34,6 +34,20 @@ export default function App() {
     return () => window.removeEventListener('keydown', handleKeyDown)
   }, [])
 
+  // Fix for ScrollTrigger not firing on programmatic scrollIntoView
+  useEffect(() => {
+    import('gsap/ScrollTrigger').then(({ ScrollTrigger }) => {
+      // Force a refresh once layout is fully painted
+      setTimeout(() => ScrollTrigger.refresh(), 500)
+      
+      // Ensure ScrollTrigger gets body scroll events (fixes smooth scroll missed updates)
+      const handleScroll = () => ScrollTrigger.update()
+      document.body.addEventListener('scroll', handleScroll, { passive: true })
+      
+      return () => document.body.removeEventListener('scroll', handleScroll)
+    })
+  }, [])
+
   const openResume = () => {
     setIsResumeOpen(true)
     document.dispatchEvent(new CustomEvent('hero-video:pause'))
