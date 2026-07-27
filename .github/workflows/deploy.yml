@@ -140,6 +140,7 @@ jobs:
             pokharelsandeep333/my-portfolio-app:${{ github.sha }}
           build-args: |
             VITE_API_URL=${{ secrets.VITE_API_URL }}
+            VITE_FORMSPREE_URL=${{ secrets.VITE_FORMSPREE_URL }}
           cache-from: type=gha
           cache-to: type=gha,mode=max
 
