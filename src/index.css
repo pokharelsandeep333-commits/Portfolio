@@ -620,9 +620,10 @@ body {
   font-family: 'Outfit', sans-serif;
   font-size: 2rem;
   font-weight: 800;
-  color: #002D62;
+  color: #111;
   line-height: 1.1;
   margin-bottom: 0.2rem;
+  text-align: center;
 }
 .resume-title-line {
   font-size: 0.85rem;
@@ -633,6 +634,7 @@ body {
 .resume-contact-row {
   display: flex;
   flex-wrap: wrap;
+  justify-content: center;
   gap: 0.25rem 0.15rem;
   font-size: 0.78rem;
   color: #555;
@@ -642,7 +644,7 @@ body {
   margin: 0 0.3rem;
 }
 .resume-contact-link {
-  color: #002D62;
+  color: #333;
   text-decoration: none;
   font-weight: 500;
 }
@@ -653,7 +655,7 @@ body {
 /* Divider */
 .resume-rule {
   border: none;
-  border-top: 1.5px solid #002D62;
+  border-top: 1.5px solid #333;
   margin: 1rem 0 0.8rem;
   opacity: 0.2;
 }
@@ -668,7 +670,7 @@ body {
   font-weight: 700;
   letter-spacing: 0.12em;
   text-transform: uppercase;
-  color: #002D62;
+  color: #222;
   margin-bottom: 0.85rem;
 }
 
@@ -696,7 +698,7 @@ body {
   flex-shrink: 0;
 }
 .resume-badge-text {
-  color: #002D62;
+  color: #333;
   font-weight: 600;
 }
 .resume-entry-org {
@@ -728,7 +730,7 @@ body {
   margin-top: 0.45rem;
 }
 .resume-project-link {
-  color: #002D62;
+  color: #333;
   text-decoration: none;
   font-size: 0.85rem;
 }
@@ -747,7 +749,7 @@ body {
 }
 .resume-skill-label {
   font-weight: 700;
-  color: #002D62;
+  color: #222;
   white-space: nowrap;
   min-width: 140px;
   flex-shrink: 0;

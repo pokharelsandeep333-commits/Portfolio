@@ -199,11 +199,11 @@ export default function Hero({ onOpenResume, onOpenTerminal }) {
       {/* ── Main content ─────────────────────────────────────────────────────── */}
       <div
         ref={contentRef}
-        className="relative flex flex-col items-center text-center px-6 max-w-4xl mx-auto"
+        className="absolute bottom-[12vh] left-6 md:left-16 flex flex-col items-start text-left max-w-3xl w-full"
         style={{ zIndex: 5 }}
       >
         {/* Eyebrow */}
-        <p className="section-label justify-center mb-4">
+        <p className="section-label justify-start mb-4">
           IT Support Desk · CS @ DSU · Madison, SD
         </p>
 
@@ -234,28 +234,13 @@ export default function Hero({ onOpenResume, onOpenTerminal }) {
         </p>
 
         {/* CTA Buttons — stopPropagation so clicking buttons doesn't toggle mute */}
-        <div className="flex flex-wrap gap-3 justify-center" onClick={(e) => e.stopPropagation()}>
+        <div className="flex flex-wrap gap-4 mt-2 justify-start" onClick={(e) => e.stopPropagation()}>
           <MagneticButton as="button" onClick={() => scrollTo('projects')} className="btn-gold" id="hero-cta-projects">
             View My Work
             <svg width="15" height="15" viewBox="0 0 16 16" fill="none" aria-hidden="true">
               <path d="M3 8h10M9 4l4 4-4 4" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"/>
             </svg>
           </MagneticButton>
-
-          <MagneticButton as="button" onClick={() => scrollTo('contact')} className="btn-outline" id="hero-cta-contact">
-            Contact Me
-          </MagneticButton>
-
-          <MagneticButton as="button" onClick={onOpenResume} id="hero-cta-resume" className="btn-outline">
-            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
-              <path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/>
-              <polyline points="14 2 14 8 20 8"/>
-            </svg>
-            View Resume
-          </MagneticButton>
-
-          {/* Force new row for Chat button */}
-          <div className="w-full h-1"></div>
 
           <MagneticButton 
             as="button" 

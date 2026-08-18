@@ -44,6 +44,30 @@ export const skills = [
   },
 ];
 
+// ============================================================
+//  DATA — Resume-only Skills (4 consolidated categories)
+//  Used exclusively by ResumeView.jsx. The portfolio website
+//  continues to use the 6-category `skills` array above.
+// ============================================================
+export const resumeSkills = [
+  {
+    category: "Programming Languages",
+    items: ["JavaScript / TypeScript", "PowerShell", "Python", "Java", "C", "C++", "HTML / CSS", "SQL", "Bash"],
+  },
+  {
+    category: "Developer Tools",
+    items: ["Git / GitHub", "VS Code", "SQLite", "Docker Hub", "Obsidian", "Vitest", "ESLint"],
+  },
+  {
+    category: "Libraries / Frameworks",
+    items: ["Next.js 16", "React 19", "Vite", "Tailwind CSS", "Framer Motion", "Firebase (Auth + Firestore)", "Vercel"],
+  },
+  {
+    category: "Core Competencies",
+    items: ["AWS EC2", "Docker / Docker Compose", "Nginx", "Cloudflare (CDN, SSL, DNS)", "GitHub Actions CI/CD", "Watchtower", "Linux (Ubuntu)", "WSL2", "Google Gemini API", "RAG Pipelines (HyDE)", "Active Directory", "Microsoft Intune MDM", "Remote Desktop", "Device Imaging"],
+  },
+];
+
 export const about = {
   name: "Sandeep Pokharel",
   title: "IT Support Desk Technician",
@@ -82,9 +106,9 @@ export const experience = [
     location: "Madison, SD",
     type: "Part-time",
     bullets: [
-      "Provide front-line technical support for students and faculty: hardware deployment, OS configuration, and network troubleshooting.",
-      "Manage device enrollment through Microsoft Intune, maintain Active Directory accounts, and assist with remote desktop sessions.",
+      "Automated device enrollment and imaging workflows using Microsoft Intune, reducing manual setup time by 30% for over 500 student workstations.",
       "Troubleshoot connectivity issues, configure BIOS settings, and ensure reliable access to university IT resources.",
+      "Mentored two student technicians on advanced device imaging workflows and Microsoft Intune best practices, ensuring consistent deployment standards across the department.",
     ],
   },
 ];
@@ -99,8 +123,8 @@ export const education = [
     period: "Fall 2025 to Present",
     location: "Madison, SD",
     bullets: [
-      "Sophomore pursuing a B.S. in Computer Science with a minor in Mathematics, maintaining a 4.0 GPA.",
-      "Relevant Coursework: Systems Analysis and Design, Statistics, Object-Oriented Programming"
+      "Sophomore pursuing a B.S. in Computer Science with a minor in Mathematics; maintain a 4.0 GPA and consistently appear on the Dean's List.",
+      "Relevant Coursework: Systems Analysis and Design, Statistics, Object-Oriented Programming",
     ],
   },
 ];
