@@ -50,9 +50,9 @@ export const projects = [
     resumeTitle: "Private RAG Search Engine",
     resumeDescription: "Engineered a self-hosted AI chat platform on AWS EC2 that queries my personal Obsidian vault using Gemini API and local vector search — no external databases.",
     resumeHighlights: [
-      "Engineered a zero-database AI chat platform on AWS EC2, achieving sub-200ms latency for semantic search queries by leveraging local Transformers.js embeddings.",
-      "Optimized RAG pipeline performance by offloading embedding generation to Transformers.js, eliminating database dependency and reducing infrastructure costs by 20%.",
-      "Implemented a CI/CD pipeline with four automated quality gates, reducing deployment failure rates and ensuring 100% test coverage for new features.",
+      "Engineered a zero-database RAG pipeline on AWS EC2, embedding search keywords locally with Transformers.js to query pre-computed Obsidian vault vectors.",
+      "Implemented secure user authentication and protected API routes using Firebase Auth and JWT validation.",
+      "Configured a GitHub Actions CI/CD pipeline with automated quality gates and zero-downtime container updates via Watchtower.",
     ],
   },
   {

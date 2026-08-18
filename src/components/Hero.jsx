@@ -18,7 +18,7 @@ const VolumeOffIcon = () => (
   </svg>
 )
 
-export default function Hero({ onOpenResume, onOpenTerminal }) {
+export default function Hero({ onOpenTerminal }) {
   const sectionRef   = useRef(null)
   const videoRef     = useRef(null)
   const contentRef   = useRef(null)

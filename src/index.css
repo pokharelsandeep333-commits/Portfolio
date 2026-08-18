@@ -761,11 +761,11 @@ body {
 /* ============================================================
    PRINT STYLES — ATS-strict @media print
    Goal: clean, single-column, black-text PDF that any ATS parser
-   can read with 100% fidelity.
+   can read with 100% fidelity. MUST fit on exactly 1 page.
    ============================================================ */
 @media print {
   @page {
-    size: letter;
+    size: letter portrait;
     margin: 0;
   }
 
@@ -779,25 +779,30 @@ body {
     display: none !important;
   }
 
-  /* 2. Reset root — white background, auto height, no clipping, display block */
-  html, body, #root {
-    height: auto !important;
-    overflow: visible !important;
-    display: block !important;
-    background: #fff !important;
-    color: #000 !important;
+  /* 2. Reset root — force wrappers to be transparent and body to be white */
+  html, body {
+    height: 100% !important;
+    background: #ffffff !important;
+    background-color: #ffffff !important;
+    color: #000000 !important;
     font-family: 'Inter', sans-serif !important;
-    font-size: 9pt !important; /* Compressed base font size */
-    line-height: 1.25 !important; /* Tighter line height */
+    font-size: 9.5pt !important;
+    line-height: 1.35 !important;
     -webkit-print-color-adjust: exact;
     print-color-adjust: exact;
   }
 
-  /* 3. Global GSAP Reset */
+  #root, #root > div {
+    background: transparent !important;
+    background-color: transparent !important;
+    min-height: 0 !important;
+    height: auto !important;
+  }
+
+  /* 3. Global GSAP Reset — preserve inline/inline-flex display on SVGs */
   * {
     transform: none !important;
     opacity: 1 !important;
-    background: transparent !important;
     box-shadow: none !important;
     text-shadow: none !important;
     -webkit-text-fill-color: initial !important;
@@ -811,6 +816,8 @@ body {
     width: 100% !important;
     margin: 0 !important;
     backdrop-filter: none !important;
+    background: transparent !important;
+    background-color: transparent !important;
     display: block !important;
     overflow: visible !important;
     inset: auto !important;
@@ -822,124 +829,157 @@ body {
     flex: none !important;
     padding: 0 !important;
     display: block !important;
+    background: transparent !important;
+    background-color: transparent !important;
   }
 
-  /* 5. Resume paper — explicit padding to replace @page margins */
+  /* 5. Resume paper — padding for elegant full-page fit */
   .resume-paper {
     position: relative !important;
     max-width: 100% !important;
     width: 100% !important;
     margin: 0 !important;
-    padding: 0.5in 0.5in !important;
+    padding: 0.6in 0.7in !important; /* Generous margins for a clean look */
     box-sizing: border-box !important;
     border-radius: 0 !important;
     display: block !important;
+    background: #ffffff !important;
+    background-color: #ffffff !important;
   }
 
-  /* 6. Strip ALL flex / grid */
+  /* 6. Strip grid on sections */
   .resume-header,
   .resume-section,
   .resume-entry {
     display: block !important;
   }
 
-  /* 7. Entry header */
+  /* 7. Entry header — flex to keep role+date on one line */
   .resume-entry-header {
-    display: block !important;
-    overflow: hidden !important;
-    margin-bottom: 0 !important;
+    display: flex !important;
+    justify-content: space-between !important;
+    align-items: baseline !important;
+    margin-bottom: 2pt !important;
   }
   .resume-entry-role {
     display: inline !important;
     font-weight: bold !important;
-    font-size: 9pt !important;
+    font-size: 10pt !important;
+  }
+  /* Keep SVG link icons inline with project titles */
+  .resume-entry-role a {
+    display: inline !important;
+    vertical-align: baseline !important;
+  }
+  .resume-entry-role a svg,
+  .resume-entry-date a svg,
+  .resume-badge-text a svg {
+    display: inline !important;
+    vertical-align: middle !important;
+    width: 9px !important;
+    height: 9px !important;
+    position: relative !important;
+    top: -1px !important;
   }
   .resume-entry-date {
     display: inline !important;
-    font-size: 8.5pt !important;
-    margin-left: 0.5em !important;
+    font-size: 9pt !important;
+    white-space: nowrap !important;
+    flex-shrink: 0 !important;
   }
   .resume-entry-date::before { content: "| "; }
+  /* Hide GitHub icon in print — ATS can't read SVG */
+  .resume-badge-text {
+    display: none !important;
+  }
 
-  /* 8. Skills */
+  /* 8. Skills — compact grid */
   .resume-skills-grid {
-    display: grid !important;
-    grid-template-columns: 130px 1fr !important;
-    gap: 1pt 10pt !important;
-    align-items: baseline !important;
-    font-size: 8.5pt !important;
-    margin-bottom: 2pt !important;
+    display: block !important;
+    font-size: 9pt !important;
+    margin-bottom: 0 !important;
   }
   .resume-skill-row {
-    display: contents !important;
+    display: block !important;
+    margin-bottom: 3pt !important;
   }
   .resume-skill-label {
     font-weight: bold !important;
-    text-align: left !important;
+    display: inline !important;
+    font-size: 9pt !important;
+    min-width: 0 !important;
   }
   .resume-skill-items {
-    display: block !important;
+    display: inline !important;
+    font-size: 9pt !important;
   }
 
-  /* 9. Contact row */
+  /* 9. Contact row — centered, single line */
   .resume-contact-row {
     display: block !important;
-    font-size: 9pt !important;
-    margin-bottom: 2pt !important;
+    text-align: center !important;
+    font-size: 9.5pt !important;
+    margin-bottom: 6pt !important;
   }
 
   /* 10. Typography & Compression */
   .resume-name {
-    font-size: 14pt !important; /* Drastically reduced header size */
+    font-size: 18pt !important;
     font-weight: bold !important;
-    margin-bottom: 3pt !important;
+    margin-bottom: 4pt !important;
     display: block !important;
+    text-align: center !important;
   }
   .resume-title-line {
-    font-size: 8.5pt !important;
+    font-size: 9.5pt !important;
     display: block !important;
-    margin-bottom: 2pt !important;
+    margin-bottom: 3pt !important;
+    text-align: center !important;
   }
   .resume-section-title {
-    font-size: 9pt !important;
+    font-size: 10.5pt !important;
     font-weight: bold !important;
     text-transform: uppercase !important;
     letter-spacing: 0.05em !important;
     border-bottom: 1px solid #000 !important;
-    padding-bottom: 3pt !important;
-    margin-bottom: 6pt !important; /* Increased gap below section headers */
+    padding-bottom: 4pt !important;
+    margin-bottom: 8pt !important;
     display: block !important;
+  }
+  .resume-section {
+    margin-bottom: 12pt !important;
   }
   .resume-entry {
-    margin-bottom: 7pt !important; /* Increased gap between jobs/projects */
+    margin-bottom: 10pt !important;
   }
   .resume-entry-org {
-    font-size: 8.5pt !important;
+    font-size: 9.5pt !important;
     font-style: italic !important;
     display: block !important;
-    margin-bottom: 3pt !important;
+    margin-bottom: 4pt !important;
   }
   .resume-entry-desc {
-    font-size: 8.5pt !important;
+    font-size: 9.5pt !important;
     display: block !important;
-    margin-bottom: 3pt !important;
+    margin-bottom: 4pt !important;
   }
   .resume-bullets {
-    font-size: 8.5pt !important;
+    font-size: 9pt !important;
     padding-left: 1.2em !important;
     list-style: disc !important;
-    margin: 3pt 0 !important;
+    margin: 4pt 0 !important;
+    line-height: 1.4 !important;
   }
   .resume-bullets li { 
-    margin-bottom: 3pt !important; /* Increased gap between bullets */
+    margin-bottom: 3.5pt !important;
   }
   .resume-stack {
-    font-size: 8pt !important;
+    font-size: 7.5pt !important;
     display: block !important;
-    margin-top: 3pt !important;
+    margin-top: 2pt !important;
   }
   .resume-project-link {
-    font-size: 8.5pt !important;
+    font-size: 8pt !important;
     text-decoration: none !important;
     display: inline !important;
     font-weight: normal !important;
@@ -948,21 +988,18 @@ body {
     text-decoration: none !important;
     display: inline !important;
     font-weight: normal !important;
+    color: #000 !important;
   }
 
-  /* 11. Divider */
+  /* 11. Divider — compressed */
   .resume-rule {
     border: none !important;
     border-top: 1px solid #000 !important;
-    margin: 12pt 0 !important; /* Larger margins on rules to fill page */
+    margin: 10pt 0 !important;
     display: block !important;
   }
 
-  /* 12. Page setup */
-  @page {
-    margin: 0; /* Eradicate browser headers/footers */
-    size: letter portrait;
-  }
+  /* 12. Page control */
   .resume-entry { page-break-inside: avoid !important; }
   .resume-section { page-break-inside: avoid !important; }
 }

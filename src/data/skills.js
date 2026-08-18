@@ -33,7 +33,7 @@ export const skills = [
   {
     category: "IT Systems",
     icon: "🖥",
-    items: ["WMI / CIM", "Active Directory", "Microsoft Intune MDM", "Remote Desktop", "WPF / XAML", "Device Imaging", "Windows OS"],
+    items: ["WMI / CIM", "Active Directory", "Microsoft Intune MDM", "Remote Desktop", "WPF / XAML", "FOG Project", "Windows OS"],
     highlight: ["WMI / CIM", "Active Directory", "Microsoft Intune MDM"],
   },
   {
@@ -106,9 +106,9 @@ export const experience = [
     location: "Madison, SD",
     type: "Part-time",
     bullets: [
-      "Automated device enrollment and imaging workflows using Microsoft Intune, reducing manual setup time by 30% for over 500 student workstations.",
-      "Troubleshoot connectivity issues, configure BIOS settings, and ensure reliable access to university IT resources.",
-      "Mentored two student technicians on advanced device imaging workflows and Microsoft Intune best practices, ensuring consistent deployment standards across the department.",
+      "Provide technical support for students and faculty, troubleshooting hardware, software, and network connectivity issues across university devices.",
+      "Manage device imaging workflows using FOG Project and Microsoft Intune to securely configure and enroll workstations.",
+      "Administer Active Directory user accounts, configuring multi-factor authentication (MFA) and performing secure password resets.",
     ],
   },
 ];
