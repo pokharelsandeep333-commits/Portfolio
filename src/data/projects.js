@@ -31,7 +31,7 @@ export const projects = [
     ],
   },
   {
-    title: "Molecular Zettelkasten",
+    title: "Private RAG Search Engine",
     status: "Production",
     badge: "badge-production",
     description:
@@ -54,6 +54,27 @@ export const projects = [
       "Implemented secure user authentication and protected API routes using Firebase Auth and JWT validation.",
       "Configured a GitHub Actions CI/CD pipeline with automated quality gates and zero-downtime container updates via Watchtower.",
     ],
+  },
+  {
+    title: "Private Encrypted DNS Server",
+    status: "Production",
+    badge: "badge-production",
+    hideOnResume: true,
+    description:
+      "Standard DNS queries are sent in plaintext over UDP Port 53, making them easy for ISPs and hackers on public Wi-Fi to intercept, log, or hijack. To bypass this, I engineered a private DNS-over-HTTPS (DoH) proxy on AWS EC2 running AdGuard Home. This wraps all my DNS requests securely inside standard HTTPS traffic, preventing any local network from seeing my web traffic while blocking ads and trackers at the network level.",
+    highlights: [
+      "Deployed AdGuard Home as a Docker container on an AWS EC2 instance to serve as a private, network-wide ad blocker.",
+      "Configured a DNS-over-HTTPS (DoH) tunnel to encrypt DNS queries over Port 443, successfully bypassing Port 53 network restrictions.",
+      "Secured the DoH endpoint using Let's Encrypt SSL certificates (via Certbot) and routed traffic through Cloudflare (DNS Only mode).",
+      "Configured Windows and iOS devices to natively tunnel DNS traffic to the custom DoH server.",
+      "Eliminated SNI leaks via Encrypted Client Hello (ECH), verifying zero plain-text DNS packets with Wireshark.",
+      "Opened the server for public use. Anyone can secure their web traffic by configuring their network settings with IP 3.222.237.91 and enabling HTTPS-only DNS using the template https://dns.sandeeppokharel.com.np/dns-query.",
+    ],
+    stack: ["AWS EC2", "Docker", "AdGuard Home", "DNS-over-HTTPS (DoH)", "Cloudflare", "Let's Encrypt", "Wireshark"],
+    github: null,
+    demo: null,
+    resumeStack: [],
+    resumeHighlights: [],
   },
   {
     title: "Device Quality Assurance (DQA) Automation Suite",
