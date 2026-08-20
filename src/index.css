@@ -808,6 +808,9 @@ body {
     -webkit-text-fill-color: initial !important;
     transition: none !important;
     animation: none !important;
+    text-rendering: geometricPrecision !important;
+    -webkit-font-smoothing: antialiased !important;
+    -moz-osx-font-smoothing: grayscale !important;
   }
 
   /* 4. Flatten the modal overlay */
@@ -839,7 +842,7 @@ body {
     max-width: 100% !important;
     width: 100% !important;
     margin: 0 !important;
-    padding: 0.6in 0.7in !important; /* Generous margins for a clean look */
+    padding: 0.75in 0.7in 0.5in 0.7in !important; /* Extra top margin so name isn't too high */
     box-sizing: border-box !important;
     border-radius: 0 !important;
     display: block !important;

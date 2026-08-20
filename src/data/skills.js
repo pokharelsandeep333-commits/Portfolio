@@ -21,13 +21,13 @@ export const skills = [
   {
     category: "Web & Frameworks",
     icon: "🌐",
-    items: ["Next.js 16", "React 19", "Vite", "Tailwind CSS", "GSAP", "Framer Motion", "Firebase (Auth + Firestore)", "Vercel"],
+    items: ["Next.js 16", "React 19", "Node.js", "Vite", "Tailwind CSS", "GSAP", "Framer Motion", "Firebase (Auth + Firestore)", "Supabase", "MySQL", "PostgreSQL", "Redis", "Vercel"],
     highlight: ["Next.js 16", "React 19", "Firebase (Auth + Firestore)"],
   },
   {
     category: "AI & Data",
     icon: "🧠",
-    items: ["Google Gemini API", "Transformers.js", "RAG Pipelines (HyDE)", "Vector Embeddings", "gray-matter", "Semantic Search"],
+    items: ["Google Gemini API", "Transformers.js", "Hugging Face", "Ollama", "VLLM", "Hermes Agent", "Open WebUI", "n8n", "Streamlit", "RAG Pipelines (HyDE)", "Vector Embeddings", "gray-matter", "Semantic Search"],
     highlight: ["Google Gemini API", "Transformers.js", "RAG Pipelines (HyDE)"],
   },
   {
@@ -39,32 +39,39 @@ export const skills = [
   {
     category: "Tools & Platforms",
     icon: "🔧",
-    items: ["Git / GitHub", "VS Code", "SQLite", "Docker Hub", "Obsidian", "Vitest", "ESLint"],
+    items: ["Git / GitHub", "VS Code", "SQLite", "Docker Hub", "Obsidian", "Vitest", "ESLint", "Postman", "Google Stitch", "AdGuard Home", "Raspberry Pi", "Tailscale", "Proxmox"],
     highlight: ["Git / GitHub", "Docker Hub"],
   },
 ];
 
 // ============================================================
-//  DATA — Resume-only Skills (4 consolidated categories)
-//  Used exclusively by ResumeView.jsx. The portfolio website
-//  continues to use the 6-category `skills` array above.
+//  DATA — Resume-only Skills (6 strict 1-line categories)
+//  Used exclusively by ResumeView.jsx.
 // ============================================================
 export const resumeSkills = [
   {
-    category: "Programming Languages",
-    items: ["JavaScript / TypeScript", "PowerShell", "Python", "Java", "C", "C++", "HTML / CSS", "SQL", "Bash"],
+    category: "Languages",
+    items: ["JavaScript / TypeScript", "PowerShell", "Python", "Java", "C/C++", "SQL", "HTML / CSS"],
   },
   {
-    category: "Developer Tools",
-    items: ["Git / GitHub", "VS Code", "SQLite", "Docker Hub", "Obsidian", "Vitest", "ESLint"],
+    category: "Tools",
+    items: ["Git / GitHub", "Docker", "Vitest", "Obsidian", "Tailscale", "AdGuard Home", "Proxmox"],
   },
   {
-    category: "Libraries / Frameworks",
-    items: ["Next.js 16", "React 19", "Vite", "Tailwind CSS", "Framer Motion", "Firebase (Auth + Firestore)", "Vercel"],
+    category: "Lib & Frameworks",
+    items: ["Next.js", "React", "Node.js", "Vite", "Tailwind CSS", "GSAP"],
   },
   {
-    category: "Core Competencies",
-    items: ["AWS EC2", "Docker / Docker Compose", "Nginx", "Cloudflare (CDN, SSL, DNS)", "GitHub Actions CI/CD", "Watchtower", "Linux (Ubuntu)", "WSL2", "Google Gemini API", "RAG Pipelines (HyDE)", "Active Directory", "Microsoft Intune MDM", "Remote Desktop", "Device Imaging"],
+    category: "Cloud",
+    items: ["AWS EC2", "Nginx", "Cloudflare", "GitHub Actions", "Vercel", "Supabase", "Redis"],
+  },
+  {
+    category: "AI & Automation",
+    items: ["RAG", "Ollama", "Hugging Face", "n8n", "VLLM", "Hermes Agent", "Streamlit", "Open WebUI"],
+  },
+  {
+    category: "IT Systems",
+    items: ["Active Directory", "Microsoft Intune", "Remote Desktop", "Device Imaging", "MFA"],
   },
 ];
 
@@ -123,8 +130,8 @@ export const education = [
     period: "Fall 2025 to Present",
     location: "Madison, SD",
     bullets: [
-      "Sophomore pursuing a B.S. in Computer Science with a minor in Mathematics; maintain a 4.0 GPA and consistently appear on the Dean's List.",
-      "Relevant Coursework: Systems Analysis and Design, Statistics, Object-Oriented Programming",
+      "Pursuing a B.S. in Computer Science with a minor in Mathematics (4.0 GPA), focusing on cloud infrastructure and AI.",
+      "Relevant Coursework: Software Engineering, Artificial Intelligence, Data Structures, OOP, Systems Analysis & Design, Calculus",
     ],
   },
 ];
