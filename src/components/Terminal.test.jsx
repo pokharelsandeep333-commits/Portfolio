@@ -33,7 +33,7 @@ describe('Terminal UI', () => {
       },
       body: JSON.stringify({ 
         messages: [
-          { role: 'bot', content: 'Hi there! I am Digital Sandeep. Ask me anything about Sandeep\'s skills, projects, or experience.' },
+          { role: 'bot', content: "Hi — I'm Digital Sandeep, an AI version of Sandeep. Ask me anything about my work, projects, or experience." },
           { role: 'user', content: 'test message' }
         ] 
       })
