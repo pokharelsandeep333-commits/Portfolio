@@ -83,7 +83,8 @@ export default function About() {
                 <div className="w-1 h-10 rounded-full bg-dsuGold flex-shrink-0 opacity-70" />
                 <div className="min-w-0">
                   <p className="text-white/35 text-xs font-inter uppercase tracking-widest mb-0.5">{d.label}</p>
-                  <p className="text-white font-outfit font-semibold text-sm truncate">{d.val}</p>
+                  {/* Wraps rather than truncating — longer role titles were losing their tail to the ellipsis */}
+                  <p className="text-white font-outfit font-semibold text-sm leading-snug">{d.val}</p>
                   <p className="text-white/45 text-xs font-inter mt-0.5">{d.sub}</p>
                 </div>
               </div>

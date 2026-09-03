@@ -99,26 +99,31 @@ export default function ResumeView({ onClose }) {
           <section className="resume-section">
             <h2 className="resume-section-title">Experience</h2>
 
-            {experience.map((job) => (
-              <div key={job.role + job.period} className="resume-entry">
-                <div className="resume-entry-header">
-                  <span className="resume-entry-role">
-                    {job.role} &middot;{' '}
-                    {job.orgLink ? (
-                      <a href={job.orgLink} className="resume-contact-link" target="_blank" rel="noopener noreferrer">{job.org}</a>
-                    ) : (
-                      <span>{job.org}</span>
-                    )}
-                  </span>
-                  <span className="resume-entry-date">{job.period}</span>
+            {experience.map((job) => {
+              // Prefer the condensed one-line-per-bullet copy written for print;
+              // fall back to the richer portfolio bullets. Mirrors resumeHighlights below.
+              const bullets = job.resumeBullets ?? job.bullets
+              return (
+                <div key={job.role + job.period} className="resume-entry">
+                  <div className="resume-entry-header">
+                    <span className="resume-entry-role">
+                      {job.role} &middot;{' '}
+                      {job.orgLink ? (
+                        <a href={job.orgLink} className="resume-contact-link" target="_blank" rel="noopener noreferrer">{job.org}</a>
+                      ) : (
+                        <span>{job.org}</span>
+                      )}
+                    </span>
+                    <span className="resume-entry-date">{job.period}</span>
+                  </div>
+                  {bullets && (
+                    <ul className="resume-bullets">
+                      {bullets.map((b, i) => <li key={i}>{b}</li>)}
+                    </ul>
+                  )}
                 </div>
-                {job.bullets && (
-                  <ul className="resume-bullets">
-                    {job.bullets.map((b, i) => <li key={i}>{b}</li>)}
-                  </ul>
-                )}
-              </div>
-            ))}
+              )
+            })}
           </section>
 
           <div className="resume-rule" />
