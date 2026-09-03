@@ -25,9 +25,32 @@ export const projects = [
     resumeStack: ["AWS EC2", "Docker Compose", "Nextcloud", "Cloudflare CDN"],
     resumeDescription: "Built and operate a self-hosted Nextcloud file server on AWS EC2, replacing third-party cloud storage with infrastructure I fully control.",
     resumeHighlights: [
-      "Deployed a self-hosted Nextcloud server on AWS EC2, providing 1TB of secure, private storage and reducing third-party cloud subscription costs by $120 annually.",
-      "Architected a Docker Compose stack (Nextcloud, MariaDB, Nginx) on Ubuntu 24.04 with automated container orchestration.",
-      "Configured Cloudflare CDN with Full Strict SSL and a 15-year Origin Certificate, hiding the server IP behind edge-level DDoS protection.",
+      "Deployed a self-hosted 1TB Nextcloud server on AWS EC2, cutting $120/year in third-party storage costs.",
+      "Architected a Docker Compose stack (Nextcloud, MariaDB, Nginx) on Ubuntu 24.04 with automated orchestration.",
+      "Configured Cloudflare CDN with Full Strict SSL and an Origin Certificate, hiding the server IP from attackers.",
+    ],
+  },
+  {
+    title: "ShiftSentry",
+    status: "Production",
+    badge: "badge-production",
+    description:
+      "I work multiple jobs on campus and kept losing track of how close I was to my weekly hour cap until it was already too late. So I built the tool I needed. ShiftSentry tracks scheduled and completed shifts across multiple jobs, projects the week's total before it happens, and warns at 80%, 90%, and 100% of the limit. It also works out gross pay, taxes, and deductions so I know what actually lands in my account. It installs as a web app or as a signed Android build.",
+    highlights: [
+      "Tracked scheduled and completed shifts across multiple jobs, each with its own pay rate, deductions, and weekly hour cap.",
+      "Projected the week's total before it happens and warned at 80%, 90%, and 100% of the cap, so a limit never gets crossed by surprise.",
+      "Calculated gross pay, taxes, and deductions per job, then charted net earnings history over time with Recharts.",
+      "Kept every user's data private to their own account with Supabase Row Level Security, enforced by the database itself rather than by app code.",
+      "Ran a GitHub Actions CI/CD pipeline on every push — unit tests, type-checking, linting, secret scanning, and CodeQL security analysis — before any release ships.",
+    ],
+    stack: ["Next.js 16", "React 19", "TypeScript", "Supabase Auth", "PostgreSQL", "Row Level Security", "Prisma 7", "Tailwind CSS v4", "Recharts", "Zod", "Docker", "GitHub Actions", "CodeQL", "Android TWA"],
+    github: "https://github.com/pokharelsandeep333-commits/ShiftSentry",
+    demo: "https://sentry.sandeeppokharel.com.np/",
+    resumeStack: ["Next.js 16", "Supabase", "Prisma", "Docker"],
+    resumeHighlights: [
+      "Built a multi-job shift, hours, and earnings tracker with Next.js 16, TypeScript, and Supabase Postgres.",
+      "Enforced per-user data isolation with Supabase Row Level Security, keeping admin access server-side via Prisma.",
+      "Automated a seven-gate CI/CD pipeline (Gitleaks, tests, CodeQL, Docker) promoting signed, SBOM-attested images.",
     ],
   },
   {
@@ -50,9 +73,9 @@ export const projects = [
     resumeTitle: "Private RAG Search Engine",
     resumeDescription: "Engineered a self-hosted AI chat platform on AWS EC2 that queries my personal Obsidian vault using Gemini API and local vector search — no external databases.",
     resumeHighlights: [
-      "Engineered a zero-database RAG pipeline on AWS EC2, embedding search keywords locally with Transformers.js to query pre-computed Obsidian vault vectors.",
+      "Engineered a zero-database RAG pipeline on AWS EC2, embedding queries locally with Transformers.js.",
       "Implemented secure user authentication and protected API routes using Firebase Auth and JWT validation.",
-      "Configured a GitHub Actions CI/CD pipeline with automated quality gates and zero-downtime container updates via Watchtower.",
+      "Configured a GitHub Actions CI/CD pipeline with zero-downtime container updates via Watchtower.",
     ],
   },
   {

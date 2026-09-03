@@ -2,6 +2,22 @@ import { useState, useRef, useEffect } from 'react';
 import gsap from 'gsap';
 import ReactMarkdown from 'react-markdown';
 
+// Shown only on an empty conversation — a blank input gets ignored, whereas a
+// tappable question gives visitors an obvious first move. Each one is
+// answerable from the portfolio data the assistant is grounded in.
+const STARTER_QUESTIONS = [
+  'What have you built with AWS?',
+  'Tell me about ShiftSentry',
+  'What do you do at DSU?',
+  'Are you open to internships?',
+];
+
+// One source for the opening message — rendered on first load, restored by
+// "Clear chat", and asserted verbatim in Terminal.test.jsx.
+const GREETING_TEXT =
+  "Hi — I'm Digital Sandeep, an AI version of Sandeep. Ask me anything about my work, projects, or experience.";
+const makeGreeting = () => [{ role: 'bot', content: GREETING_TEXT }];
+
 const Terminal = ({ isOpen, onClose }) => {
   const [messages, setMessages] = useState(() => {
     try {
@@ -19,14 +35,15 @@ const Terminal = ({ isOpen, onClose }) => {
     } catch (error) {
       console.error("Failed to parse chat history", error);
     }
-    return [
-      { role: 'bot', content: 'Hi there! I am Digital Sandeep. Ask me anything about Sandeep\'s skills, projects, or experience.' }
-    ];
+    return makeGreeting();
   });
   const [input, setInput] = useState('');
   const [isLoading, setIsLoading] = useState(false);
   const endOfMessagesRef = useRef(null);
   const messagesRef = useRef(null);
+  const inputRef = useRef(null);
+  const restoreFocusRef = useRef(null);
+  const panelRef = useRef(null);
 
 
   useEffect(() => {
@@ -34,44 +51,70 @@ const Terminal = ({ isOpen, onClose }) => {
     endOfMessagesRef.current?.scrollIntoView({ behavior: 'smooth' });
   }, [messages, isLoading]);
 
+  // The drawer is always mounted and only translated off-canvas, so `autoFocus`
+  // would claim focus on page load — and pop the keyboard on mobile — while the
+  // panel is still hidden. Focus only once it is actually open, and hand focus
+  // back on close: browsers do not blur an already-focused element when `inert`
+  // is applied, which would otherwise strand the caret off-canvas.
+  useEffect(() => {
+    if (isOpen) {
+      restoreFocusRef.current = document.activeElement;
+      inputRef.current?.focus();
+    } else if (restoreFocusRef.current) {
+      // Only reclaim focus if it is still trapped inside the panel. Closing by
+      // clicking the page already moved focus elsewhere — stealing it back
+      // would be its own annoyance.
+      if (panelRef.current?.contains(document.activeElement)) {
+        restoreFocusRef.current.focus?.();
+      }
+      restoreFocusRef.current = null;
+    }
+  }, [isOpen]);
+
   const clearChat = () => {
-    const initial = [{ role: 'bot', content: 'Hi there! I am Digital Sandeep. Ask me anything about Sandeep\'s skills, projects, or experience.' }];
+    const initial = makeGreeting();
     setMessages(initial);
     localStorage.setItem('chatHistory', JSON.stringify(initial));
   };
 
-  const handleKeyDown = async (e) => {
-    if (e.key === 'Enter' && input.trim()) {
-      const userMessage = input.trim();
-      setInput('');
-      
-      const newMessages = [...messages, { role: 'user', content: userMessage }];
-      setMessages(newMessages);
-      setIsLoading(true);
+  // Shared by the input's Enter key and the starter-question buttons.
+  const sendMessage = async (text) => {
+    const userMessage = text.trim();
+    if (!userMessage || isLoading) return;
+    setInput('');
 
-      try {
-        const apiUrl = import.meta.env.VITE_API_URL || '/api/chat';
-        const response = await fetch(apiUrl, {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-          },
-          body: JSON.stringify({ messages: newMessages }),
-        });
+    const newMessages = [...messages, { role: 'user', content: userMessage }];
+    setMessages(newMessages);
+    setIsLoading(true);
 
-        if (response.status === 429) {
-          setMessages(prev => [...prev, { role: 'bot', content: 'Too many requests. Please slow down and try again in a minute.' }]);
-          return;
-        }
+    try {
+      const apiUrl = import.meta.env.VITE_API_URL || '/api/chat';
+      const response = await fetch(apiUrl, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ messages: newMessages }),
+      });
 
-        const data = await response.json();
-        
-        setMessages(prev => [...prev, { role: 'bot', content: data.response || data.error || 'Error' }]);
-      } catch {
-        setMessages(prev => [...prev, { role: 'bot', content: 'Network Error' }]);
-      } finally {
-        setIsLoading(false);
+      if (response.status === 429) {
+        setMessages(prev => [...prev, { role: 'bot', content: 'Too many requests. Please slow down and try again in a minute.' }]);
+        return;
       }
+
+      const data = await response.json();
+
+      setMessages(prev => [...prev, { role: 'bot', content: data.response || data.error || 'Error' }]);
+    } catch {
+      setMessages(prev => [...prev, { role: 'bot', content: 'Network Error' }]);
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  const handleKeyDown = (e) => {
+    if (e.key === 'Enter' && input.trim()) {
+      sendMessage(input);
     }
   };
 
@@ -88,7 +131,11 @@ const Terminal = ({ isOpen, onClose }) => {
     <>
       {/* Sidebar panel */}
       <div 
+        ref={panelRef}
         className={`fixed right-0 top-0 h-full w-full sm:w-80 bg-[#050e1f]/40 backdrop-blur-2xl shadow-[-20px_0_40px_rgba(0,0,0,0.6)] border-l border-white/10 z-50 flex flex-col text-sm text-[#e6f1ff] transition-transform duration-700 ease-[cubic-bezier(0.16,1,0.3,1)] ${isOpen ? 'translate-x-0' : 'translate-x-full'}`}
+        aria-label="Digital Sandeep AI chat"
+        aria-hidden={!isOpen}
+        inert={!isOpen}
       >
         <div className="flex items-center justify-between p-4 border-b border-white/10 bg-white/5">
           <div className="flex items-center space-x-2 text-white">
@@ -136,6 +183,22 @@ const Terminal = ({ isOpen, onClose }) => {
             </div>
           </div>
         ))}
+        {messages.length <= 1 && !isLoading && (
+          <div className="pt-1">
+            <p className="text-white/35 text-xs font-inter uppercase tracking-widest mb-2.5 px-1">Try asking</p>
+            <div className="flex flex-col items-start gap-2">
+              {STARTER_QUESTIONS.map((q) => (
+                <button
+                  key={q}
+                  onClick={() => sendMessage(q)}
+                  className="text-xs font-inter text-left px-3 py-2 rounded-xl border border-white/10 bg-white/5 text-white/60 hover:border-[#FFC72C]/40 hover:text-white hover:bg-white/10 transition-all"
+                >
+                  {q}
+                </button>
+              ))}
+            </div>
+          </div>
+        )}
         {isLoading && (
           <div className="flex justify-start">
             <div className="bg-white/10 backdrop-blur-md border border-white/10 text-[#e6f1ff] max-w-[85%] rounded-2xl rounded-tl-sm p-4 flex items-center space-x-2 shadow-lg">
@@ -155,8 +218,8 @@ const Terminal = ({ isOpen, onClose }) => {
             value={input}
             onChange={(e) => setInput(e.target.value)}
             onKeyDown={handleKeyDown}
+            ref={inputRef}
             className="w-full bg-[#050e1f]/50 border border-white/10 rounded-full px-4 py-3 outline-none text-[#e6f1ff] placeholder-white/40 focus:border-[#FFC72C]/50 focus:ring-1 focus:ring-[#FFC72C]/50 transition-all shadow-inner"
-            autoFocus
             disabled={isLoading}
             placeholder="Type your message..."
           />

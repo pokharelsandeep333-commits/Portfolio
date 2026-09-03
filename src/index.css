@@ -842,7 +842,7 @@ body {
     max-width: 100% !important;
     width: 100% !important;
     margin: 0 !important;
-    padding: 0.75in 0.7in 0.5in 0.7in !important; /* Extra top margin so name isn't too high */
+    padding: 0.55in 0.65in 0.4in 0.65in !important; /* Tightened so the page holds 2 roles + 3 projects */
     box-sizing: border-box !important;
     border-radius: 0 !important;
     display: block !important;
@@ -904,7 +904,7 @@ body {
   }
   .resume-skill-row {
     display: block !important;
-    margin-bottom: 3pt !important;
+    margin-bottom: 2pt !important;
   }
   .resume-skill-label {
     font-weight: bold !important;
@@ -922,14 +922,14 @@ body {
     display: block !important;
     text-align: center !important;
     font-size: 9.5pt !important;
-    margin-bottom: 6pt !important;
+    margin-bottom: 5pt !important;
   }
 
   /* 10. Typography & Compression */
   .resume-name {
-    font-size: 18pt !important;
+    font-size: 17pt !important;
     font-weight: bold !important;
-    margin-bottom: 4pt !important;
+    margin-bottom: 3pt !important;
     display: block !important;
     text-align: center !important;
   }
@@ -945,15 +945,15 @@ body {
     text-transform: uppercase !important;
     letter-spacing: 0.05em !important;
     border-bottom: 1px solid #000 !important;
-    padding-bottom: 4pt !important;
-    margin-bottom: 8pt !important;
+    padding-bottom: 2.5pt !important;
+    margin-bottom: 5pt !important;
     display: block !important;
   }
   .resume-section {
-    margin-bottom: 12pt !important;
+    margin-bottom: 7pt !important;
   }
   .resume-entry {
-    margin-bottom: 10pt !important;
+    margin-bottom: 6pt !important;
   }
   .resume-entry-org {
     font-size: 9.5pt !important;
@@ -970,11 +970,11 @@ body {
     font-size: 9pt !important;
     padding-left: 1.2em !important;
     list-style: disc !important;
-    margin: 4pt 0 !important;
-    line-height: 1.4 !important;
+    margin: 3pt 0 !important;
+    line-height: 1.32 !important;
   }
   .resume-bullets li { 
-    margin-bottom: 3.5pt !important;
+    margin-bottom: 2pt !important;
   }
   .resume-stack {
     font-size: 7.5pt !important;
@@ -998,7 +998,7 @@ body {
   .resume-rule {
     border: none !important;
     border-top: 1px solid #000 !important;
-    margin: 10pt 0 !important;
+    margin: 4pt 0 !important;
     display: block !important;
   }
 

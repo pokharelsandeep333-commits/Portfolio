@@ -117,6 +117,7 @@ describe('API Route /api/chat', () => {
         systemInstruction: expect.any(String),
         generationConfig: {
           maxOutputTokens: 800,
+          temperature: 0.35,
         }
       })
     );

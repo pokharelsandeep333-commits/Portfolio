@@ -16,7 +16,7 @@ describe('Terminal UI', () => {
   });
 
   it('renders correctly and accepts input', async () => {
-    render(<Terminal />);
+    render(<Terminal isOpen={true} />);
     
     const input = screen.getByRole('textbox');
     expect(input).toBeInTheDocument();
@@ -33,7 +33,7 @@ describe('Terminal UI', () => {
       },
       body: JSON.stringify({ 
         messages: [
-          { role: 'bot', content: 'Hi there! I am Digital Sandeep. Ask me anything about Sandeep\'s skills, projects, or experience.' },
+          { role: 'bot', content: "Hi — I'm Digital Sandeep, an AI version of Sandeep. Ask me anything about my work, projects, or experience." },
           { role: 'user', content: 'test message' }
         ] 
       })
@@ -52,7 +52,7 @@ describe('Terminal UI', () => {
       })
     );
 
-    render(<Terminal />);
+    render(<Terminal isOpen={true} />);
     
     const input = screen.getByRole('textbox');
     fireEvent.change(input, { target: { value: 'rate limit test' } });
@@ -61,5 +61,15 @@ describe('Terminal UI', () => {
     await waitFor(() => {
       expect(screen.getByText('Too many requests. Please slow down and try again in a minute.')).toBeInTheDocument();
     });
+  });
+
+  it('hides the drawer from assistive tech and keyboard focus while closed', () => {
+    const { container } = render(<Terminal isOpen={false} />);
+    const panel = container.querySelector('[aria-label="Digital Sandeep AI chat"]');
+
+    expect(panel).toHaveAttribute('aria-hidden', 'true');
+    expect(panel).toHaveAttribute('inert');
+    // getByRole skips the a11y-hidden subtree, so nothing inside should surface
+    expect(screen.queryByRole('textbox')).toBeNull();
   });
 });
