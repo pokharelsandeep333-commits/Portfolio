@@ -40,14 +40,14 @@ export default function Skills() {
     <section
       id="skills"
       ref={sectionRef}
-      className="relative py-28 px-6"
+      className="relative py-20 sm:py-24 lg:py-28 px-5 sm:px-6"
       style={{ background: 'linear-gradient(180deg, #081525 0%, #050e1f 100%)' }}
     >
-      <div className="section-divider mb-16" />
+      <div className="section-divider mb-10 sm:mb-16" />
 
       <div className="max-w-6xl mx-auto">
         {/* Header */}
-        <div ref={headingRef} className="mb-14">
+        <div ref={headingRef} className="mb-10 sm:mb-14">
           <p className="section-label">Technical Skills</p>
           <h2 className="section-heading">
             What I <span>work with</span>
@@ -60,7 +60,7 @@ export default function Skills() {
           className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5"
         >
           {skills.map((group) => (
-            <div key={group.category} className="glass-card p-8">
+            <div key={group.category} className="glass-card p-6 sm:p-8">
               {/* Icon + category header */}
               <div className="flex items-center gap-3 mb-5">
                 <span className="text-2xl" aria-hidden="true">{group.icon}</span>

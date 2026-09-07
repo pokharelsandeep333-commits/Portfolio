@@ -2,6 +2,7 @@ import { useLayoutEffect, useRef, useState, useEffect } from 'react'
 import { gsap } from 'gsap'
 import { ScrollTrigger } from 'gsap/ScrollTrigger'
 import MagneticButton from './MagneticButton'
+import { useMediaQuery, MOBILE_QUERY } from '../hooks/useMediaQuery'
 
 // ─── Volume Icons ─────────────────────────────────────────────────────────────
 const VolumeOnIcon = () => (
@@ -18,7 +19,7 @@ const VolumeOffIcon = () => (
   </svg>
 )
 
-export default function Hero({ onOpenTerminal }) {
+export default function Hero({ onToggleTerminal }) {
   const sectionRef   = useRef(null)
   const videoRef     = useRef(null)
   const contentRef   = useRef(null)
@@ -28,12 +29,21 @@ export default function Hero({ onOpenTerminal }) {
 
   const [isMuted, setIsMuted] = useState(true)
 
+  // Phones get a CSS-gradient backdrop instead of the 1.7 MB loop: it is the
+  // whole page weight over cellular, and iOS Low Power Mode blocks autoplay
+  // anyway, which used to leave a black hero. Gating the JSX (not just CSS)
+  // means the file is never requested at all.
+  const isMobile = useMediaQuery(MOBILE_QUERY)
+  const hasVideo = !isMobile
+
   // Track whether the hero section is currently in the viewport.
   // ScrollTrigger writes to this ref; the resume event handler reads it.
   const heroInViewRef = useRef(true)
 
   // ─── Video control — strictly scoped, no prop dependency ─────────────────────
   useEffect(() => {
+    if (!hasVideo) return
+
     const onPause = () => {
       videoRef.current?.pause()
     }
@@ -50,7 +60,7 @@ export default function Hero({ onOpenTerminal }) {
       document.removeEventListener('hero-video:pause',  onPause)
       document.removeEventListener('hero-video:resume', onResume)
     }
-  }, [])
+  }, [hasVideo])
 
   // ─── GSAP entrance + ScrollTrigger ───────────────────────────────────────────
   useLayoutEffect(() => {
@@ -67,51 +77,59 @@ export default function Hero({ onOpenTerminal }) {
         { opacity: 0 },
         { opacity: 1, duration: 0.8, delay: 1.6, ease: 'power2.out' }
       )
-      gsap.fromTo(
-        volumeRef.current,
-        { opacity: 0 },
-        { opacity: 1, duration: 0.6, delay: 2.0, ease: 'power2.out' }
-      )
 
-      // Audio hint: fade in after 0.8s, then auto-fade out at 4.5s
-      gsap.fromTo(
-        hintRef.current,
-        { opacity: 0, y: 8 },
-        { opacity: 1, y: 0, duration: 0.7, delay: 0.8, ease: 'power2.out' }
-      )
-      gsap.to(hintRef.current, {
-        opacity: 0,
-        duration: 0.9,
-        delay: 4.5,
-        ease: 'power2.inOut',
-        onComplete: () => {
-          if (hintRef.current) hintRef.current.style.pointerEvents = 'none'
-        },
-      })
+      // The volume readout and audio hint only exist when a video does.
+      if (volumeRef.current) {
+        gsap.fromTo(
+          volumeRef.current,
+          { opacity: 0 },
+          { opacity: 1, duration: 0.6, delay: 2.0, ease: 'power2.out' }
+        )
+      }
+
+      if (hintRef.current) {
+        // Audio hint: fade in after 0.8s, then auto-fade out at 4.5s
+        gsap.fromTo(
+          hintRef.current,
+          { opacity: 0, y: 8 },
+          { opacity: 1, y: 0, duration: 0.7, delay: 0.8, ease: 'power2.out' }
+        )
+        gsap.to(hintRef.current, {
+          opacity: 0,
+          duration: 0.9,
+          delay: 4.5,
+          ease: 'power2.inOut',
+          onComplete: () => {
+            if (hintRef.current) hintRef.current.style.pointerEvents = 'none'
+          },
+        })
+      }
 
       // ScrollTrigger: pause when hero exits viewport; resume when back.
       // Also keeps heroInViewRef accurate so the resume handler knows the state.
-      ScrollTrigger.create({
-        trigger: sectionRef.current,
-        start: 'top top',
-        end: 'bottom top',
-        onLeave: () => {
-          heroInViewRef.current = false
-          videoRef.current?.pause()
-        },
-        onEnterBack: () => {
-          heroInViewRef.current = true
-          if (videoRef.current) {
-            videoRef.current.currentTime = 0
-            videoRef.current.play().catch(() => {})
-          }
-        },
-      })
+      if (hasVideo) {
+        ScrollTrigger.create({
+          trigger: sectionRef.current,
+          start: 'top top',
+          end: 'bottom top',
+          onLeave: () => {
+            heroInViewRef.current = false
+            videoRef.current?.pause()
+          },
+          onEnterBack: () => {
+            heroInViewRef.current = true
+            if (videoRef.current) {
+              videoRef.current.currentTime = 0
+              videoRef.current.play().catch(() => {})
+            }
+          },
+        })
+      }
 
     }, sectionRef)
 
     return () => ctx.revert()
-  }, [])
+  }, [hasVideo])
 
   // ─── Click to toggle mute ────────────────────────────────────────────────────
   const handleVideoClick = () => {
@@ -144,27 +162,37 @@ export default function Hero({ onOpenTerminal }) {
     <section
       id="hero"
       ref={sectionRef}
-      className="relative min-h-screen flex items-center justify-center overflow-hidden"
-      onClick={handleVideoClick}
-      onKeyDown={(e) => { if (e.key === ' ' && e.target === sectionRef.current) { e.preventDefault(); handleVideoClick() } }}
+      className="hero-section relative flex items-center justify-center overflow-hidden"
+      onClick={hasVideo ? handleVideoClick : undefined}
+      onKeyDown={(e) => {
+        if (hasVideo && e.key === ' ' && e.target === sectionRef.current) {
+          e.preventDefault()
+          handleVideoClick()
+        }
+      }}
       tabIndex={-1}
-      aria-label="Hero section — click anywhere or press Space to toggle sound"
+      aria-label={hasVideo ? 'Hero section — click anywhere or press Space to toggle sound' : 'Hero section'}
     >
-      {/* ── Full-screen cinematic video — auto-plays immediately ── */}
-      <video
-        ref={videoRef}
-        autoPlay
-        muted
-        loop
-        playsInline
-        preload="auto"
-        fetchPriority="low"
-        aria-hidden="true"
-        className="absolute inset-0 w-full h-full object-cover"
-        style={{ zIndex: 0 }}
-      >
-        <source src="/hero-video.mp4" type="video/mp4" />
-      </video>
+      {hasVideo ? (
+        /* ── Full-screen cinematic video — auto-plays immediately ── */
+        <video
+          ref={videoRef}
+          autoPlay
+          muted
+          loop
+          playsInline
+          preload="auto"
+          fetchPriority="low"
+          aria-hidden="true"
+          className="absolute inset-0 w-full h-full object-cover"
+          style={{ zIndex: 0 }}
+        >
+          <source src="/hero-video.mp4" type="video/mp4" />
+        </video>
+      ) : (
+        /* ── Mobile stand-in — pure CSS, zero bytes over the wire ── */
+        <div className="hero-gradient" aria-hidden="true" style={{ zIndex: 0 }} />
+      )}
 
       {/* ── Dark cinematic overlay ───────────────────────────────────────────── */}
       <div
@@ -180,7 +208,7 @@ export default function Hero({ onOpenTerminal }) {
       {/* ── Bottom fade to page background ──────────────────────────────────── */}
       <div
         aria-hidden="true"
-        className="absolute bottom-0 left-0 right-0 h-52 pointer-events-none"
+        className="absolute bottom-0 left-0 right-0 h-32 sm:h-52 pointer-events-none"
         style={{ zIndex: 2, background: 'linear-gradient(to bottom, transparent, #050e1f)' }}
       />
 
@@ -197,21 +225,14 @@ export default function Hero({ onOpenTerminal }) {
       />
 
       {/* ── Main content ─────────────────────────────────────────────────────── */}
-      <div
-        ref={contentRef}
-        className="absolute bottom-[12vh] left-6 md:left-16 flex flex-col items-start text-left max-w-3xl w-full"
-        style={{ zIndex: 5 }}
-      >
+      <div ref={contentRef} className="hero-content flex flex-col items-start text-left">
         {/* Eyebrow */}
-        <p className="section-label justify-start mb-4">
+        <p className="section-label justify-start mb-3 sm:mb-4">
           IT Support Desk · CS @ DSU · Madison, SD
         </p>
 
         {/* Name */}
-        <h1
-          className="font-outfit font-black text-white leading-none mb-2"
-          style={{ fontSize: 'clamp(3rem, 8vw, 6rem)' }}
-        >
+        <h1 className="hero-name font-outfit font-black text-white leading-none mb-2">
           Sandeep{' '}
           <span
             style={{
@@ -226,15 +247,12 @@ export default function Hero({ onOpenTerminal }) {
         </h1>
 
         {/* Tagline */}
-        <p
-          className="font-inter text-white/65 mt-5 mb-10 max-w-2xl leading-relaxed"
-          style={{ fontSize: 'clamp(1rem, 2.2vw, 1.2rem)' }}
-        >
+        <p className="hero-tagline font-inter text-white/65 mt-4 mb-8 sm:mt-5 sm:mb-10 max-w-2xl leading-relaxed">
           IT Support Technician by day, building web apps and cloud infrastructure by night.
         </p>
 
         {/* CTA Buttons — stopPropagation so clicking buttons doesn't toggle mute */}
-        <div className="flex flex-wrap gap-4 mt-2 justify-start" onClick={(e) => e.stopPropagation()}>
+        <div className="hero-ctas flex flex-wrap gap-3 sm:gap-4 mt-2 justify-start" onClick={(e) => e.stopPropagation()}>
           <MagneticButton as="button" onClick={() => scrollTo('projects')} className="btn-gold" id="hero-cta-projects">
             View My Work
             <svg width="15" height="15" viewBox="0 0 16 16" fill="none" aria-hidden="true">
@@ -242,10 +260,10 @@ export default function Hero({ onOpenTerminal }) {
             </svg>
           </MagneticButton>
 
-          <MagneticButton 
-            as="button" 
-            onClick={onOpenTerminal} 
-            id="hero-cta-chat" 
+          <MagneticButton
+            as="button"
+            onClick={onToggleTerminal}
+            id="hero-cta-chat"
             className="btn-outline group relative overflow-hidden"
             style={{
               borderColor: 'rgba(255,199,44,0.5)',
@@ -262,50 +280,54 @@ export default function Hero({ onOpenTerminal }) {
           </MagneticButton>
         </div>
 
-        {/* ── Audio hint — fades in at 0.8s, auto-fades out at 4.5s, instant on click ── */}
-        <div
-          ref={hintRef}
-          aria-hidden="true"
-          className="mt-8 pointer-events-none"
-          style={{ opacity: 0 }}
-        >
+        {/* ── Audio hint — only meaningful when a video is actually playing ── */}
+        {hasVideo && (
           <div
-            className="flex items-center gap-2.5 px-5 py-2.5 rounded-full font-inter text-white/55 select-none"
-            style={{
-              fontSize: 12,
-              background: 'rgba(0,0,0,0.42)',
-              backdropFilter: 'blur(14px)',
-              border: '1px solid rgba(255,255,255,0.10)',
-              whiteSpace: 'nowrap',
-            }}
+            ref={hintRef}
+            aria-hidden="true"
+            className="mt-8 pointer-events-none"
+            style={{ opacity: 0 }}
           >
-            <VolumeOffIcon />
-            Click anywhere on screen to enable audio
+            <div
+              className="flex items-center gap-2.5 px-5 py-2.5 rounded-full font-inter text-white/55 select-none"
+              style={{
+                fontSize: 12,
+                background: 'rgba(0,0,0,0.42)',
+                backdropFilter: 'blur(14px)',
+                border: '1px solid rgba(255,255,255,0.10)',
+                whiteSpace: 'nowrap',
+              }}
+            >
+              <VolumeOffIcon />
+              Click anywhere on screen to enable audio
+            </div>
           </div>
-        </div>
+        )}
       </div>
 
 
       {/* ── Volume indicator — bottom-right ──────────────────────────────────── */}
-      <div
-        ref={volumeRef}
-        aria-hidden="true"
-        className="absolute bottom-10 right-8 z-10 flex items-center gap-2 px-3 py-2 rounded-full text-white/50 text-xs font-inter select-none pointer-events-none"
-        style={{
-          opacity: 0,
-          background: 'rgba(0,0,0,0.35)',
-          backdropFilter: 'blur(8px)',
-          border: '1px solid rgba(255,255,255,0.12)',
-        }}
-      >
-        {isMuted ? <VolumeOffIcon /> : <VolumeOnIcon />}
-        <span style={{ fontSize: 11 }}>{isMuted ? 'Sound off' : 'Sound on'}</span>
-      </div>
+      {hasVideo && (
+        <div
+          ref={volumeRef}
+          aria-hidden="true"
+          className="absolute bottom-10 right-8 z-10 flex items-center gap-2 px-3 py-2 rounded-full text-white/50 text-xs font-inter select-none pointer-events-none"
+          style={{
+            opacity: 0,
+            background: 'rgba(0,0,0,0.35)',
+            backdropFilter: 'blur(8px)',
+            border: '1px solid rgba(255,255,255,0.12)',
+          }}
+        >
+          {isMuted ? <VolumeOffIcon /> : <VolumeOnIcon />}
+          <span style={{ fontSize: 11 }}>{isMuted ? 'Sound off' : 'Sound on'}</span>
+        </div>
+      )}
 
       {/* ── Scroll indicator — bottom-center ─────────────────────────────────── */}
       <div
         ref={scrollIndRef}
-        className="absolute bottom-10 left-1/2 -translate-x-1/2 flex flex-col items-center gap-1.5 z-10"
+        className="hero-scroll-hint absolute left-1/2 -translate-x-1/2 flex flex-col items-center gap-1.5 z-10"
         style={{ opacity: 0 }}
         onClick={(e) => { e.stopPropagation(); scrollTo('about') }}
         role="button"

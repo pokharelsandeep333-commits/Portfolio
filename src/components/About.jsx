@@ -39,21 +39,21 @@ export default function About() {
     <section
       id="about"
       ref={sectionRef}
-      className="relative py-28 px-6"
+      className="relative py-20 sm:py-24 lg:py-28 px-5 sm:px-6"
       style={{ background: 'linear-gradient(180deg, #050e1f 0%, #081525 100%)' }}
     >
-      <div className="section-divider mb-16" />
+      <div className="section-divider mb-10 sm:mb-16" />
 
       <div className="max-w-6xl mx-auto">
         {/* Header */}
-        <div ref={headingRef} className="mb-14">
+        <div ref={headingRef} className="mb-10 sm:mb-14">
           <p className="section-label">About Me</p>
           <h2 className="section-heading">
             A little <span>background</span>
           </h2>
         </div>
 
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-14">
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-10 lg:gap-14">
           {/* Left — Bio + Tags */}
           <div>
             <div ref={bioRef} className="space-y-5">

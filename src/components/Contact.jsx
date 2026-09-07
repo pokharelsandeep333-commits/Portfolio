@@ -111,13 +111,13 @@ export default function Contact() {
     <section
       id="contact"
       ref={sectionRef}
-      className="relative py-28 px-6"
+      className="relative py-20 sm:py-24 lg:py-28 px-5 sm:px-6"
       style={{ background: 'linear-gradient(180deg, #081525 0%, #050e1f 100%)' }}
     >
-      <div className="section-divider mb-16" />
+      <div className="section-divider mb-10 sm:mb-16" />
 
       <div className="max-w-6xl mx-auto">
-        <div ref={headingRef} className="mb-14">
+        <div ref={headingRef} className="mb-10 sm:mb-14">
           <p className="section-label">Contact</p>
           <h2 className="section-heading">Let's <span>connect</span></h2>
           <p className="font-inter text-white/45 text-base mt-3 max-w-lg">
@@ -126,7 +126,7 @@ export default function Contact() {
           </p>
         </div>
 
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-14">
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-10 lg:gap-14">
           {/* Social / location links */}
           <div ref={leftRef} className="space-y-3">
             {LINKS.map((l) => {
@@ -171,7 +171,7 @@ export default function Contact() {
           {/* Contact form */}
           <div ref={rightRef}>
             {status === 'sent' ? (
-              <div className="glass-card p-12 flex flex-col items-center justify-center text-center min-h-[320px]">
+              <div className="glass-card p-8 sm:p-12 flex flex-col items-center justify-center text-center min-h-[280px] sm:min-h-[320px]">
                 <svg width="56" height="56" viewBox="0 0 56 56" fill="none" aria-label="Message sent">
                   <circle cx="28" cy="28" r="26" stroke="#FFC72C" strokeWidth="2" fill="rgba(255,199,44,0.08)" />
                   <path d="M18 28l7 7 13-14" stroke="#FFC72C" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" />
@@ -183,7 +183,7 @@ export default function Contact() {
                 </button>
               </div>
             ) : (
-              <form onSubmit={handleSubmit} className="glass-card p-8 space-y-5" noValidate>
+              <form onSubmit={handleSubmit} className="glass-card p-6 sm:p-8 space-y-5" noValidate>
                 <div>
                   <label htmlFor="contact-name" className="block text-white/50 text-xs font-inter font-medium uppercase tracking-widest mb-2">
                     Your Name

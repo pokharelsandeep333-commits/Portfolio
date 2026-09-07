@@ -48,14 +48,14 @@ export default function Certifications() {
     <section
       id="certifications"
       ref={sectionRef}
-      className="relative py-28 px-6"
+      className="relative py-20 sm:py-24 lg:py-28 px-5 sm:px-6"
       style={{ background: 'linear-gradient(180deg, #050e1f 0%, #081525 100%)' }}
     >
-      <div className="section-divider mb-16" />
+      <div className="section-divider mb-10 sm:mb-16" />
 
       <div className="max-w-5xl mx-auto">
         {/* Header */}
-        <div ref={headingRef} className="mb-14">
+        <div ref={headingRef} className="mb-10 sm:mb-14">
           <p className="section-label">Credentials</p>
           <h2 className="section-heading">
             Certifications &amp; <span>Courses</span>
@@ -72,7 +72,7 @@ export default function Certifications() {
             return (
               <div
                 key={cert.name}
-                className="glass-card p-6 flex flex-col gap-4 group hover:border-dsuGold/25 transition-all"
+                className="glass-card p-5 sm:p-6 flex flex-col gap-4 group hover:border-dsuGold/25 transition-all"
               >
                 {/* Top: icon + status */}
                 <div className="flex items-center justify-between">

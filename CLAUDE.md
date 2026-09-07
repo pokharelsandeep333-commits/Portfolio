@@ -39,11 +39,39 @@ Because the EC2 bundle is static, `VITE_API_URL` is **baked in at build time**: 
 
 ### The scroll container is `<body>`, not the window
 
-`src/index.css` sets `html { overflow: hidden }` and `body { height: 100vh; overflow-y: auto }`, so `main.jsx` calls `ScrollTrigger.defaults({ scroller: document.body })`. Consequences to respect:
+`src/index.css` sets `html { overflow: hidden }` and `body { height: 100dvh; overflow-y: auto }`, so `main.jsx` calls `ScrollTrigger.defaults({ scroller: document.body })`. Consequences to respect:
 
 - Any new ScrollTrigger inherits that scroller — do not pass `scroller: window`.
 - `App.jsx` forwards `body` scroll events to `ScrollTrigger.update()` and fires a delayed `ScrollTrigger.refresh()`, working around triggers that miss programmatic `scrollIntoView`.
 - GSAP plugins are registered exactly once in `main.jsx`; components import `gsap` and use `gsap.context()` inside `useLayoutEffect`/`useEffect` with a `ctx.revert()` cleanup. Follow that pattern rather than registering plugins locally.
+- `body` is sized in `dvh` with a `vh` fallback. Because `html` is `overflow: hidden` the mobile URL bar never collapses, so a `100vh` body is the *large* viewport and hides its last ~90px behind the browser chrome. Anything sized to the full viewport (`.hero-section`, `.chat-drawer`) follows the same two-line pattern.
+
+### Responsive layout
+
+Breakpoints are Tailwind's defaults; `768px` (`md`) is the phone/laptop line and
+`src/hooks/useMediaQuery.js` exports `MOBILE_QUERY` so JS and CSS agree on it.
+
+Reach for that hook **only when CSS cannot express the change** — it costs a
+React render. One place qualifies:
+
+- `Hero.jsx` renders `.hero-gradient` instead of the `<video>` under 768px, so
+  the 1.7 MB file is never requested on cellular. Gating it in CSS would still
+  download it.
+
+**The navbar has no hamburger, and is not to grow one.** `Navbar.jsx` renders
+one pill at every width; on a phone it scrolls sideways inside its own
+`max-width`, with masked edges hinting at the overflow. The one piece of JS
+this needs is the effect that scrolls the active link back into the visible
+slice — it drives `navRef.scrollTo` directly rather than `scrollIntoView`,
+because `body` is the page's scroll container and `scrollIntoView` would walk
+up and yank the page along with the pill.
+
+Everything else is a stylesheet media query. Note `.hero-content` is
+`position: relative` (not `static`) on mobile — the overlay layers above it are
+positioned at `z-index` 1 and 2, so a static hero would be painted over.
+
+Hover lifts are wrapped in `@media (hover: hover) and (pointer: fine)`; a tap
+otherwise leaves `:hover` stuck on the card until the next tap elsewhere.
 
 ### Content lives in `src/data/`, not in JSX
 
@@ -98,4 +126,4 @@ Server-only, set in Vercel (needed locally only when running the function):
 ## Local gotchas
 
 - The repo lives in a OneDrive-synced path with spaces. `vite.config.js` excludes `public/**/*.{mp4,webm,mov,avi}` from the file watcher because OneDrive locks syncing media and crashes the dev server with `EBUSY`. Keep new large media out of the watcher.
-- `src/components/CustomCursor.jsx` and `src/components/DQASimulator.jsx` are not imported anywhere — they are unmounted leftovers, not part of the render tree.
+- `vite.config.js` sets `test.fileParallelism: false`. One worker per test file times out on this machine (60s, "Failed to start forks worker") because every worker re-reads `node_modules` through the OneDrive sync filter. Serial runs the whole suite in ~6s.

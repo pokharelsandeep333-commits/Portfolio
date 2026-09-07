@@ -8,6 +8,11 @@ export default defineConfig({
     globals: true,
     environment: 'jsdom',
     setupFiles: './src/test/setup.js',
+    // Spawning a worker per test file times out here (60s, "Failed to start
+    // forks worker") — the repo lives on a OneDrive-synced path and every
+    // worker re-reads node_modules through the sync filter. Serial runs the
+    // same 3 files in ~16s, so there is nothing to win from parallelism.
+    fileParallelism: false,
   },
   server: {
     watch: {
