@@ -37,14 +37,14 @@ export default function Experience() {
     <section
       id="experience"
       ref={sectionRef}
-      className="relative py-28 px-6"
+      className="relative py-20 sm:py-24 lg:py-28 px-5 sm:px-6"
       style={{ background: 'linear-gradient(180deg, #081525 0%, #050e1f 100%)' }}
     >
-      <div className="section-divider mb-16" />
+      <div className="section-divider mb-10 sm:mb-16" />
 
       <div className="max-w-5xl mx-auto">
         {/* Header */}
-        <div ref={headingRef} className="mb-14">
+        <div ref={headingRef} className="mb-10 sm:mb-14">
           <p className="section-label">Background</p>
           <h2 className="section-heading">
             Experience &amp; <span>Education</span>
@@ -129,7 +129,7 @@ function TimelineEntry({ dot, period, title, subtitle, badge, bullets, note, isL
       </div>
 
       {/* Card */}
-      <div className="glass-card p-6">
+      <div className="glass-card p-5 sm:p-6">
         {/* Top row */}
         <div className="flex flex-wrap items-start justify-between gap-3 mb-3">
           <div>

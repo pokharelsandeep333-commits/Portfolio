@@ -3,11 +3,14 @@ import { about } from '../data/skills'
 export default function Footer() {
   return (
     <footer
-      className="relative py-10 px-6 border-t border-white/5"
-      style={{ background: '#030c18' }}
+      className="relative py-10 px-5 sm:px-6 border-t border-white/5"
+      style={{
+        background: '#030c18',
+        paddingBottom: 'max(2.5rem, env(safe-area-inset-bottom))',
+      }}
     >
       <div className="max-w-6xl mx-auto flex flex-col sm:flex-row items-center justify-between gap-4">
-        <div className="flex items-center gap-2">
+        <div className="flex flex-wrap items-center justify-center gap-x-2 gap-y-1 text-center sm:text-left">
           <span className="font-outfit font-bold text-white">
             Sandeep<span className="text-dsuGold">.</span>
           </span>

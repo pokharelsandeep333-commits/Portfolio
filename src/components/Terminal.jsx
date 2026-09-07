@@ -71,6 +71,13 @@ const Terminal = ({ isOpen, onClose }) => {
     }
   }, [isOpen]);
 
+  useEffect(() => {
+    if (!isOpen) return
+    const onKeyDown = (e) => { if (e.key === 'Escape') onClose?.(); };
+    document.addEventListener('keydown', onKeyDown);
+    return () => document.removeEventListener('keydown', onKeyDown);
+  }, [isOpen, onClose]);
+
   const clearChat = () => {
     const initial = makeGreeting();
     setMessages(initial);
@@ -132,7 +139,7 @@ const Terminal = ({ isOpen, onClose }) => {
       {/* Sidebar panel */}
       <div 
         ref={panelRef}
-        className={`fixed right-0 top-0 h-full w-full sm:w-80 bg-[#050e1f]/40 backdrop-blur-2xl shadow-[-20px_0_40px_rgba(0,0,0,0.6)] border-l border-white/10 z-50 flex flex-col text-sm text-[#e6f1ff] transition-transform duration-700 ease-[cubic-bezier(0.16,1,0.3,1)] ${isOpen ? 'translate-x-0' : 'translate-x-full'}`}
+        className={`chat-drawer fixed right-0 top-0 w-full sm:w-80 bg-[#050e1f]/40 backdrop-blur-2xl shadow-[-20px_0_40px_rgba(0,0,0,0.6)] border-l border-white/10 z-50 flex flex-col text-sm text-[#e6f1ff] transition-transform duration-700 ease-[cubic-bezier(0.16,1,0.3,1)] ${isOpen ? 'translate-x-0' : 'translate-x-full'}`}
         aria-label="Digital Sandeep AI chat"
         aria-hidden={!isOpen}
         inert={!isOpen}
@@ -211,7 +218,10 @@ const Terminal = ({ isOpen, onClose }) => {
         <div ref={endOfMessagesRef} />
       </div>
 
-        <div className="border-t border-white/10 p-4 bg-white/5 backdrop-blur-xl">
+        <div
+          className="border-t border-white/10 p-4 bg-white/5 backdrop-blur-xl"
+          style={{ paddingBottom: 'max(1rem, env(safe-area-inset-bottom))' }}
+        >
           <input
             type="text"
             role="textbox"
@@ -219,7 +229,7 @@ const Terminal = ({ isOpen, onClose }) => {
             onChange={(e) => setInput(e.target.value)}
             onKeyDown={handleKeyDown}
             ref={inputRef}
-            className="w-full bg-[#050e1f]/50 border border-white/10 rounded-full px-4 py-3 outline-none text-[#e6f1ff] placeholder-white/40 focus:border-[#FFC72C]/50 focus:ring-1 focus:ring-[#FFC72C]/50 transition-all shadow-inner"
+            className="chat-drawer-input w-full bg-[#050e1f]/50 border border-white/10 rounded-full px-4 py-3 outline-none text-[#e6f1ff] placeholder-white/40 focus:border-[#FFC72C]/50 focus:ring-1 focus:ring-[#FFC72C]/50 transition-all shadow-inner"
             disabled={isLoading}
             placeholder="Type your message..."
           />
