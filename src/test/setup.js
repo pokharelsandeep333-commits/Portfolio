@@ -3,6 +3,10 @@ import { vi } from 'vitest'
 
 window.HTMLElement.prototype.scrollIntoView = vi.fn();
 
+// jsdom has no 2D canvas; the hero's code stream bails out on a null
+// context, so return that instead of letting jsdom log "not implemented".
+window.HTMLCanvasElement.prototype.getContext = vi.fn(() => null)
+
 // Mock matchMedia for JSDOM
 Object.defineProperty(window, 'matchMedia', {
   writable: true,
@@ -34,6 +38,10 @@ vi.mock('gsap', () => {
       from: vi.fn().mockReturnThis(),
       fromTo: vi.fn().mockReturnThis(),
       set: vi.fn().mockReturnThis(),
+      call: vi.fn().mockReturnThis(),
+      timeScale: vi.fn().mockReturnThis(),
+      paused: vi.fn().mockReturnThis(),
+      kill: vi.fn(),
     })),
   };
   return {

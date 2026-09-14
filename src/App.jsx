@@ -48,23 +48,14 @@ export default function App() {
     })
   }, [])
 
-  const openResume = useCallback(() => {
-    setIsResumeOpen(true)
-    document.dispatchEvent(new CustomEvent('hero-video:pause'))
-  }, [])
-  const closeResume = useCallback(() => {
-    setIsResumeOpen(false)
-    document.dispatchEvent(new CustomEvent('hero-video:resume'))
-  }, [])
+  const openResume  = useCallback(() => setIsResumeOpen(true),  [])
+  const closeResume = useCallback(() => setIsResumeOpen(false), [])
 
   const closeTerminal = useCallback(() => setIsTerminalOpen(false), [])
 
-  // Toggle, not open. The hero's CTA row calls `stopPropagation` so that
-  // clicking a button does not also toggle the video's mute — which means its
-  // clicks never reach the click-outside handler below either. A button that
-  // only ever set `true` therefore had no way to close what it had opened.
-  // Stopping propagation here as well keeps that click-outside handler from
-  // firing in the same batch and immediately undoing the toggle.
+  // Toggle, not open. The content wrapper below closes the drawer on any
+  // click that bubbles to it, so a button that only ever set `true` would be
+  // undone in the same batch. Stopping propagation here keeps the toggle.
   const toggleTerminal = useCallback((e) => {
     e?.stopPropagation?.()
     setIsTerminalOpen((open) => !open)

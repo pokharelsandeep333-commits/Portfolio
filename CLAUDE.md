@@ -35,7 +35,7 @@ Because the EC2 bundle is static, `VITE_API_URL` is **baked in at build time**: 
 
 `App.jsx` composes every section in order and owns the two overlays as state: the resume modal (`ResumeView`, mounted on demand) and the AI chat drawer (`Terminal`, always mounted, translated off-canvas). The drawer toggles on `Ctrl+\` and on a `body.chat-open` class that shifts the page with a `margin-right` transition (`src/index.css`).
 
-`Hero` pauses/resumes its background video through `hero-video:pause` / `hero-video:resume` `CustomEvent`s dispatched on `document` from `App.jsx` — the resume modal uses this instead of prop drilling.
+`Hero` has no video and no audio. It is a layered scene under `.hero-scene` (`z-index: 0`, below the `.hero-ramp` legibility gradient): navy gradient → two blurred colour orbs and a halo → `HeroCodeCanvas` (a canvas streaming monospace tokens, capped at 20 fps and stopped off-screen) → the portrait rig → gold motes → scanlines. The portrait is **three transparent WebPs sharing one frame** — `hero-portrait` (full), `hero-shirt`, `hero-hair`, each with a `-sm` variant picked by `srcset` — stacked inside `.hero-rig` at different GSAP `z` values, so tilting the rig toward the cursor separates them (2.5D). A fourth copy of the base is the glitch layer, driven by CSS keyframes. On first view per tab a GSAP **boot timeline** runs (~3.5 s: veil → gold power line → scan-bar reveal via `clip-path` → glitch burst → rim flash → copy); later mounts replay it at 2.6× (`sessionStorage['hero-booted']`). `prefers-reduced-motion` skips the boot, the idle float, the tilt and the canvas animation — note that Windows' "Animation effects" toggle sets that media query, so a dev machine with it off sees a static hero. The layers were prepared once through the Adobe connector (Generative Expand to complete the hair, background removal, magenta rim light rotated +128° to gold, Hair / Upper Clothes masks) — regenerate from the source PNG rather than editing the WebPs.
 
 ### The scroll container is `<body>`, not the window
 
@@ -54,9 +54,13 @@ Breakpoints are Tailwind's defaults; `768px` (`md`) is the phone/laptop line and
 Reach for that hook **only when CSS cannot express the change** — it costs a
 React render. One place qualifies:
 
-- `Hero.jsx` renders `.hero-gradient` instead of the `<video>` under 768px, so
-  the 1.7 MB file is never requested on cellular. Gating it in CSS would still
-  download it.
+- `Navbar.jsx` uses it to decide whether to run the effect that scrolls the
+  active link back into the pill's visible slice — that effect only exists
+  because the pill overflows on phones, and there is no CSS way to skip it.
+
+The hero used to be the other one (it gated a 1.7 MB `<video>` off phones).
+It no longer needs JS: the portrait is an `<img srcset>` and the phone layout
+is a plain media query, so keep it that way.
 
 **The navbar has no hamburger, and is not to grow one.** `Navbar.jsx` renders
 one pill at every width; on a phone it scrolls sideways inside its own
