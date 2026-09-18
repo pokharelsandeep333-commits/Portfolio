@@ -61,10 +61,11 @@ export default function App() {
     setIsTerminalOpen((open) => !open)
   }, [])
 
-  // Opening the chat animates `body`'s margin for 700ms. Re-rendering all eight
-  // sections on that first frame measured ~66ms of script — a visible stutter
-  // right where the slide should be smoothest. Nothing in here reads the chat
-  // state, so freeze the element tree and let only the drawer re-render.
+  // Opening the chat animates the page-shell padding for 700ms. Re-rendering
+  // all eight sections on that first frame measured ~66ms of script — a
+  // visible stutter right where the slide should be smoothest. Nothing in
+  // here reads the chat state, so freeze the element tree and let only the
+  // drawer re-render.
   const page = useMemo(() => (
     <>
       {/* Floating pill nav */}
@@ -92,17 +93,12 @@ export default function App() {
           margin on `body`. `body` is the page's scroll container and the
           scroller every ScrollTrigger is bound to, so animating its width made
           the whole scroll system recalculate on every frame. Padding a child
-          keeps the scroll container a fixed size. It is also only applied from
-          `lg` up: below that the drawer simply slides over the page, so there
-          is no reflow at all on phones and small tablets.
+          keeps the scroll container a fixed size.
 
-          `pr-80` is 20rem — it MUST equal the drawer's `sm:w-80`. An earlier
-          version padded 28rem against a 20rem drawer, which left a 128px strip
-          of bare page background between the content and the panel. */}
-      <div
-        className={`w-full transition-all duration-300 ease-in-out ${isTerminalOpen ? 'lg:pr-80' : ''}`}
-        onClick={closeTerminal}
-      >
+          The padding itself, its width, and its timing live in the
+          `.page-shell` rules in index.css, keyed off `body.chat-open`, so the
+          page and the drawer share one duration and curve. */}
+      <div className="page-shell w-full" onClick={closeTerminal}>
         {page}
       </div>
 

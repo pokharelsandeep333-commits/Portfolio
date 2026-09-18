@@ -139,7 +139,7 @@ const Terminal = ({ isOpen, onClose }) => {
       {/* Sidebar panel */}
       <div 
         ref={panelRef}
-        className={`chat-drawer fixed right-0 top-0 w-full sm:w-80 bg-[#050e1f]/40 backdrop-blur-2xl shadow-[-20px_0_40px_rgba(0,0,0,0.6)] border-l border-white/10 z-50 flex flex-col text-sm text-[#e6f1ff] transition-transform duration-700 ease-[cubic-bezier(0.16,1,0.3,1)] ${isOpen ? 'translate-x-0' : 'translate-x-full'}`}
+        className={`chat-drawer fixed right-0 top-0 w-full sm:w-80 bg-[#050e1f]/40 backdrop-blur-2xl shadow-[-20px_0_40px_rgba(0,0,0,0.6)] border-l border-white/10 z-50 flex flex-col text-sm text-[#e6f1ff] ${isOpen ? 'is-open' : ''}`}
         aria-label="Digital Sandeep AI chat"
         aria-hidden={!isOpen}
         inert={!isOpen}
