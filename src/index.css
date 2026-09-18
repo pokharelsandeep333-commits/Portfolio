@@ -11,14 +11,11 @@ html {
    the mobile URL bar never collapses, so a `100vh` body (the *large* viewport)
    hid its last ~90px behind the browser chrome on every screenful. The plain
    `vh` line stays first as the fallback for browsers without `dvh`. */
-/* NOTE: `margin-right` is deliberately NOT transitioned. Animating it meant
-   every one of the ~42 frames paid for a full-page layout (measured at 3.4ms
-   on its own), a full-page repaint as all the text re-wrapped, the hero
-   <video> being re-scaled, and — the expensive one — the drawer's 40px
-   `backdrop-filter` being recomputed, because a blur cannot be cached while
-   the content behind it is moving. The page now reaches its final width in a
-   single layout on click and the drawer slides into the space it just made,
-   which is a pure compositor transform. Same end state, nothing to drop. */
+/* NOTE: `body` itself is never animated for the chat drawer. It is the scroll
+   container and the scroller every ScrollTrigger is bound to, so transitioning
+   its `margin-right` made the whole scroll system recalculate on every frame.
+   The drawer makes room by padding `.page-shell` (App.jsx) instead — see the
+   CHAT DRAWER block for the shared open/close timing. */
 body {
   height: 100vh;
   height: 100dvh;
@@ -35,6 +32,15 @@ body {
    GLOBAL DESIGN TOKENS
    ============================================================ */
 :root {
+  /* Chat drawer motion. Open is long and settles on an expo-out; close is a
+     ~60% ease-in so dismissing feels responsive. Everything that moves with
+     the drawer (the panel, the page-shell padding) reads these so they stay
+     one motion. */
+  --drawer-open-dur: 0.7s;
+  --drawer-open-ease: cubic-bezier(0.16, 1, 0.3, 1);
+  --drawer-close-dur: 0.42s;
+  --drawer-close-ease: cubic-bezier(0.7, 0, 0.84, 0);
+
   --clr-blue: #002D62;
   --clr-blue-dark: #001a3d;
   --clr-blue-light: #003d8a;
@@ -366,11 +372,14 @@ body {
   box-shadow: 0 8px 32px rgba(0,0,0,0.4);
   opacity: 0;
   pointer-events: none;
-  /* `margin-left` is not transitioned either — it recentres the pill over the
-     narrowed page, so it has to land on the same frame the page does. Sliding
-     it for 700ms after the page had already snapped read as the pill lagging
-     behind. Only the fade stays animated. */
-  transition: opacity 0.4s ease;
+  /* The pill is fixed and centred on the *viewport*, so when the drawer opens
+     it has to be recentred over the narrowed page by hand — see the
+     `body.chat-open` rule below. That shift rides the drawer's own tokens so
+     the pill, the page and the panel land on the same frame. */
+  transition:
+    opacity 0.4s ease,
+    transform var(--drawer-close-dur) var(--drawer-close-ease),
+    max-width var(--drawer-close-dur) var(--drawer-close-ease);
   white-space: nowrap;
   max-width: 92vw;
   overflow-x: auto;
@@ -663,6 +672,11 @@ body {
 .hero-section {
   min-height: 100vh;
   min-height: 100dvh;
+  /* Lets the portrait and the copy size themselves in `cqw` — the hero's own
+     width — rather than `vw`. The two differ whenever the chat drawer has
+     taken its 20rem, which is exactly when the copy used to run into the
+     face on a laptop. */
+  container-type: inline-size;
 }
 
 .hero-content {
@@ -681,6 +695,25 @@ body {
 
 .hero-tagline {
   font-size: clamp(0.95rem, 2.2vw, 1.2rem);
+}
+
+/* The copy column and the portrait split the hero's width: the portrait may
+   take up to 42cqw (see `.hero-portrait`), the copy gets what is left after
+   the 4rem gutter and a 1rem gap. On a wide desktop none of this bites — the
+   portrait is still height-bound and the copy still caps at 48rem — but on
+   a 1024–1366px laptop with the chat open (hero ≈ 700–1050px) everything
+   scales down together instead of overlapping. The `vw` rules above are the
+   fallback for browsers without container units. */
+@supports (width: 1cqw) {
+  .hero-content {
+    max-width: min(48rem, calc(58cqw - 3vw - 5rem));
+  }
+  .hero-name {
+    font-size: clamp(2.6rem, 8.6cqw, 6rem);
+  }
+  .hero-tagline {
+    font-size: clamp(0.95rem, 2.2cqw, 1.2rem);
+  }
 }
 
 .hero-scroll-hint {
@@ -813,6 +846,18 @@ body {
   aspect-ratio: 1166 / 1400;
   perspective: 1100px;
   will-change: transform, opacity, clip-path;
+}
+
+/* Height-bound on a wide screen (the crop lands at the shoulders), but never
+   wider than 42% of the hero, so a narrow hero — a laptop with the chat open —
+   shrinks the portrait instead of sliding it under the copy. Width drives and
+   the aspect ratio gives the height back; the image is bottom-anchored, so a
+   shorter portrait still sits on the floor of the section. */
+@supports (width: 1cqw) {
+  .hero-portrait {
+    height: auto;
+    width: min(calc(86dvh * 1166 / 1400), 42cqw);
+  }
 }
 
 /* 2.5D rig: three copies of the same frame at different z. GSAP tilts this
@@ -982,6 +1027,8 @@ body {
     right: -14vw;
     top: 5vh;
     bottom: auto;
+    /* Back to height-driven: the phone layout has the whole width to itself. */
+    width: auto;
     height: 54vh;
     height: 54dvh;
   }
@@ -1070,13 +1117,27 @@ body {
   }
 }
 
-/* Deliberately NOT tightened when the chat opens. An earlier version squeezed
-   the pill's gap and padding here, which made it visibly snap narrower on the
-   same frame the drawer slid in — the pill jumped while the page moved. It is
-   also unnecessary: above 1200px the pill is ~859px and the space left beside
-   the 320px drawer is at least 881px, so it already fits. Below 1200px the
-   rule above has tightened it regardless of whether the chat is open, so the
-   width never changes mid-animation at any breakpoint. */
+/* The gap and padding are deliberately NOT tightened further when the chat
+   opens — that made the pill snap narrower on the frame the drawer slid in.
+   Below 1200px the rule above has already tightened it whether or not the
+   chat is open, so the rhythm never changes mid-animation. */
+
+/* From `lg` up the page keeps 20rem clear for the drawer, so the pill moves
+   its centre 10rem left to sit over what is left of the page — otherwise its
+   right end lands on the drawer header (it is fixed to the viewport and at
+   `z-index: 100` against the drawer's 50). The cap keeps it from reaching
+   under the panel on a 1024–1200px laptop, where the remaining page is
+   narrower than the pill; it then scrolls sideways as it does on a phone. */
+@media (min-width: 1024px) {
+  body.chat-open .navbar-pill {
+    transform: translateX(calc(-50% - 10rem));
+    max-width: calc(100vw - 20rem - 2rem);
+    transition:
+      opacity 0.4s ease,
+      transform var(--drawer-open-dur) var(--drawer-open-ease),
+      max-width var(--drawer-open-dur) var(--drawer-open-ease);
+  }
+}
 
 /* ============================================================
    MOBILE NAV — the same pill, tuned for a thumb
@@ -1113,10 +1174,8 @@ body {
 }
 
 /* Below `lg` the page makes no room for the drawer — it just slides over the
-   top. The pill is centred on the full viewport and sits at `z-index: 100`
-   against the drawer's 50, so it would float above the conversation. Fade it
-   out for as long as the chat is open; from `lg` up the wrapper's padding
-   opens a gap and the pill is clear of the drawer again. */
+   top, and the pill would float above the conversation. Fade it out for as
+   long as the chat is open; from `lg` up the rule above recentres it instead. */
 @media (max-width: 1023px) {
   body.chat-open .navbar-pill {
     opacity: 0;
@@ -1130,10 +1189,78 @@ body {
 .chat-drawer {
   height: 100vh;
   height: 100dvh;
-  /* The drawer is now the only thing that moves, so promote it to its own
+  /* The panel is the main thing that moves, so promote it to its own
      compositor layer up front — otherwise the first frame of the slide pays
      for the layer being created, which is exactly where a stutter shows. */
   will-change: transform;
+  /* Clips the gold edge sweep; the message list scrolls on its own. */
+  overflow: hidden;
+  transform: translateX(100%);
+  /* The transition that runs is the one on the *destination* state, so the
+     base rule owns the close timing and `.is-open` owns the open timing. */
+  transition:
+    transform var(--drawer-close-dur) var(--drawer-close-ease),
+    border-color var(--drawer-close-dur) ease;
+}
+
+.chat-drawer.is-open {
+  transform: none;
+  border-left-color: rgba(255, 199, 44, 0.28);
+  transition:
+    transform var(--drawer-open-dur) var(--drawer-open-ease),
+    border-color 0.6s ease 0.3s;
+}
+
+/* Gold edge sweep — a short beam of light runs down the drawer's left edge
+   as the panel arrives, echoing the hero's power line. Keyframe-driven, so
+   it only plays on open (the rule is scoped to `.is-open`) and the global
+   reduced-motion block already collapses it to nothing. */
+.chat-drawer::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 2px;
+  height: 38%;
+  pointer-events: none;
+  background: linear-gradient(
+    to bottom,
+    rgba(255, 199, 44, 0) 0%,
+    rgba(255, 199, 44, 0.9) 45%,
+    #fff3c4 55%,
+    rgba(255, 199, 44, 0) 100%
+  );
+  box-shadow: 0 0 12px 1px rgba(255, 199, 44, 0.45);
+  opacity: 0;
+  transform: translateY(-100%);
+}
+
+.chat-drawer.is-open::before {
+  animation: drawer-edge-sweep 1s cubic-bezier(0.22, 0.61, 0.36, 1) 0.12s both;
+}
+
+@keyframes drawer-edge-sweep {
+  0%   { opacity: 0;   transform: translateY(-100%); }
+  12%  { opacity: 1; }
+  85%  { opacity: 0.9; }
+  100% { opacity: 0;   transform: translateY(300%); }
+}
+
+/* From `lg` up the page makes room for the drawer by padding this wrapper.
+   `20rem` MUST equal the drawer's `sm:w-80` — an earlier version padded 28rem
+   against a 20rem drawer and left a 128px strip of bare background. The
+   padding shares the drawer's timing so the content glides aside exactly as
+   the panel fills the gap. This is a per-frame layout, which is the price of
+   the two moving together; below `lg` the drawer just slides over the page. */
+.page-shell {
+  transition: padding-right var(--drawer-close-dur) var(--drawer-close-ease);
+}
+
+@media (min-width: 1024px) {
+  body.chat-open .page-shell {
+    padding-right: 20rem;
+    transition: padding-right var(--drawer-open-dur) var(--drawer-open-ease);
+  }
 }
 
 .chat-drawer-input {
@@ -1212,6 +1339,22 @@ body {
     animation-duration: 0.01ms !important;
     animation-iteration-count: 1 !important;
     transition-duration: 0.01ms !important;
+  }
+
+  /* The drawer keeps a short, plain slide. A panel easing in from the edge is
+     not the vestibular trigger the hero's tilt and glitch are, and a 20rem
+     panel appearing in a single frame is its own jolt. No expo settle, no
+     edge sweep (the block above already removes that). Note: Windows'
+     "Animation effects" toggle sets this media query, so this is also what
+     a dev machine with it off sees. */
+  .chat-drawer,
+  .chat-drawer.is-open,
+  .page-shell,
+  body.chat-open .page-shell,
+  .navbar-pill,
+  body.chat-open .navbar-pill {
+    transition-duration: 0.35s !important;
+    transition-timing-function: ease-out !important;
   }
 }
 
