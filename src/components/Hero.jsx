@@ -15,9 +15,10 @@ export default function Hero({ onToggleTerminal }) {
   const scrollIndRef = useRef(null)
 
   const isMobile = useMediaQuery(MOBILE_QUERY)
+  const reduceMotion = useMediaQuery(REDUCED_MOTION_QUERY)
   const [videoFailed, setVideoFailed] = useState(false)
   const [videoReady, setVideoReady] = useState(false)
-  const useVideo = !isMobile && !videoFailed
+  const useVideo = !isMobile && !reduceMotion && !videoFailed
 
   useLayoutEffect(() => {
     const ctx = gsap.context(() => {
@@ -72,10 +73,13 @@ export default function Hero({ onToggleTerminal }) {
     if (!useVideo || !video || typeof IntersectionObserver === 'undefined') return
 
     let heroInView = true
+    let active = true
 
     const play = () => {
       const result = video.play()
-      result?.catch?.(() => setVideoFailed(true))
+      result?.catch?.((error) => {
+        if (active && error.name !== 'AbortError') setVideoFailed(true)
+      })
     }
 
     const observer = new IntersectionObserver(
@@ -96,6 +100,7 @@ export default function Hero({ onToggleTerminal }) {
     document.addEventListener('visibilitychange', onVisibilityChange)
 
     return () => {
+      active = false
       observer.disconnect()
       document.removeEventListener('visibilitychange', onVisibilityChange)
       video.pause()
@@ -139,7 +144,7 @@ export default function Hero({ onToggleTerminal }) {
               loop
               playsInline
               preload="metadata"
-              poster="/hero-video-poster.webp"
+              poster="/hero-static-lightning-poster.webp"
               onLoadStart={() => setVideoReady(false)}
               onPlaying={() => setVideoReady(true)}
               onError={() => {
@@ -147,7 +152,7 @@ export default function Hero({ onToggleTerminal }) {
                 setVideoFailed(true)
               }}
             >
-              <source src="/hero-video-gold.mp4" type="video/mp4" />
+              <source src="/hero-static-lightning.mp4" type="video/mp4" />
             </video>
           )}
         </div>
