@@ -732,34 +732,48 @@ body {
 }
 
 .hero-media {
+  --hero-portrait-width: calc(86vh * 1166 / 1400);
+  --hero-portrait-width: calc(86dvh * 1166 / 1400);
   position: absolute;
   inset: 0;
 }
 
-.hero-video {
+.hero-media::before {
+  content: '';
   position: absolute;
   inset: 0;
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-  object-position: 60% center;
-  background: #01030a;
+  background: linear-gradient(90deg, #01050e, #030a1a 65%, #01040c);
+  opacity: 0;
+  transition: opacity 300ms ease-out;
+}
+
+.hero-media:has(.hero-video--ready)::before {
+  opacity: 1;
+}
+
+/* The approved 1920 x 1080 clip contains an 897.82px-wide portrait with
+   a 68px right margin. Scale that embedded portrait to the same dimensions
+   and bottom/right anchor as the static fallback, without cover-cropping. */
+.hero-video {
+  position: absolute;
+  right: calc(3vw - var(--hero-portrait-width) * 68 / 897.82);
+  bottom: 0;
+  width: calc(var(--hero-portrait-width) * 1920 / 897.82);
+  height: auto;
+  max-width: none;
+  aspect-ratio: 1920 / 1080;
+  object-fit: contain;
+  /* Feather only the outer edge and empty left side into the navy backdrop. */
+  mask-image:
+    linear-gradient(90deg, transparent, #000 45%, #000 98%, transparent),
+    linear-gradient(180deg, transparent, #000 1%, #000 97%, transparent);
+  mask-composite: intersect;
   opacity: 0;
   transition: opacity 300ms ease-out;
 }
 
 .hero-video--ready {
   opacity: 1;
-}
-
-/* When the chat drawer narrows the hero, contain the full composition instead
-   of cropping the portrait or pushing it under the copy. The surrounding
-   letterbox is invisible against the video's near-black background. */
-@container (max-width: 1150px) {
-  .hero-video {
-    object-fit: contain;
-    object-position: center;
-  }
 }
 
 /* Base backdrop — layered gradients, zero bytes over the wire. */
@@ -811,9 +825,12 @@ body {
    the aspect ratio gives the height back; the image is bottom-anchored, so a
    shorter portrait still sits on the floor of the section. */
 @supports (width: 1cqw) {
+  .hero-media {
+    --hero-portrait-width: min(calc(86dvh * 1166 / 1400), 42cqw);
+  }
   .hero-portrait {
     height: auto;
-    width: min(calc(86dvh * 1166 / 1400), 42cqw);
+    width: var(--hero-portrait-width);
   }
 }
 
