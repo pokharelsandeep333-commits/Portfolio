@@ -7,6 +7,7 @@ const REDUCED_MOTION_QUERY = '(prefers-reduced-motion: reduce)'
 
 export default function Hero({ onToggleTerminal }) {
   const sectionRef = useRef(null)
+  const mediaRef = useRef(null)
   const videoRef = useRef(null)
   const veilRef = useRef(null)
   const powerlineRef = useRef(null)
@@ -15,11 +16,24 @@ export default function Hero({ onToggleTerminal }) {
 
   const isMobile = useMediaQuery(MOBILE_QUERY)
   const [videoFailed, setVideoFailed] = useState(false)
+  const [videoReady, setVideoReady] = useState(false)
   const useVideo = !isMobile && !videoFailed
 
   useLayoutEffect(() => {
     const ctx = gsap.context(() => {
       const copy = contentRef.current.children
+
+      gsap.to(mediaRef.current, {
+        yPercent: 12,
+        opacity: 0.25,
+        ease: 'none',
+        scrollTrigger: {
+          trigger: sectionRef.current,
+          start: 'top top',
+          end: 'bottom top',
+          scrub: true,
+        },
+      })
 
       if (window.matchMedia(REDUCED_MOTION_QUERY).matches) {
         gsap.set(veilRef.current, { display: 'none' })
@@ -47,6 +61,7 @@ export default function Hero({ onToggleTerminal }) {
         .to(veilRef.current, { autoAlpha: 0, duration: 0.55 }, 0.7)
         .to(copy, { y: 0, opacity: 1, duration: 1, stagger: 0.12, ease: 'power3.out' }, 0.9)
         .to(scrollIndRef.current, { opacity: 1, duration: 0.7 }, 1.5)
+
     }, sectionRef)
 
     return () => ctx.revert()
@@ -99,22 +114,8 @@ export default function Hero({ onToggleTerminal }) {
       <div className="hero-scene" aria-hidden="true">
         <div className="hero-gradient" />
 
-        {useVideo ? (
-          <video
-            ref={videoRef}
-            className="hero-video"
-            autoPlay
-            muted
-            loop
-            playsInline
-            preload="metadata"
-            poster="/hero-video-poster.webp"
-            onError={() => setVideoFailed(true)}
-          >
-            <source src="/hero-video-gold.mp4" type="video/mp4" />
-          </video>
-        ) : (
-          <div className="hero-portrait hero-portrait--static">
+        <div ref={mediaRef} className="hero-media">
+          <div className={`hero-portrait hero-portrait--static${useVideo && videoReady ? ' hero-portrait--hidden' : ''}`}>
             <img
               className="hero-layer"
               src="/hero-portrait.webp"
@@ -128,7 +129,28 @@ export default function Hero({ onToggleTerminal }) {
               draggable="false"
             />
           </div>
-        )}
+
+          {useVideo && (
+            <video
+              ref={videoRef}
+              className={`hero-video${videoReady ? ' hero-video--ready' : ''}`}
+              autoPlay
+              muted
+              loop
+              playsInline
+              preload="metadata"
+              poster="/hero-video-poster.webp"
+              onLoadStart={() => setVideoReady(false)}
+              onPlaying={() => setVideoReady(true)}
+              onError={() => {
+                setVideoReady(false)
+                setVideoFailed(true)
+              }}
+            >
+              <source src="/hero-video-gold.mp4" type="video/mp4" />
+            </video>
+          )}
+        </div>
       </div>
 
       <div aria-hidden="true" className="hero-ramp absolute inset-0 pointer-events-none" style={{ zIndex: 1 }} />

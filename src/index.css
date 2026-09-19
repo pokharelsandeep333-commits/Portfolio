@@ -731,6 +731,11 @@ body {
   pointer-events: none;
 }
 
+.hero-media {
+  position: absolute;
+  inset: 0;
+}
+
 .hero-video {
   position: absolute;
   inset: 0;
@@ -739,6 +744,12 @@ body {
   object-fit: cover;
   object-position: 60% center;
   background: #01030a;
+  opacity: 0;
+  transition: opacity 300ms ease-out;
+}
+
+.hero-video--ready {
+  opacity: 1;
 }
 
 /* When the chat drawer narrows the hero, contain the full composition instead
@@ -786,6 +797,12 @@ body {
 .hero-portrait--static {
   perspective: none;
   will-change: auto;
+  opacity: 1;
+  transition: opacity 300ms ease-out;
+}
+
+.hero-portrait--hidden {
+  opacity: 0;
 }
 
 /* Height-bound on a wide screen (the crop lands at the shoulders), but never
