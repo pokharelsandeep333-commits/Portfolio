@@ -1,0 +1,13 @@
+{
+  "note": "Captures that frames 03-05 were measured on. Regenerate only after re-measuring those frames.",
+  "files": {
+    "chat-answer.json": "c8a8509872c8bddb6741a5a4a19e56ab74e3a9395bb1b4143acf1bd4f1f68b33",
+    "chat-answer.png": "a4f97a1bef7d73928590450bc287f51786fec9b72da3dc6e7d84c141cf81a1ff",
+    "chat-empty.png": "8fb71c0b01130c2aa7857478ad1b4d201c67b057e9732e273919f7fe61519445",
+    "hero.png": "f6d57bd0a845bdd2468bbd67680ff32e0fcd96bff1ae756c7f06b6d9693a0f54",
+    "projects-full.png": "02c8e2bfbf20b7487f71ecdfd5d62d8fa39e6116f64335a5502fbfda64ea88a7",
+    "projects-view.png": "1f71fe186eddb110a456ea948efe4480840d2dc53d4db13517a516fb5bcb0837",
+    "resume-paper.png": "54cd3f207afceae9e36edf8c42185f3380039da61c986068c88587d8e3757570",
+    "resume-view.png": "67c4c52bc69188b2fd2b59d96921c1272865daf0e84040845590594ebbc80949"
+  }
+}
