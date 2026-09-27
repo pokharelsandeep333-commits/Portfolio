@@ -144,6 +144,38 @@ const allowedOrigins = process.env.ALLOWED_ORIGINS
 const MAX_MESSAGES = 50;
 const FORWARDED_TURNS = 16;
 
+// Gemini sheds load per model: on 2026-09-26/27 the primary returned 503 "high
+// demand" for over a day while the key and quota were fine. A second model keeps
+// the assistant answering. Override the fallback with GEMINI_FALLBACK_MODEL.
+const PRIMARY_MODEL = 'gemini-3.5-flash';
+const DEFAULT_FALLBACK_MODEL = 'gemini-2.5-flash';
+
+// Upstream failures another model may still survive: rate limit, server error,
+// overload, timeout, a retired model id (404), or a network error with no status.
+// 400/401/403 are not retried: the same request or key fails on any model.
+const FALLBACK_STATUSES = new Set([404, 429, 500, 503, 504]);
+const shouldFallBack = (error) => error?.status === undefined || FALLBACK_STATUSES.has(error.status);
+
+const generationConfig = {
+  maxOutputTokens: 800,
+  // Low temperature: this bot restates facts about a real person,
+  // so consistency matters far more than variety.
+  temperature: 0.35,
+};
+
+async function generateReply(genAI, modelName, history, message) {
+  const model = genAI.getGenerativeModel({
+    model: modelName,
+    systemInstruction: systemPrompt,
+    generationConfig,
+  });
+  // A ChatSession appends to the history array it is given, so each attempt
+  // gets its own copy.
+  const chat = model.startChat({ history: [...history] });
+  const result = await chat.sendMessage(message);
+  return result.response.text();
+}
+
 const ChatRequestSchema = z.object({
   messages: z
     .array(
@@ -200,16 +232,7 @@ export default async function handler(req, res) {
 
   try {
     const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY);
-    const model = genAI.getGenerativeModel({
-      model: 'gemini-3.5-flash',
-      systemInstruction: systemPrompt,
-      generationConfig: {
-        maxOutputTokens: 800,
-        // Low temperature: this bot restates facts about a real person,
-        // so consistency matters far more than variety.
-        temperature: 0.35,
-      },
-    });
+    const fallbackModel = process.env.GEMINI_FALLBACK_MODEL?.trim() || DEFAULT_FALLBACK_MODEL;
 
     // Only the most recent turns are forwarded — older context adds tokens
     // without improving answers about a fixed set of facts.
@@ -225,10 +248,17 @@ export default async function handler(req, res) {
       history.shift();
     }
 
-    const chat = model.startChat({ history });
-
-    const result = await chat.sendMessage(latestMessage.content);
-    const text = result.response.text();
+    let text;
+    try {
+      text = await generateReply(genAI, PRIMARY_MODEL, history, latestMessage.content);
+    } catch (error) {
+      if (!shouldFallBack(error) || fallbackModel === PRIMARY_MODEL) throw error;
+      console.warn(
+        `Model ${PRIMARY_MODEL} failed (${error.status ?? 'network error'}); falling back to ${fallbackModel}`
+      );
+      text = await generateReply(genAI, fallbackModel, history, latestMessage.content);
+      console.warn(`Answered by fallback model ${fallbackModel}`);
+    }
 
     return res.status(200).json({ response: text });
   } catch (error) {
