@@ -1,0 +1,221 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Portfolio Promo — Storyboard v1</title>
+<style>
+  /* Fonts captured from the live site (hyperframes capture → assets/fonts/). Both are variable. */
+  @font-face { font-family: 'Outfit'; font-weight: 100 900; src: url("assets/fonts/captured-QGYvz_MVcBeNP4NJtEtqUYLknw.woff2") format('woff2'); }
+  @font-face { font-family: 'Inter'; font-weight: 100 900; src: url("assets/fonts/captured-UcC73FwrK3iLTeHuS_nVMrMxCp50SjIa1ZL7W0Q5nw.woff2") format('woff2'); }
+
+  :root {
+    --bg: #050E1F; --surface: #0A1628; --gold: #FFC72C; --ink: #E8EDF5; --muted: #8899B4;
+    --line: rgba(255,255,255,0.08);
+    --page: #0b0d12; --page-ink: #e6e8ee; --page-muted: #8a91a0;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { background: var(--page); color: var(--page-ink); font-family: Inter, system-ui, sans-serif; padding: 40px 32px 64px; }
+  header { max-width: 1320px; margin: 0 auto 28px; display: flex; align-items: end; justify-content: space-between; gap: 24px; flex-wrap: wrap; }
+  header h1 { font-family: Outfit, sans-serif; font-weight: 800; font-size: 34px; letter-spacing: -0.02em; }
+  header h1 span { color: var(--gold); }
+  header p { color: var(--page-muted); font-size: 15px; margin-top: 6px; max-width: 70ch; }
+  .tag { font: 500 12px/1 ui-monospace, Consolas, monospace; letter-spacing: 0.08em; text-transform: uppercase; color: var(--page-muted); border: 1px solid #2a2f3a; padding: 8px 10px; border-radius: 6px; }
+  .grid { max-width: 1320px; margin: 0 auto; display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 28px 24px; }
+  @media (max-width: 1000px) { .grid { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+  @media (max-width: 640px) { .grid { grid-template-columns: 1fr; } body { padding: 24px 16px 48px; } }
+
+  figure { display: flex; flex-direction: column; gap: 10px; }
+  .label { display: flex; justify-content: space-between; font: 500 12px/1.2 ui-monospace, Consolas, monospace; letter-spacing: 0.06em; color: var(--page-muted); text-transform: uppercase; }
+  .label b { color: var(--page-ink); font-weight: 600; }
+  figcaption { font-size: 13.5px; line-height: 1.5; color: #b8bdc8; }
+  figcaption strong { color: var(--page-ink); }
+  .chip { align-self: start; font: 500 11px/1 ui-monospace, Consolas, monospace; letter-spacing: 0.06em; text-transform: uppercase; color: var(--gold); border: 1px solid rgba(255,199,44,0.35); padding: 6px 8px; border-radius: 999px; }
+
+  /* ---- A cell is the 1080×1350 canvas; 1cqw = 10.8 canvas px ---- */
+  .cell { position: relative; aspect-ratio: 4 / 5; container-type: inline-size; background: var(--bg); overflow: hidden; border-radius: 10px; outline: 1px solid #1d2230; font-family: Inter, sans-serif; color: var(--ink); }
+  .safe { position: absolute; left: 0; right: 0; top: 110cqw; bottom: 0; background: repeating-linear-gradient(135deg, rgba(255,80,80,0.10) 0 1.2cqw, transparent 1.2cqw 2.4cqw); border-top: 0.2cqw dashed rgba(255,110,110,0.55); }
+  .safe::after { content: "LinkedIn UI · keep clear"; position: absolute; right: 2cqw; top: 1.4cqw; font: 500 1.6cqw/1 ui-monospace, Consolas, monospace; color: rgba(255,140,140,0.8); letter-spacing: 0.08em; }
+  .noise { position: absolute; inset: 0; opacity: 0.22; background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='160' height='160'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2' seed='20260927'/></filter><rect width='160' height='160' filter='url(%23n)' opacity='0.9'/></svg>"); mix-blend-mode: screen; }
+
+  .callout { position: absolute; z-index: 3; top: 15cqw; left: 50%; transform: translateX(-50%); height: 5.19cqw; padding: 0 2.4cqw; border-radius: 999px; background: var(--gold); color: var(--bg); font: 800 2.41cqw/5.19cqw Outfit, sans-serif; letter-spacing: 0.01em; white-space: nowrap; }
+
+  .window { position: absolute; left: 4.44cqw; top: 24.26cqw; width: 91.11cqw; height: 60.65cqw; border-radius: 1.67cqw; background: var(--surface); border: 0.09cqw solid var(--line); box-shadow: 0 2.8cqw 7.4cqw rgba(0,0,0,0.55); overflow: hidden; }
+  .chrome { height: 3.7cqw; display: flex; align-items: center; gap: 0.93cqw; padding-left: 1.85cqw; border-bottom: 0.09cqw solid var(--line); }
+  .dot { width: 0.93cqw; height: 0.93cqw; border-radius: 50%; }
+  .url { margin-left: 3cqw; font: 500 1.67cqw/1 Inter, sans-serif; color: var(--muted); background: rgba(255,255,255,0.04); padding: 0.6cqw 2cqw; border-radius: 999px; }
+  .content { position: absolute; left: 0; right: 0; top: 3.7cqw; bottom: 0; overflow: hidden; }
+  .content img { position: absolute; left: 0; top: 0; width: 100%; }
+
+  .name { font-family: Outfit, sans-serif; font-weight: 800; letter-spacing: -0.03em; line-height: 0.92; }
+  .gold { color: var(--gold); }
+  .muted { color: var(--muted); }
+
+  .glow { position: absolute; border: 0.35cqw solid var(--gold); border-radius: 1.2cqw; box-shadow: 0 0 3cqw rgba(255,199,44,0.45); }
+  .projlabel { position: absolute; font: 800 2.6cqw/1 Outfit, sans-serif; background: var(--bg); color: var(--gold); padding: 1cqw 1.6cqw; border-radius: 0.8cqw; border: 0.12cqw solid rgba(255,199,44,0.5); }
+
+  .popout { position: absolute; overflow: hidden; border-radius: 1.4cqw; border: 0.12cqw solid rgba(255,199,44,0.45); box-shadow: 0 3cqw 8cqw rgba(0,0,0,0.7); background: #0d1526; }
+  .popout img { position: absolute; }
+  .dim { position: absolute; inset: 0; background: rgba(5,14,31,0.55); }
+
+  .note-cell { aspect-ratio: auto; min-height: 100%; padding: 22px; border-radius: 10px; outline: 1px solid #1d2230; background: #10131a; container-type: normal; }
+  .note-cell h3 { font: 800 18px/1.2 Outfit, sans-serif; margin-bottom: 12px; }
+  .note-cell ul { list-style: none; display: grid; gap: 8px; font-size: 13.5px; color: #b8bdc8; }
+  .note-cell li b { color: var(--page-ink); }
+  .swatches { display: grid; grid-template-columns: repeat(5, 1fr); gap: 8px; margin: 4px 0 14px; }
+  .sw { height: 44px; border-radius: 6px; border: 1px solid #2a2f3a; display: flex; align-items: end; padding: 4px; font: 500 10px/1 ui-monospace, Consolas, monospace; }
+  .seam { display: grid; grid-template-columns: repeat(6, 1fr); gap: 4px; margin-bottom: 12px; }
+  .seam div { background: #1a1f2b; border-radius: 4px; padding: 8px 4px; text-align: center; font: 500 11px/1.3 ui-monospace, Consolas, monospace; color: var(--page-muted); }
+  .seam div b { display: block; color: var(--gold); font-size: 13px; }
+</style>
+</head>
+<body>
+<header>
+  <div>
+    <h1>Portfolio Promo — Storyboard <span>v1</span></h1>
+    <p>Six key moments, drawn at the build's 1080×1350 geometry with the real captures, fonts and palette. Layout and copy only — no motion yet. The striped band is LinkedIn's action strip; nothing important goes there.</p>
+  </div>
+  <div class="tag">1080×1350 · 25 s · 6 frames · silent-safe</div>
+</header>
+
+<main class="grid">
+
+  <!-- 01 · COLD OPEN (0–3 s), key moment ≈ 2.6 s -->
+  <figure>
+    <div class="cell" id="frame-01">
+      <div class="noise"></div>
+      <div style="position:absolute; left:8cqw; top:38cqw; width:0.45cqw; height:44cqw; background:var(--gold); box-shadow:0 0 2cqw rgba(255,199,44,0.6)"></div>
+      <div style="position:absolute; left:12.5cqw; top:44cqw;">
+        <div class="name" style="font-size:15cqw; color:var(--ink)">Sandeep</div>
+        <div class="name gold" style="font-size:15cqw">Pokharel</div>
+        <div style="margin-top:4.5cqw; font:500 3cqw/1.35 Inter, sans-serif" class="muted"><span style="color:var(--ink)">IT Support Desk Technician</span> · CS @ Dakota State</div>
+      </div>
+      <div class="safe"></div>
+    </div>
+    <div class="label"><span><b>01 · Cold open</b></span><span>0–3 s</span></div>
+    <figcaption><strong>The gold line draws first, top-down,</strong> then the name scramble-decodes and locks on a beat (zap); the subtitle types in last. Static flicker under 3 flashes/s.</figcaption>
+    <span class="chip">cut →</span>
+  </figure>
+
+  <!-- 02 · THE SITE (3–7 s), key moment ≈ 5.5 s -->
+  <figure>
+    <div class="cell" id="frame-02">
+      <div class="callout">Designed and built by me</div>
+      <div class="window">
+        <div class="chrome"><span class="dot" style="background:#ff5f57"></span><span class="dot" style="background:#febc2e"></span><span class="dot" style="background:#28c840"></span><span class="url">portfolio.sandeeppokharel.com.np</span></div>
+        <div class="content"><img src="assets/states/hero.png" alt="Live hero" style="transform:scale(1.06); transform-origin:75% 45%"></div>
+      </div>
+      <div class="safe"></div>
+    </div>
+    <div class="label"><span><b>02 · The site</b></span><span>3–7 s</span></div>
+    <figcaption><strong>The window rises first</strong> (power3.out) with the live hero inside, then pushes 1.0 → 1.08 toward the portrait. The pill slides in from the left with a scramble. The window stays put through frame 5.</figcaption>
+    <span class="chip">cut → (window fixed)</span>
+  </figure>
+
+  <!-- 03 · THE PROJECTS (7–13 s), key moment = first punch-in ≈ 9 s -->
+  <figure>
+    <div class="cell" id="frame-03">
+      <div class="callout">7 shipped projects</div>
+      <div class="window">
+        <div class="chrome"><span class="dot" style="background:#ff5f57"></span><span class="dot" style="background:#febc2e"></span><span class="dot" style="background:#28c840"></span><span class="url">portfolio.sandeeppokharel.com.np</span></div>
+        <div class="content">
+          <img src="assets/states/projects-view.png" alt="Projects section" style="transform:scale(1.3); transform-origin:30% 62%">
+          <div class="glow" style="left:1.5cqw; top:21cqw; width:83cqw; height:33cqw"></div>
+          <div class="projlabel" data-fact="project" style="left:4cqw; top:17.5cqw">SandeepCloud</div>
+        </div>
+      </div>
+      <div class="safe"></div>
+    </div>
+    <div class="label"><span><b>03 · The projects</b></span><span>7–13 s</span></div>
+    <figcaption><strong>Inside the window, the hero whips out left</strong> (motion blur) as Projects whips in; the view pans down all seven cards, then punches in ≤1.3× on three beats: SandeepCloud (shown), ShiftSentry, Private RAG Search Engine — each with a gold glow and name tag.</figcaption>
+    <span class="chip">cut → (window fixed)</span>
+  </figure>
+
+  <!-- 04 · THE AI ASSISTANT (13–18 s), key moment = answer revealed ≈ 17 s -->
+  <figure>
+    <div class="cell" id="frame-04">
+      <div class="callout">AI assistant built on the site's own data</div>
+      <div class="window">
+        <div class="chrome"><span class="dot" style="background:#ff5f57"></span><span class="dot" style="background:#febc2e"></span><span class="dot" style="background:#28c840"></span><span class="url">portfolio.sandeeppokharel.com.np</span></div>
+        <div class="content"><img src="assets/states/chat-answer.png" alt="Chat drawer with the real answer"></div>
+      </div>
+      <div class="dim"></div>
+      <!-- Pop-out: drawer crop CSS x 1120–1440, y 180–740 (320×560) shown at 48.1cqw wide (≈1.62× the site's size). -->
+      <div class="popout" style="left:25.95cqw; top:24.5cqw; width:48.1cqw; height:84.2cqw;">
+        <img src="assets/states/chat-answer.png" alt="Real question and answer, enlarged" style="width:216.4cqw; left:-168.3cqw; top:-27.05cqw;">
+      </div>
+      <div class="safe"></div>
+    </div>
+    <div class="label"><span><b>04 · The AI assistant</b></span><span>13–18 s</span></div>
+    <figcaption><strong>The drawer slides in from the right inside the window, then lifts out as an enlarged panel</strong> so the real answer is readable muted (drawer text ≈1.6×). The question types in; the answer reveals line by line over the real pixels. <em>New vs. the plan: the pop-out.</em></figcaption>
+    <span class="chip">cut → (panel settles back)</span>
+  </figure>
+
+  <!-- 05 · THE RESUME (18–21 s), key moment = full page ≈ 20 s -->
+  <figure>
+    <div class="cell" id="frame-05">
+      <div class="callout">One-page resume, print-ready</div>
+      <div class="window" style="opacity:0.35">
+        <div class="chrome"><span class="dot" style="background:#ff5f57"></span><span class="dot" style="background:#febc2e"></span><span class="dot" style="background:#28c840"></span><span class="url">portfolio.sandeeppokharel.com.np</span></div>
+        <div class="content"><img src="assets/states/resume-view.png" alt="Resume modal"></div>
+      </div>
+      <!-- Paper is 1640×2644: at 52cqw wide it is 83.8cqw tall, so it ends at 107.8cqw, above the strip. -->
+      <div class="popout" style="left:24cqw; top:24cqw; width:52cqw; height:83.8cqw; border-color:rgba(255,255,255,0.18); background:#fff;">
+        <img src="assets/states/resume-paper.png" alt="The full one-page resume" style="width:52cqw; left:0; top:0;">
+      </div>
+      <div class="safe"></div>
+    </div>
+    <div class="label"><span><b>05 · The resume</b></span><span>18–21 s</span></div>
+    <figcaption><strong>Opens tight on the resume header, then pulls back until the whole page stands out of the window</strong>, which dims and exits. Last 0.3 s: seeded RGB-split glitch-out, no white flash. <em>New vs. the plan: the paper leaves the window so the one-page shape reads.</em></figcaption>
+    <span class="chip">cut → glitch</span>
+  </figure>
+
+  <!-- 06 · END CARD (21–25 s), key moment = the hold ≈ 23.5 s -->
+  <figure>
+    <div class="cell" id="frame-06">
+      <div class="noise" style="opacity:0.12"></div>
+      <div style="position:absolute; left:0; right:0; top:42cqw; text-align:center;">
+        <div class="name" style="font-size:12.5cqw; color:var(--ink)">Sandeep <span class="gold">Pokharel</span></div>
+        <div style="width:30cqw; height:0.45cqw; margin:5cqw auto 5cqw; background:var(--gold); box-shadow:0 0 2cqw rgba(255,199,44,0.6)"></div>
+        <div data-callout style="font:500 3.9cqw/1 Inter, sans-serif; color:var(--gold)">portfolio.sandeeppokharel.com.np</div>
+      </div>
+      <div class="safe"></div>
+    </div>
+    <div class="label"><span><b>06 · End card</b></span><span>21–25 s</span></div>
+    <figcaption><strong>The glitch settles into the lock-up</strong>; the gold line redraws under the name with the final, louder zap; then 1.5 s of stillness so the URL can be read. The held frame of the film.</figcaption>
+    <span class="chip">end · hold 1.5 s</span>
+  </figure>
+
+  <!-- Seam map -->
+  <div class="note-cell">
+    <h3>Seam map</h3>
+    <div class="seam">
+      <div>01<b>cut</b></div><div>02<b>cut</b></div><div>03<b>whip*</b></div><div>04<b>cut</b></div><div>05<b>cut</b></div><div>06<b>glitch*</b></div>
+    </div>
+    <ul>
+      <li><b>Spine:</b> one browser window, fixed from 02 to 05 — the site is one continuous place.</li>
+      <li><b>*In-frame:</b> the whip happens inside the window at 03's open; the glitch spans 05's last 0.3 s and 06's first 0.3 s. Every boundary is a hard cut on a beat.</li>
+      <li><b>Direction:</b> content moves leftward; the drawer arrives from the right, as on the site.</li>
+    </ul>
+  </div>
+
+  <!-- Tokens -->
+  <div class="note-cell">
+    <h3>Tokens (from the live site)</h3>
+    <div class="swatches">
+      <div class="sw" style="background:#050E1F;color:#8899B4">050E1F</div>
+      <div class="sw" style="background:#0A1628;color:#8899B4">0A1628</div>
+      <div class="sw" style="background:#FFC72C;color:#050E1F">FFC72C</div>
+      <div class="sw" style="background:#E8EDF5;color:#050E1F">E8EDF5</div>
+      <div class="sw" style="background:#8899B4;color:#050E1F">8899B4</div>
+    </div>
+    <ul>
+      <li><b>Type:</b> Outfit 800 for names and pills · Inter 400/500 for body and the URL.</li>
+      <li><b>Bans:</b> no fake UI (every screen is a real capture) · no rewritten bot answer · no full-frame white or gold flash · no text in the LinkedIn strip · no slideshow cards, no motion that says nothing.</li>
+      <li><b>Truthfulness:</b> hero, projects, chat and resume are 2026-09-27 captures of the live site; the chat answer is the bot's real reply (HTTP 200, 13:49:05Z).</li>
+    </ul>
+  </div>
+
+</main>
+</body>
+</html>

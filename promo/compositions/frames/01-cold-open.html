@@ -1,0 +1,344 @@
+<template>
+  <div data-hf-id="hf-jgbo" id="root" data-composition-id="01-cold-open" data-duration="3" data-width="1080" data-height="1350">
+    <style>
+      #root {
+        position: absolute;
+        inset: 0;
+        width: 1080px;
+        height: 1350px;
+        overflow: hidden;
+        container-type: size;
+        isolation: isolate;
+        color: #e8edf5;
+        font-family: "Inter", sans-serif;
+      }
+
+      /* ground: full-bleed clip, lowest track */
+      [class~="01-cold-open-ground"] {
+        position: absolute;
+        inset: 0;
+        background: #050e1f;
+      }
+
+      /* grain-overlay (registry), adapted: timeline-stepped boil instead of a CSS loop */
+      [class~="01-cold-open-grain"] {
+        position: absolute;
+        inset: 0;
+        overflow: hidden;
+        pointer-events: none;
+      }
+      [class~="01-cold-open-grain-tex"] {
+        position: absolute;
+        top: -50%;
+        left: -50%;
+        width: 200%;
+        height: 200%;
+        opacity: 0.16;
+        mix-blend-mode: screen;
+        background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2' seed='20260927' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+        background-size: 256px 256px;
+      }
+
+      [class~="01-cold-open-stage"] {
+        position: absolute;
+        inset: 0;
+      }
+
+      /* svg-stroke-trace / svg-path-draw: the gold power line, left third */
+      [class~="01-cold-open-power"] {
+        position: absolute;
+        left: 6cqw;
+        top: 36cqw;
+        width: 5cqw;
+        height: 48cqw;
+        overflow: visible;
+      }
+      [class~="01-cold-open-power-core"],
+      [class~="01-cold-open-power-glow"] {
+        fill: none;
+        stroke: #ffc72c;
+        stroke-linecap: butt;
+      }
+      [class~="01-cold-open-power-core"] {
+        stroke-width: 4.5;
+      }
+      [class~="01-cold-open-power-glow"] {
+        stroke-width: 14;
+        opacity: 0.6;
+      }
+
+      /* name lock-up */
+      [class~="01-cold-open-name"] {
+        position: absolute;
+        left: 12.5cqw;
+        top: 44cqw;
+        transform-origin: 0% 50%;
+      }
+      [class~="01-cold-open-line"] {
+        font-family: "Outfit", sans-serif;
+        font-weight: 800;
+        font-size: 15cqw;
+        line-height: 0.92;
+        letter-spacing: -0.03em;
+        white-space: nowrap;
+        perspective: 1500px;
+      }
+      [class~="01-cold-open-first"] {
+        color: #e8edf5;
+      }
+      [class~="01-cold-open-last"] {
+        color: #ffc72c;
+      }
+      /* hacker-flip-3d char: the real letter reserves width (ghost), the flicker glyph rides on ::after */
+      [class~="01-cold-open-c"] {
+        position: relative;
+        display: inline-block;
+        transform-origin: 50% 100%;
+        transform-style: preserve-3d;
+      }
+      [class~="01-cold-open-c"]::after {
+        content: attr(data-g);
+        position: absolute;
+        top: 0;
+        left: -200%;
+        right: -200%;
+        text-align: center;
+        white-space: pre;
+      }
+
+      /* subtitle: discrete type-on, title in ink, the rest in cream-hint */
+      [class~="01-cold-open-sub"] {
+        margin-top: 4.5cqw;
+        min-width: 80cqw;
+        min-height: 4.05cqw;
+        font-family: "Inter", sans-serif;
+        font-weight: 500;
+        font-size: 3cqw;
+        line-height: 1.35;
+        color: #8899b4;
+        white-space: pre;
+      }
+      [class~="01-cold-open-title"] {
+        color: #e8edf5;
+      }
+    </style>
+
+    <div data-hf-id="hf-fp92" class="clip 01-cold-open-ground" data-start="0" data-duration="3" data-track-index="0"></div>
+
+    <div data-hf-id="hf-fshs" class="clip 01-cold-open-grain" data-start="0" data-duration="3" data-track-index="1" aria-hidden="true">
+      <div data-hf-id="hf-iuf3" class="01-cold-open-grain-tex"></div>
+    </div>
+
+    <div data-hf-id="hf-klun" class="clip 01-cold-open-stage" data-start="0" data-duration="3" data-track-index="2">
+      <svg data-hf-id="hf-7mvr" class="01-cold-open-power" viewBox="0 0 50 480" preserveAspectRatio="none" aria-hidden="true">
+        <defs data-hf-id="hf-mh0t">
+          <filter data-hf-id="hf-wczs" id="01-cold-open-glow-blur" filterUnits="userSpaceOnUse" x="-60" y="-60" width="170" height="600">
+            <fegaussianblur data-hf-id="hf-5pp5" stdDeviation="7" />
+          </filter>
+        </defs>
+        <path data-hf-id="hf-nxuu" class="01-cold-open-power-glow" d="M 22.25 20 L 22.25 460" filter="url(#01-cold-open-glow-blur)" />
+        <path data-hf-id="hf-td1f" class="01-cold-open-power-core" d="M 22.25 20 L 22.25 460" />
+      </svg>
+
+      <div data-hf-id="hf-w4gf" class="01-cold-open-name" data-text="Sandeep Pokharel" aria-label="Sandeep Pokharel">
+        <div data-hf-id="hf-lqlu" class="01-cold-open-line 01-cold-open-first" data-word="Sandeep"></div>
+        <div data-hf-id="hf-58a4" class="01-cold-open-line 01-cold-open-last" data-word="Pokharel"></div>
+        <div data-hf-id="hf-bq2g" class="01-cold-open-sub" data-text="IT Support Desk Technician · CS @ Dakota State"><span data-hf-id="hf-mro1" class="01-cold-open-title" data-fact="title" data-text="IT Support Desk Technician"><span data-hf-id="hf-mi3d" class="01-cold-open-k">IT</span><span data-hf-id="hf-ctd7" class="01-cold-open-k"> Support</span><span data-hf-id="hf-zgkd" class="01-cold-open-k"> Desk</span><span data-hf-id="hf-tf22" class="01-cold-open-k"> Technician</span></span><span data-hf-id="hf-tb83" class="01-cold-open-rest"><span data-hf-id="hf-o8zt" class="01-cold-open-k"> ·</span><span data-hf-id="hf-smea" class="01-cold-open-k"> CS</span><span data-hf-id="hf-fa6k" class="01-cold-open-k"> @</span><span data-hf-id="hf-t22u" class="01-cold-open-k"> Dakota</span><span data-hf-id="hf-4tkp" class="01-cold-open-k"> State</span></span></div>
+      </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/gsap@3.14.2/dist/gsap.min.js"></script>
+    <script>
+      (function () {
+        "use strict";
+
+        var ID = "01-cold-open";
+        var DURATION = 3;
+        var FPS = 30;
+        var host = document.querySelector('[data-composition-id="' + ID + '"]');
+        var q = function (cls) {
+          return Array.prototype.slice.call(host.getElementsByClassName(ID + "-" + cls));
+        };
+
+        // ---- seeded PRNG (mulberry32, seed 20260927); draws happen once, in fixed order ----
+        function mulberry32(a) {
+          return function () {
+            a |= 0;
+            a = (a + 0x6d2b79f5) | 0;
+            var t = Math.imul(a ^ (a >>> 15), 1 | a);
+            t = (t + Math.imul(t ^ (t >>> 7), 61 | t)) ^ t;
+            return ((t ^ (t >>> 14)) >>> 0) / 4294967296;
+          };
+        }
+        var rand = mulberry32(20260927);
+
+        var tex = q("grain-tex")[0];
+        var glowPath = q("power-glow")[0];
+        var corePath = q("power-core")[0];
+        var nameWrap = q("name")[0];
+        var lines = q("line");
+        var chunks = q("k");
+
+        var tl = gsap.timeline({ paused: true });
+
+        // ================= Scene 1 (0.0-0.8s): static ground + power line draw =================
+
+        // Grain boil: seeded texture offsets stepped at 12 fps (texture shift, not a flash).
+        var BOIL_STEP = 1 / 12;
+        for (var s = 0; s * BOIL_STEP < DURATION; s += 1) {
+          tl.set(
+            tex,
+            { x: Math.round((rand() - 0.5) * 360), y: Math.round((rand() - 0.5) * 360) },
+            s * BOIL_STEP
+          );
+        }
+
+        // Static flashes: 3 total, never more than 2 inside any 1 s window, grain only (no white).
+        function staticFlash(t, peak) {
+          tl.to(tex, { opacity: peak, duration: 1 / FPS, ease: "none" }, t);
+          tl.to(tex, { opacity: 0.16, duration: 0.14, ease: "power2.out" }, t + 1 / FPS);
+        }
+        staticFlash(0.1, 0.4);
+        staticFlash(0.8, 0.32);
+
+        // svg-path-draw: dasharray = measured length, offset length -> 0, top to bottom.
+        var len = 440;
+        try {
+          len = corePath.getTotalLength() || 440;
+        } catch (e) {
+          len = 440;
+        }
+        [corePath, glowPath].forEach(function (p) {
+          p.style.strokeDasharray = String(len);
+        });
+        tl.fromTo(
+          [corePath, glowPath],
+          { strokeDashoffset: len },
+          { strokeDashoffset: 0, duration: 0.62, ease: "power2.out" },
+          0.08
+        );
+
+        // ================= Scene 2 (0.8-2.0s): hacker-flip-3d decode, lock + zap =================
+
+        var GLYPHS = "ABCDEFGHKNOPRSTUXYZ0123456789#$%&?";
+        var FLIP = 0.7; // FLIP_DURATION
+        var STAGGER = 0.05; // CHAR_STAGGER
+        var LOCK_AFTER = 0.26; // raw time where power2.out progress crosses REVEAL_THRESHOLD 0.6
+        var SWAP = 3 / FPS; // one glyph per 3 frames (FLICKER_RATE)
+        var WORD_START = [0.8, 1.29]; // "Sandeep", then "Pokharel"; last char locks at 1.90
+
+        function pickGlyph(target) {
+          var g = GLYPHS.charAt(Math.floor(rand() * GLYPHS.length));
+          if (g.toUpperCase() === target.toUpperCase()) {
+            g = GLYPHS.charAt((GLYPHS.indexOf(g) + 1) % GLYPHS.length);
+          }
+          return g;
+        }
+
+        var T_LOCK = 0;
+        lines.forEach(function (line, w) {
+          var word = line.getAttribute("data-word");
+          Array.prototype.forEach.call(word, function (ch, i) {
+            var c = document.createElement("span");
+            c.className = ID + "-c";
+            // The two name lines are set with tight leading (0.92, as on the site), so
+            // "Sandeep"'s glyph boxes touch "Pokharel"'s: intentional (layout audit opt-out).
+            c.setAttribute("data-layout-allow-overlap", "");
+            var real = document.createElement("span");
+            real.setAttribute("data-layout-allow-overlap", "");
+            real.textContent = ch; // reserves the real advance width (ghost) and is the final text
+            c.appendChild(real);
+            line.appendChild(c);
+
+            var start = WORD_START[w] + i * STAGGER;
+            var lockAt = start + LOCK_AFTER;
+            T_LOCK = Math.max(T_LOCK, lockAt);
+
+            // flap hinge at the bottom edge: rotateX 90 -> 0 under parent perspective
+            tl.fromTo(
+              c,
+              { rotationX: 90 },
+              { rotationX: 0, duration: FLIP, ease: "power2.out" },
+              start
+            );
+            tl.fromTo(
+              c,
+              { opacity: 0 },
+              { opacity: 1, duration: FLIP * 0.4, ease: "power2.out" },
+              start
+            );
+
+            // seeded glyph flicker until the threshold, then the real letter clicks in
+            var first = pickGlyph(ch);
+            c.setAttribute("data-g", first);
+            for (var k = 1; start + k * SWAP < lockAt - 0.001; k += 1) {
+              tl.set(c, { attr: { "data-g": pickGlyph(ch) } }, start + k * SWAP);
+            }
+            tl.set(c, { attr: { "data-g": "" } }, lockAt);
+            tl.fromTo(real, { autoAlpha: 0 }, { autoAlpha: 1, duration: 0.001, ease: "none" }, lockAt);
+          });
+        });
+
+        // Zap on the lock (T_LOCK = 1.90, the glitch-1 SFX offset): glow bloom, line surge,
+        // static flash, 3-frame seeded shake and an expo.out punch.
+        staticFlash(T_LOCK, 0.44);
+        tl.fromTo(
+          nameWrap,
+          { textShadow: "0px 0px 0px rgba(255,199,44,0)" },
+          {
+            textShadow: "0px 0px 44px rgba(255,199,44,0.85)",
+            duration: 1 / FPS,
+            ease: "none",
+            immediateRender: false,
+          },
+          T_LOCK
+        );
+        tl.to(
+          nameWrap,
+          { textShadow: "0px 0px 0px rgba(255,199,44,0)", duration: 0.6, ease: "power2.out" },
+          T_LOCK + 1 / FPS
+        );
+        tl.fromTo(
+          glowPath,
+          { opacity: 0.6 },
+          { opacity: 1, duration: 1 / FPS, ease: "none", immediateRender: false },
+          T_LOCK
+        );
+        tl.to(glowPath, { opacity: 0.6, duration: 0.5, ease: "power2.out" }, T_LOCK + 1 / FPS);
+        tl.fromTo(
+          nameWrap,
+          { scale: 1.025 },
+          { scale: 1, duration: 0.4, ease: "expo.out", immediateRender: false },
+          T_LOCK
+        );
+        for (var j = 0; j < 3; j += 1) {
+          tl.set(
+            nameWrap,
+            { x: Math.round((rand() - 0.5) * 12), y: Math.round((rand() - 0.5) * 4) },
+            T_LOCK + j / FPS
+          );
+        }
+        tl.set(nameWrap, { x: 0, y: 0 }, T_LOCK + 3 / FPS);
+
+        // ================= Scene 3 (2.0-3.0s): discrete type-on of the subtitle, then hold =================
+        // Word-sized bulk states (discrete-text-sequence), with a short beat after the title.
+        var TYPE_AT = [2.0, 2.06, 2.12, 2.18, 2.27, 2.32, 2.36, 2.42, 2.48];
+        chunks.forEach(function (el, i) {
+          tl.fromTo(
+            el,
+            { autoAlpha: 0 },
+            { autoAlpha: 1, duration: 0.001, ease: "none" },
+            TYPE_AT[i]
+          );
+        });
+
+        // Hold still to the cut; pin the timeline length to the frame duration.
+        tl.set({}, {}, DURATION);
+
+        tl.seek(0);
+        window.__timelines = window.__timelines || {};
+        window.__timelines[ID] = tl;
+      })();
+    </script>
+  </div>
+</template>
