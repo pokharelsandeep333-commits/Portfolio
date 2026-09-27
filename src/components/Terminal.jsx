@@ -39,7 +39,6 @@ const Terminal = ({ isOpen, onClose }) => {
   });
   const [input, setInput] = useState('');
   const [isLoading, setIsLoading] = useState(false);
-  const endOfMessagesRef = useRef(null);
   const messagesRef = useRef(null);
   const inputRef = useRef(null);
   const restoreFocusRef = useRef(null);
@@ -48,7 +47,12 @@ const Terminal = ({ isOpen, onClose }) => {
 
   useEffect(() => {
     localStorage.setItem('chatHistory', JSON.stringify(messages));
-    endOfMessagesRef.current?.scrollIntoView({ behavior: 'smooth' });
+    // Scroll the message list directly, not via `scrollIntoView`: that walks
+    // every scrollable ancestor and aligns the target to the top of each —
+    // including the drawer itself, which pushed the header off-screen and
+    // left the input floating mid-panel after "Clear chat".
+    const list = messagesRef.current;
+    list?.scrollTo?.({ top: list.scrollHeight, behavior: 'smooth' });
   }, [messages, isLoading]);
 
   // The drawer is always mounted and only translated off-canvas, so `autoFocus`
@@ -215,7 +219,6 @@ const Terminal = ({ isOpen, onClose }) => {
             </div>
           </div>
         )}
-        <div ref={endOfMessagesRef} />
       </div>
 
         <div

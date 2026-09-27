@@ -1033,8 +1033,13 @@ body {
      compositor layer up front — otherwise the first frame of the slide pays
      for the layer being created, which is exactly where a stutter shows. */
   will-change: transform;
-  /* Clips the gold edge sweep; the message list scrolls on its own. */
+  /* Clips the gold edge sweep; the message list scrolls on its own.
+     `clip`, not just `hidden`: the sweep's final frame sits at
+     translateY(300%), past the bottom edge, and a `hidden` box is still
+     programmatically scrollable into that overflow. `clip` makes the drawer
+     a non-scroll-container so nothing can shift the panel. */
   overflow: hidden;
+  overflow: clip;
   transform: translateX(100%);
   /* The transition that runs is the one on the *destination* state, so the
      base rule owns the close timing and `.is-open` owns the open timing. */
