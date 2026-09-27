@@ -95,7 +95,7 @@ Every component reads from two modules — edit these to change site content:
 
 `Terminal.jsx` persists the whole array to `localStorage.chatHistory` and migrates a legacy `{ isBot, text }` shape on read. If you change the message schema, update the Zod schema, the migration, **and** `src/components/Terminal.test.jsx`, which asserts the exact serialized request body.
 
-Server-side guards: 10 req/min per IP via Upstash Redis sliding window, `maxOutputTokens: 800`, `temperature: 0.35`, a `MAX_MESSAGES` cap on the submitted array with server-side trimming to the last `FORWARDED_TURNS`, and a CORS allowlist from `ALLOWED_ORIGINS` (comma-separated) falling back to a hardcoded list of production origins plus `localhost:5173`. Upstream failures return a generic 502 — never the Gemini error text.
+Server-side guards: 10 req/min per IP via Upstash Redis sliding window, `maxOutputTokens: 800`, `temperature: 0.35`, a `MAX_MESSAGES` cap on the submitted array with server-side trimming to the last `FORWARDED_TURNS`, and a CORS allowlist from `ALLOWED_ORIGINS` (comma-separated) falling back to a hardcoded list of production origins plus `localhost:5173`. If the primary model (`gemini-3.5-flash`) fails with 404/429/500/503/504 or a network error, the handler retries once on `GEMINI_FALLBACK_MODEL` (default `gemini-2.5-flash`); 400/401/403 are not retried. Upstream failures return a generic 502 — never the Gemini error text.
 
 **The system prompt is generated, not written.** `api/chat.js` imports `src/data/skills.js` and `src/data/projects.js` and builds the prompt at module load, so the assistant always matches what the site renders — adding a project or a job in `src/data/` updates the site, the resume, and the AI together. Two consequences: the data modules must stay importable from Node (no JSX, no browser globals, no imports of their own), and nothing may exclude `src/` from the Vercel function bundle.
 
@@ -130,7 +130,7 @@ Client (must be `VITE_`-prefixed, baked into the bundle — never secret):
 
 Server-only, set in Vercel (needed locally only when running the function):
 
-- `GEMINI_API_KEY`, `UPSTASH_REDIS_REST_URL`, `UPSTASH_REDIS_REST_TOKEN`, `ALLOWED_ORIGINS`.
+- `GEMINI_API_KEY`, `UPSTASH_REDIS_REST_URL`, `UPSTASH_REDIS_REST_TOKEN`, `ALLOWED_ORIGINS`, and optionally `GEMINI_FALLBACK_MODEL` (defaults to `gemini-2.5-flash`).
 
 ## Local gotchas
 
