@@ -27,3 +27,15 @@ dist-ssr
 
 # Agent context
 .agents/
+# HyperFrames promo (promo/): keep media, captures and build output out of git.
+# The media provenance ledger stays tracked so licenses remain provable.
+promo/node_modules/
+promo/assets/
+promo/capture/
+promo/snapshots/
+promo/renders/
+promo/.hyperframes/
+promo/.thumbnails/
+promo/.waveform-cache/
+promo/.media/*
+!promo/.media/manifest.jsonl

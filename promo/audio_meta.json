@@ -1,0 +1,49 @@
+{
+  "bgm": {
+    "path": "assets/bgm/turtlebeats-dark-synthwave-black-neon-251690.mp3",
+    "volume": 0.9,
+    "query": "dark electronic synth pulse, 120–128 BPM, driving and confident, no vocals",
+    "duration_s": 120.024,
+    "source": "pixabay:251690 (Pixabay Content License)",
+    "media_id": "bgm_001"
+  },
+  "bgm_pending": false,
+  "voices": [],
+  "sfx": [
+    {
+      "frame": 1,
+      "file": "assets/sfx/glitch-1.mp3",
+      "offset_s": 1.9,
+      "duration_s": 0.6,
+      "volume": 0.35
+    },
+    {
+      "frame": 3,
+      "file": "assets/sfx/whoosh-short.mp3",
+      "offset_s": 0,
+      "duration_s": 0.575,
+      "volume": 0.35
+    },
+    {
+      "frame": 4,
+      "file": "assets/sfx/click-soft.mp3",
+      "offset_s": 0.05,
+      "duration_s": 0.366,
+      "volume": 0.35
+    },
+    {
+      "frame": 6,
+      "file": "assets/sfx/glitch-2.mp3",
+      "offset_s": 0,
+      "duration_s": 0.8,
+      "volume": 0.35
+    },
+    {
+      "frame": 6,
+      "file": "assets/sfx/glitch-1.mp3",
+      "offset_s": 0.35,
+      "duration_s": 0.6,
+      "volume": 0.45
+    }
+  ]
+}

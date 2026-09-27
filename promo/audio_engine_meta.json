@@ -1,0 +1,68 @@
+{
+ "tts_provider": null,
+ "voice_id": null,
+ "bgm": {
+  "path": "assets/bgm/turtlebeats-dark-synthwave-black-neon-251690.mp3",
+  "volume": 0.9,
+  "query": "dark electronic synth pulse, 120–128 BPM, driving and confident, no vocals",
+  "mode": "retrieve",
+  "duration_s": 120.024
+ },
+ "bgm_pending": false,
+ "bgm_provider": "pixabay (ingested, bgm_001)",
+ "bgm_pid": null,
+ "bgm_log": null,
+ "bgm_mode": "retrieve",
+ "bgm_target_duration_s": null,
+ "bgm_seed_duration_s": null,
+ "bgm_loop_count": null,
+ "voices": [],
+ "sfx": [
+  {
+   "id": "01",
+   "name": "electric-zap",
+   "file": "assets/sfx/electric-zap.mp3",
+   "source": "heygen",
+   "offset_s": 0,
+   "duration_s": 0.72,
+   "volume": 0.35
+  },
+  {
+   "id": "03",
+   "name": "whoosh-short",
+   "file": "assets/sfx/whoosh-short.mp3",
+   "source": "heygen",
+   "offset_s": 0,
+   "duration_s": 1.285,
+   "volume": 0.35
+  },
+  {
+   "id": "04",
+   "name": "click-soft",
+   "file": "assets/sfx/click-soft.mp3",
+   "source": "heygen",
+   "offset_s": 0,
+   "duration_s": 0.264,
+   "volume": 0.35
+  },
+  {
+   "id": "06",
+   "name": "glitch-2",
+   "file": "assets/sfx/glitch-2.mp3",
+   "source": "heygen",
+   "offset_s": 0,
+   "duration_s": 1.372,
+   "volume": 0.35
+  },
+  {
+   "id": "06",
+   "name": "electric-zap",
+   "file": "assets/sfx/electric-zap.mp3",
+   "source": "heygen",
+   "offset_s": 0,
+   "duration_s": 0.72,
+   "volume": 0.35
+  }
+ ],
+ "total_duration_s": 0
+}

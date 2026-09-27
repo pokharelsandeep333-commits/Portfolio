@@ -18,6 +18,20 @@
         "preview"
       ],
       "port": 4173
+    },
+    {
+      "name": "promo-storyboard",
+      "runtimeExecutable": "python",
+      "runtimeArgs": [
+        "-m",
+        "http.server",
+        "5180",
+        "--bind",
+        "127.0.0.1",
+        "--directory",
+        "promo"
+      ],
+      "port": 5180
     }
   ]
 }

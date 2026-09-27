@@ -1,0 +1,513 @@
+<template>
+  <div data-hf-id="hf-6knw" id="root" data-composition-id="05-resume" data-width="1080" data-height="1350" data-duration="3">
+    <style>
+      #root {
+        position: absolute;
+        inset: 0;
+        width: 1080px;
+        height: 1350px;
+        overflow: hidden;
+        color: #e8edf5;
+        font-family: Inter, sans-serif;
+      }
+      [id="05-resume-ground"],
+      [id="05-resume-stage"],
+      [id="05-resume-callout-layer"] {
+        position: absolute;
+        inset: 0;
+        width: 1080px;
+        height: 1350px;
+        overflow: hidden;
+      }
+      [id="05-resume-ground"] {
+        background: #050e1f;
+      }
+      /* camera wrapper (the one world): origin top-left, transform = translate(T) scale(S),
+         written only by the driver's onUpdate. No will-change: a pre-rasterised layer
+         would upscale blurry when the camera starts at 2.2x. */
+      [id="05-resume-world"] {
+        position: absolute;
+        left: 0;
+        top: 0;
+        width: 1080px;
+        height: 1350px;
+        transform-origin: 0 0;
+      }
+
+      /* browser window — video-direction geometry, identical in frames 2-5 */
+      [id="05-resume-window"] {
+        position: absolute;
+        left: 48px;
+        top: 262px;
+        width: 984px;
+        height: 655px;
+        border-radius: 18px;
+        background: #0a1628;
+        box-shadow: 0 30px 80px rgba(0, 0, 0, 0.55);
+        overflow: hidden;
+      }
+      /* 1px border drawn as an overlay so the 984x615 content viewport stays exact */
+      [id="05-resume-window-border"] {
+        position: absolute;
+        inset: 0;
+        border: 1px solid rgba(255, 255, 255, 0.08);
+        border-radius: 18px;
+        z-index: 3;
+        pointer-events: none;
+      }
+      [id="05-resume-chrome"] {
+        position: absolute;
+        left: 0;
+        top: 0;
+        width: 984px;
+        height: 40px;
+        box-sizing: border-box;
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        padding-left: 20px;
+        border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+        z-index: 2;
+        background: #0a1628;
+      }
+      [class~="05-resume-dot"] {
+        width: 10px;
+        height: 10px;
+        border-radius: 50%;
+        flex: 0 0 10px;
+      }
+      [id="05-resume-url"] {
+        margin-left: 22px;
+        padding: 6px 22px;
+        border-radius: 999px;
+        background: rgba(255, 255, 255, 0.04);
+        color: #8899b4;
+        font-family: Inter, sans-serif;
+        font-weight: 500;
+        font-size: 18px;
+        line-height: 1;
+        white-space: nowrap;
+      }
+      /* content viewport: canvas x 48, y 302, w 984, h 615 (1440x900 capture x 0.6833) */
+      [id="05-resume-viewport"] {
+        position: absolute;
+        left: 0;
+        top: 40px;
+        width: 984px;
+        height: 615px;
+        overflow: hidden;
+        background: #050e1f;
+      }
+      [id="05-resume-shot"] {
+        position: absolute;
+        left: 0;
+        top: 0;
+        width: 984px;
+        height: 615px;
+        display: block;
+      }
+
+      /* the resume paper — landed box x 259, y 259, w 562, h 905 (24/24/52/83.8 cqw) */
+      [id="05-resume-paper"],
+      [id="05-resume-glitch"] {
+        position: absolute;
+        left: 259px;
+        top: 259px;
+        width: 562px;
+        height: 905px;
+      }
+      [id="05-resume-paper"] {
+        overflow: hidden;
+        border-radius: 15px;
+        background: #ffffff;
+        /* hairline paper edge + light drop shadow */
+        box-shadow:
+          0 0 0 1px rgba(255, 255, 255, 0.18),
+          0 32px 86px rgba(0, 0, 0, 0.6);
+        visibility: hidden;
+      }
+      [id="05-resume-paper-img"] {
+        position: absolute;
+        left: 0;
+        top: 0;
+        width: 562px;
+        height: auto;
+        display: block;
+      }
+
+      /* glitch-out layer: seeded horizontal bands, each an RGB-split stack of the paper */
+      [id="05-resume-glitch"] {
+        visibility: hidden;
+      }
+      [class~="05-resume-band"] {
+        position: absolute;
+        left: 0;
+        width: 562px;
+        overflow: hidden;
+        background: #000000;
+        isolation: isolate;
+      }
+      [class~="05-resume-ch"] {
+        position: absolute;
+        left: 0;
+        width: 562px;
+        height: auto;
+        display: block;
+        mix-blend-mode: screen;
+      }
+      [class~="05-resume-ch-r"] {
+        filter: url(#05-resume-fr);
+      }
+      [class~="05-resume-ch-g"] {
+        filter: url(#05-resume-fg);
+      }
+      [class~="05-resume-ch-b"] {
+        filter: url(#05-resume-fb);
+      }
+
+      /* callout slot: one gold pill centred on x 540, box y 162-218 */
+      [id="05-resume-callout-row"] {
+        position: absolute;
+        left: 0;
+        top: 162px;
+        width: 1080px;
+        height: 56px;
+        display: flex;
+        justify-content: center;
+      }
+      [id="05-resume-callout"] {
+        position: relative;
+        height: 56px;
+        padding: 0 26px;
+        border-radius: 999px;
+        background: #ffc72c;
+        color: #050e1f;
+        font-family: Outfit, sans-serif;
+        font-weight: 800;
+        font-size: 26px;
+        line-height: 56px;
+        letter-spacing: 0.01em;
+        white-space: nowrap;
+        overflow: hidden;
+        will-change: transform, opacity;
+      }
+      [id="05-resume-callout-sizer"] {
+        visibility: hidden;
+      }
+      [id="05-resume-callout-live"] {
+        position: absolute;
+        left: 26px;
+        right: 26px;
+        top: 0;
+        bottom: 0;
+        overflow: hidden;
+        white-space: pre;
+        text-align: left;
+      }
+    </style>
+
+    <!-- channel-isolation filters for the RGB split (screen-summed back to the original colours) -->
+    <svg data-hf-id="hf-p8o1" width="0" height="0" style="position: absolute; width: 0; height: 0" aria-hidden="true" focusable="false">
+      <filter data-hf-id="hf-lt1f" id="05-resume-fr" color-interpolation-filters="sRGB">
+        <fecolormatrix data-hf-id="hf-gt7a" type="matrix" values="1 0 0 0 0  0 0 0 0 0  0 0 0 0 0  0 0 0 1 0" />
+      </filter>
+      <filter data-hf-id="hf-k64m" id="05-resume-fg" color-interpolation-filters="sRGB">
+        <fecolormatrix data-hf-id="hf-x6l8" type="matrix" values="0 0 0 0 0  0 1 0 0 0  0 0 0 0 0  0 0 0 1 0" />
+      </filter>
+      <filter data-hf-id="hf-2xub" id="05-resume-fb" color-interpolation-filters="sRGB">
+        <fecolormatrix data-hf-id="hf-wwem" type="matrix" values="0 0 0 0 0  0 0 0 0 0  0 0 1 0 0  0 0 0 1 0" />
+      </filter>
+    </svg>
+
+    <!-- track 0: full-bleed ground -->
+    <div data-hf-id="hf-bzei" id="05-resume-ground" class="clip" data-start="0" data-duration="3" data-track-index="0"></div>
+
+    <!-- track 1: the world (window + paper) inside one camera wrapper -->
+    <div data-hf-id="hf-ajdc" id="05-resume-stage" class="clip" data-start="0" data-duration="3" data-track-index="1">
+      <div data-hf-id="hf-pan4" id="05-resume-world" data-layout-allow-overflow="">
+        <div data-hf-id="hf-3gqp" id="05-resume-window">
+          <div data-hf-id="hf-r1db" id="05-resume-chrome">
+            <span data-hf-id="hf-joxi" class="05-resume-dot" style="background: #ff5f57"></span>
+            <span data-hf-id="hf-kyuy" class="05-resume-dot" style="background: #febc2e"></span>
+            <span data-hf-id="hf-ss8s" class="05-resume-dot" style="background: #28c840"></span>
+            <span data-hf-id="hf-7jlu" id="05-resume-url" data-text="portfolio.sandeeppokharel.com.np">portfolio.sandeeppokharel.com.np</span>
+          </div>
+          <div data-hf-id="hf-vutv" id="05-resume-viewport">
+            <img data-hf-id="hf-ntbl" id="05-resume-shot" src="assets/states/resume-view.png" alt="Live resume modal in the portfolio window">
+          </div>
+          <div data-hf-id="hf-h0z4" id="05-resume-window-border"></div>
+        </div>
+
+        <div data-hf-id="hf-5n2q" id="05-resume-paper" data-layout-allow-overflow="">
+          <img data-hf-id="hf-ugev" id="05-resume-paper-img" src="assets/states/resume-paper.png" alt="The full one-page resume">
+        </div>
+
+        <div data-hf-id="hf-lbjn" id="05-resume-glitch" data-layout-allow-overflow=""></div>
+      </div>
+    </div>
+
+    <!-- track 2: callout pill (scramble-reveal) -->
+    <div data-hf-id="hf-yqfr" id="05-resume-callout-layer" class="clip" data-start="0" data-duration="3" data-track-index="2">
+      <div data-hf-id="hf-p0a4" id="05-resume-callout-row">
+        <div data-hf-id="hf-otk8" id="05-resume-callout" data-callout="" data-text="One-page resume, print-ready">
+          <span data-hf-id="hf-p9cl" id="05-resume-callout-sizer" aria-hidden="true">One-page resume, print-ready</span>
+          <span data-hf-id="hf-db84" id="05-resume-callout-live" aria-hidden="true">One-page resume, print-ready</span>
+        </div>
+      </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/gsap@3.14.2/dist/gsap.min.js"></script>
+    <script>
+      (function () {
+        "use strict";
+
+        var world = document.getElementById("05-resume-world");
+        var win = document.getElementById("05-resume-window");
+        var paper = document.getElementById("05-resume-paper");
+        var glitch = document.getElementById("05-resume-glitch");
+        var pill = document.getElementById("05-resume-callout");
+        var live = document.getElementById("05-resume-callout-live");
+
+        var DURATION = 3;
+        var FPS = 30;
+        var PAPER_SRC = "assets/states/resume-paper.png";
+        var PAPER_W = 562;
+        var PAPER_H = 905;
+
+        // ---- Scene 1 (0.0-0.6s): window static at the handoff; callout scrambles in
+        var CALLOUT_AT = 0.0;
+        var ARRIVAL = 0.4;
+        var REVEAL = 0.55;
+        var TARGET = pill.getAttribute("data-text");
+
+        // ---- Scene 2 (0.6-1.9s): cut tight on the paper header, one decelerating pull-back
+        // World transform: canvas = T + S * p (origin 0 0). The header block centre sits at
+        // H = (540, 319) on the landed paper; the tight open puts it at C = (540, 500) at
+        // S0 = 2.2 (header lines span ~880 px; raster stays under its 1640 px source width).
+        var CUT = 0.6;
+        var PULL = 1.3;
+        var S0 = 2.2;
+        var HX = 540, HY = 319, CX = 540, CY = 500;
+        var T0X = CX - S0 * HX;
+        var T0Y = CY - S0 * HY;
+        var pullEase = gsap.parseEase("power3.out");
+        var FOCUS = 0.18; // blur-to-sharp resolve on the cut
+        var FOCUS_BLUR = 5;
+
+        // window dims behind the paper, then drops away before the glitch
+        var DIM_AT = 0.6, DIM_DUR = 0.8, DIM_TO = 0.35;
+        var DROP_AT = 1.95, DROP_DUR = 0.4;
+
+        // ---- Scene 3 (1.9-2.35s): held read of the full page, camera locked
+        // ---- Scene 4 (2.35-2.65s): glitch-out — seeded RGB split + slice displacement
+        var GLITCH_AT = 2.35;
+        var STEP = 0.05;
+        var STEPS = 6; // ends 2.65
+        var GLITCH_END = GLITCH_AT + STEP * STEPS;
+
+        // Seeded PRNG — mulberry32, seed 20260927 (no Math.random).
+        function mulberry32(a) {
+          return function () {
+            a |= 0;
+            a = (a + 0x6d2b79f5) | 0;
+            var t = Math.imul(a ^ (a >>> 15), 1 | a);
+            t = (t + Math.imul(t ^ (t >>> 7), 61 | t)) ^ t;
+            return ((t ^ (t >>> 14)) >>> 0) / 4294967296;
+          };
+        }
+        var rand = mulberry32(20260927);
+
+        // ---- Scramble frame table (built once, synchronously) -------------------
+        var frameTable = (function () {
+          var lower = "abcdeghknopqrsuvxyz#%&";
+          var upper = "ABCDEGHKNOPRSUVXYZ#%&";
+          var chars = Array.from(TARGET);
+          var lastFrame = Math.max(1, Math.round(REVEAL * FPS));
+          var firstLock = Math.round(0.1 * FPS);
+          var lockFrames = chars.map(function (ch, i) {
+            if (/[\s,\-]/.test(ch)) return 0;
+            var pos = chars.length <= 1 ? 1 : i / (chars.length - 1);
+            return Math.round(firstLock + pos * (lastFrame - firstLock));
+          });
+          var rows = [];
+          for (var f = 0; f <= lastFrame; f += 1) {
+            rows.push(
+              chars
+                .map(function (ch, i) {
+                  if (f >= lockFrames[i]) return ch;
+                  var set = ch === ch.toUpperCase() && ch !== ch.toLowerCase() ? upper : lower;
+                  var g = set.charAt(Math.floor(rand() * set.length));
+                  if (g === ch) g = set.charAt((set.indexOf(g) + 1) % set.length);
+                  return g;
+                })
+                .join(""),
+            );
+          }
+          rows[rows.length - 1] = TARGET;
+          return rows;
+        })();
+
+        // ---- Glitch tables (built once, synchronously) ---------------------------
+        // Seeded band heights summing to the paper height.
+        var BANDS = 14;
+        var bandH = [];
+        (function () {
+          var w = [], sum = 0, i;
+          for (i = 0; i < BANDS; i += 1) { w.push(0.35 + rand()); sum += w[i]; }
+          var acc = 0;
+          for (i = 0; i < BANDS; i += 1) {
+            var h = i === BANDS - 1 ? PAPER_H - acc : Math.round((PAPER_H * w[i]) / sum);
+            bandH.push(h);
+            acc += h;
+          }
+        })();
+        // Per step: RGB split distance and per-band x displacement.
+        var SPLIT = [3, 6, 10, 15, 21, 28];
+        var INTENSITY = [0.35, 0.55, 0.75, 0.9, 1, 1];
+        var bandDX = [];
+        for (var s = 0; s < STEPS; s += 1) {
+          var row = [];
+          for (var b = 0; b < BANDS; b += 1) {
+            var active = rand() < 0.5 + 0.08 * s;
+            var mag = (rand() * 2 - 1) * 72 * INTENSITY[s];
+            row.push(active ? Math.round(mag) : 0);
+          }
+          bandDX.push(row);
+        }
+        // Each band vanishes at a seeded step 3..6 (6 = the 2.65s end) and never returns (brightness only
+        // falls — one decaying event, no strobing, no white flash).
+        var bandKill = [];
+        for (var k = 0; k < BANDS; k += 1) bandKill.push(3 + Math.floor(rand() * 4));
+
+        // Build the band DOM.
+        var bandEls = [];
+        var chEls = [];
+        (function () {
+          var top = 0;
+          for (var i = 0; i < BANDS; i += 1) {
+            var band = document.createElement("div");
+            band.className = "05-resume-band";
+            band.setAttribute("data-layout-allow-overflow", "");
+            band.style.top = top + "px";
+            band.style.height = bandH[i] + "px";
+            var trio = [];
+            ["r", "g", "b"].forEach(function (c) {
+              var img = document.createElement("img");
+              img.className = "05-resume-ch 05-resume-ch-" + c;
+              img.src = PAPER_SRC;
+              img.alt = "";
+              img.style.top = -top + "px";
+              band.appendChild(img);
+              trio.push(img);
+            });
+            glitch.appendChild(band);
+            bandEls.push(band);
+            chEls.push(trio);
+            top += bandH[i];
+          }
+        })();
+
+        // ---- Pure function of time: camera, focus, paper/glitch state, scramble ----
+        var lastRow = -1;
+        var lastStep = -2;
+        function render(t) {
+          // scramble text
+          var f = Math.floor((t - CALLOUT_AT) * FPS + 1e-6);
+          f = Math.max(0, Math.min(frameTable.length - 1, f));
+          if (f !== lastRow) {
+            live.textContent = frameTable[f];
+            lastRow = f;
+          }
+
+          // camera — the one writer of world.style.transform
+          var sc = 1, tx = 0, ty = 0;
+          if (t >= CUT) {
+            var p = pullEase(Math.min(1, (t - CUT) / PULL));
+            sc = S0 + (1 - S0) * p;
+            tx = T0X * (1 - p);
+            ty = T0Y * (1 - p);
+          }
+          world.style.transform = "translate(" + tx.toFixed(3) + "px, " + ty.toFixed(3) + "px) scale(" + sc.toFixed(5) + ")";
+
+          // paper: hidden before the cut, blur-to-sharp resolve on it, swapped for the
+          // glitch layer during the glitch-out
+          var paperOn = t >= CUT && t < GLITCH_AT;
+          paper.style.visibility = paperOn ? "visible" : "hidden";
+          var blur = t >= CUT && t < CUT + FOCUS ? FOCUS_BLUR * (1 - (t - CUT) / FOCUS) : 0;
+          paper.style.filter = blur > 0.01 ? "blur(" + blur.toFixed(2) + "px)" : "none";
+
+          var step = t >= GLITCH_AT && t < GLITCH_END ? Math.min(STEPS - 1, Math.floor((t - GLITCH_AT) / STEP + 1e-6)) : -1;
+          if (step !== lastStep) {
+            glitch.style.visibility = step >= 0 ? "visible" : "hidden";
+            if (step >= 0) {
+              var d = SPLIT[step];
+              for (var i = 0; i < BANDS; i += 1) {
+                var alive = step < bandKill[i];
+                bandEls[i].style.visibility = alive ? "visible" : "hidden";
+                bandEls[i].style.transform = "translateX(" + bandDX[step][i] + "px)";
+                chEls[i][0].style.transform = "translateX(" + -d + "px)";
+                chEls[i][1].style.transform = "translateX(0px)";
+                chEls[i][2].style.transform = "translateX(" + d + "px)";
+              }
+            }
+            lastStep = step;
+          }
+        }
+
+        var tl = gsap.timeline({ paused: true });
+
+        // Driver: time -> render(t). Seek-safe (pure function of t), spans the frame.
+        var drv = { t: 0 };
+        tl.fromTo(
+          drv,
+          { t: 0 },
+          {
+            t: DURATION,
+            duration: DURATION,
+            ease: "none",
+            onUpdate: function () {
+              render(drv.t);
+            },
+          },
+          0,
+        );
+
+        // Scene 1 — callout slides in from the left, text locks left to right.
+        tl.fromTo(
+          pill,
+          { x: -60, opacity: 0 },
+          { x: 0, opacity: 1, duration: ARRIVAL, ease: "power3.out" },
+          CALLOUT_AT,
+        );
+
+        // Scene 2 — the window dims behind the rising paper...
+        tl.fromTo(
+          win,
+          { opacity: 1 },
+          { opacity: DIM_TO, duration: DIM_DUR, ease: "power2.out" },
+          DIM_AT,
+        );
+        // ...then drops away before the glitch-out (packet: the window exits in this frame).
+        tl.fromTo(
+          win,
+          { opacity: DIM_TO, y: 0 },
+          { opacity: 0, y: 70, duration: DROP_DUR, ease: "power2.in", immediateRender: false },
+          DROP_AT,
+        );
+
+        // Scene 4 — the callout fades out as the paper glitches away.
+        tl.fromTo(
+          pill,
+          { opacity: 1 },
+          { opacity: 0, duration: 0.2, ease: "power2.in", immediateRender: false },
+          GLITCH_AT,
+        );
+
+        render(0);
+
+        window.__timelines = window.__timelines || {};
+        window.__timelines["05-resume"] = tl;
+      })();
+    </script>
+  </div>
+</template>

@@ -1,0 +1,458 @@
+<template>
+  <div data-hf-id="hf-eyvi" id="root" data-composition-id="04-chat" data-width="1080" data-height="1350" data-duration="5">
+    <style>
+      #root {
+        position: absolute;
+        inset: 0;
+        width: 1080px;
+        height: 1350px;
+        overflow: hidden;
+        color: #e8edf5;
+        font-family: Inter, sans-serif;
+      }
+      [id="04-chat-ground"],
+      [id="04-chat-stage"],
+      [id="04-chat-dim-layer"],
+      [id="04-chat-panel-layer"],
+      [id="04-chat-callout-layer"] {
+        position: absolute;
+        inset: 0;
+        width: 1080px;
+        height: 1350px;
+        pointer-events: none;
+      }
+      [id="04-chat-ground"] {
+        background: #050e1f;
+      }
+
+      /* browser window: video-direction geometry, identical in frames 2-5 (static all frame) */
+      [id="04-chat-window"] {
+        position: absolute;
+        left: 48px;
+        top: 262px;
+        width: 984px;
+        height: 655px;
+        border-radius: 18px;
+        background: #0a1628;
+        box-shadow: 0 30px 80px rgba(0, 0, 0, 0.55);
+        overflow: hidden;
+      }
+      /* 1px border as an overlay so the 984x615 content viewport stays exact */
+      [id="04-chat-window-border"] {
+        position: absolute;
+        inset: 0;
+        border: 1px solid rgba(255, 255, 255, 0.08);
+        border-radius: 18px;
+        z-index: 3;
+        pointer-events: none;
+      }
+      [id="04-chat-chrome"] {
+        position: absolute;
+        left: 0;
+        top: 0;
+        width: 984px;
+        height: 40px;
+        box-sizing: border-box;
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        padding-left: 20px;
+        border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+        z-index: 2;
+        background: #0a1628;
+      }
+      [data-f04="dot"] {
+        width: 10px;
+        height: 10px;
+        border-radius: 50%;
+        flex: 0 0 10px;
+      }
+      [id="04-chat-url"] {
+        margin-left: 22px;
+        padding: 6px 22px;
+        border-radius: 999px;
+        background: rgba(255, 255, 255, 0.04);
+        color: #8899b4;
+        font-family: Inter, sans-serif;
+        font-weight: 500;
+        font-size: 18px;
+        line-height: 1;
+        white-space: nowrap;
+      }
+      /* content viewport: canvas x 48, y 302, w 984, h 615 (1440x900 captures at 0.6833) */
+      [id="04-chat-viewport"] {
+        position: absolute;
+        left: 0;
+        top: 40px;
+        width: 984px;
+        height: 615px;
+        overflow: hidden;
+        background: #050e1f;
+      }
+      [id="04-chat-page-projects"],
+      [id="04-chat-page-open"] {
+        position: absolute;
+        left: 0;
+        top: 0;
+        width: 984px;
+        height: 615px;
+        display: block;
+        will-change: transform, opacity;
+      }
+      /* the page as it sits beside the open drawer: left 1120 of 1440 CSS px only */
+      [id="04-chat-page-open"] {
+        clip-path: inset(0px 218.667px 0px 0px);
+      }
+      /* drawer slot: CSS x 1120-1440 of the capture = viewport x 765.33, w 218.67 */
+      [id="04-chat-slot"] {
+        position: absolute;
+        left: 765.333px;
+        top: 0;
+        width: 218.667px;
+        height: 615px;
+        overflow: hidden;
+      }
+      [id="04-chat-slider"] {
+        position: absolute;
+        inset: 0;
+        will-change: transform;
+      }
+
+      /* a drawer sheet: the drawer in capture image pixels (640 x 1800), scaled by its host */
+      [data-f04="sheet"] {
+        position: absolute;
+        left: 0;
+        top: 0;
+        width: 640px;
+        height: 1800px;
+        overflow: hidden;
+        transform-origin: 0 0;
+      }
+      [id="04-chat-slot-sheet"] {
+        transform: scale(0.341667);
+      }
+      /* pop-out crop: image y 360-1480 at 519 px wide (scale 0.810937) */
+      [id="04-chat-panel-sheet"] {
+        transform: translate(0px, -291.937px) scale(0.810937);
+      }
+      [data-f04="sheet"] img {
+        position: absolute;
+        left: -2240px;
+        top: 0;
+        width: 2880px;
+        height: 1800px;
+        display: block;
+        max-width: none;
+      }
+      /* clears the starter-question chips at submit (drawer ground colour, sampled #050E1F) */
+      [data-chat-layer="clear"] {
+        position: absolute;
+        left: 12px;
+        top: 392px;
+        width: 620px;
+        height: 390px;
+        background: #050e1f;
+      }
+
+      [id="04-chat-dim"] {
+        position: absolute;
+        inset: 0;
+        background: rgba(5, 14, 31, 0.55);
+      }
+
+      /* the pop-out panel at its locked geometry: x 280, y 265, w 519, h 909 */
+      [id="04-chat-panel"] {
+        position: absolute;
+        left: 280px;
+        top: 265px;
+        width: 519px;
+        height: 909px;
+        overflow: hidden;
+        background: #0d1526;
+        will-change: transform, opacity;
+      }
+
+      /* callout slot: one gold pill centred on x 540, box y 162-218 */
+      [id="04-chat-callout-row"] {
+        position: absolute;
+        left: 0;
+        top: 162px;
+        width: 1080px;
+        height: 56px;
+        display: flex;
+        justify-content: center;
+      }
+      [id="04-chat-callout"] {
+        position: relative;
+        height: 56px;
+        padding: 0 26px;
+        border-radius: 999px;
+        background: #ffc72c;
+        color: #050e1f;
+        font-family: Outfit, sans-serif;
+        font-weight: 800;
+        font-size: 26px;
+        line-height: 56px;
+        letter-spacing: 0.01em;
+        white-space: nowrap;
+        overflow: hidden;
+        will-change: transform, opacity;
+      }
+      /* sizes the pill to the final string without adding DOM text */
+      [id="04-chat-callout"]::before {
+        content: attr(data-text);
+        visibility: hidden;
+        white-space: pre;
+      }
+      [id="04-chat-callout-live"] {
+        position: absolute;
+        left: 26px;
+        right: 26px;
+        top: 0;
+        bottom: 0;
+        overflow: hidden;
+        white-space: pre;
+        text-align: left;
+      }
+    </style>
+
+    <!-- track 0: full-bleed ground -->
+    <div data-hf-id="hf-a1wc" id="04-chat-ground" class="clip" data-start="0" data-duration="5" data-track-index="0"></div>
+
+    <!-- track 1: the browser window (static at both cuts) -->
+    <div data-hf-id="hf-3sq2" id="04-chat-stage" class="clip" data-start="0" data-duration="5" data-track-index="1">
+      <div data-hf-id="hf-5d35" id="04-chat-window">
+        <div data-hf-id="hf-ovqn" id="04-chat-chrome">
+          <span data-hf-id="hf-58np" data-f04="dot" style="background: #ff5f57"></span>
+          <span data-hf-id="hf-fgxd" data-f04="dot" style="background: #febc2e"></span>
+          <span data-hf-id="hf-qogj" data-f04="dot" style="background: #28c840"></span>
+          <span data-hf-id="hf-atyg" id="04-chat-url" data-callout="">portfolio.sandeeppokharel.com.np</span>
+        </div>
+        <div data-hf-id="hf-epxv" id="04-chat-viewport">
+          <img data-hf-id="hf-asjo" id="04-chat-page-projects" src="assets/states/projects-view.png" alt="">
+          <img data-hf-id="hf-k4x2" id="04-chat-page-open" src="assets/states/chat-empty.png" alt="">
+          <div data-hf-id="hf-2vh1" id="04-chat-slot">
+            <div data-hf-id="hf-tg7q" id="04-chat-slider">
+              <div data-hf-id="hf-yflk" id="04-chat-slot-sheet" data-f04="sheet">
+                <img data-hf-id="hf-2fcl" data-chat-layer="empty" src="assets/states/chat-empty.png" alt="">
+                <div data-hf-id="hf-ywfg" data-chat-layer="clear"></div>
+                <img data-hf-id="hf-4le4" data-chat-layer="q" src="assets/states/chat-answer.png" alt="">
+                <img data-hf-id="hf-wp5o" data-chat-layer="a" src="assets/states/chat-answer.png" alt="">
+              </div>
+            </div>
+          </div>
+        </div>
+        <div data-hf-id="hf-kdgw" id="04-chat-window-border"></div>
+      </div>
+    </div>
+
+    <!-- track 2: dim over the window during the pop-out -->
+    <div data-hf-id="hf-r0d3" id="04-chat-dim-layer" class="clip" data-start="0" data-duration="5" data-track-index="2">
+      <div data-hf-id="hf-2rzl" id="04-chat-dim"></div>
+    </div>
+
+    <!-- track 3: the pop-out panel (the same drawer sheet, enlarged ~1.6x per storyboard) -->
+    <div data-hf-id="hf-bh64" id="04-chat-panel-layer" class="clip" data-start="0" data-duration="5" data-track-index="3">
+      <div data-hf-id="hf-prd5" id="04-chat-panel">
+        <div data-hf-id="hf-t8xe" id="04-chat-panel-sheet" data-f04="sheet">
+          <img data-hf-id="hf-jotl" data-chat-layer="empty" src="assets/states/chat-empty.png" alt="">
+          <div data-hf-id="hf-obb8" data-chat-layer="clear"></div>
+          <img data-hf-id="hf-beck" data-chat-layer="q" src="assets/states/chat-answer.png" alt="">
+          <img data-hf-id="hf-4k0k" data-chat-layer="a" src="assets/states/chat-answer.png" alt="">
+        </div>
+      </div>
+    </div>
+
+    <!-- track 4: callout pill -->
+    <div data-hf-id="hf-mxxv" id="04-chat-callout-layer" class="clip" data-start="0" data-duration="5" data-track-index="4">
+      <div data-hf-id="hf-j0do" id="04-chat-callout-row">
+        <div data-hf-id="hf-5gz7" id="04-chat-callout" data-callout="" data-text="AI assistant built on the site's own data"><span data-hf-id="hf-3eub" id="04-chat-callout-live" data-text="AI assistant built on the site's own data"></span></div>
+      </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/gsap@3.14.2/dist/gsap.min.js"></script>
+    <script>
+      (function () {
+        "use strict";
+
+        var root = document.querySelector('[data-composition-id="04-chat"]');
+        function byId(id) {
+          return root.querySelector('[id="' + id + '"]');
+        }
+
+        var pageProjects = byId("04-chat-page-projects");
+        var pageOpen = byId("04-chat-page-open");
+        var slider = byId("04-chat-slider");
+        var dim = byId("04-chat-dim");
+        var panel = byId("04-chat-panel");
+        var pill = byId("04-chat-callout");
+        var live = byId("04-chat-callout-live");
+        var clears = root.querySelectorAll('[data-chat-layer="clear"]');
+        var qLayers = root.querySelectorAll('[data-chat-layer="q"]');
+        var aLayers = root.querySelectorAll('[data-chat-layer="a"]');
+
+        // ---- measured geometry (canvas px) ----
+        // Opening the drawer glides the page 160 CSS px left and 40 CSS px down
+        // (measured on the captures: the Projects heading moves 320/80 image px).
+        var DX = -109.333;
+        var DY = 27.333;
+        var SLOT_W = 218.667;
+        // Panel resting over its source region in the window (CSS x 1120, y 180
+        // -> canvas x 813.33, y 425; 218.67 / 519 = 0.421323 uniform scale).
+        var PANEL_AT_SLOT = { x: 533.333, y: 160, scale: 0.421323 };
+        var RING_OFF = "0px 0px 0px 1.3px rgba(255,199,44,0), 0px 0px 0px 0px rgba(0,0,0,0)";
+        var RING_ON = "0px 0px 0px 1.3px rgba(255,199,44,0.45), 0px 32px 86px 0px rgba(0,0,0,0.7)";
+
+        // Clip insets in drawer image px (sheet 640 x 1800).
+        // Question bubble band: y 380-505. Answer bubble groups end at y 884,
+        // 1084, 1286 (between measured text rows), then the rest of the drawer.
+        function qClip(right) {
+          return "inset(380px " + right + "px 1295px 0px)";
+        }
+        function aClip(bottomY) {
+          return "inset(505px 0px " + (1800 - bottomY) + "px 0px)";
+        }
+
+        // ---- explicit t=0 state ----
+        gsap.set(pageProjects, { x: 0, y: 0, opacity: 1 });
+        gsap.set(pageOpen, { x: -DX, y: -DY, opacity: 0 });
+        gsap.set(slider, { x: SLOT_W });
+        gsap.set(dim, { opacity: 0 });
+        gsap.set(panel, {
+          x: PANEL_AT_SLOT.x,
+          y: PANEL_AT_SLOT.y,
+          scale: PANEL_AT_SLOT.scale,
+          transformOrigin: "0 0",
+          opacity: 0,
+          borderRadius: 0,
+          boxShadow: RING_OFF,
+        });
+        gsap.set(clears, { opacity: 0 });
+        gsap.set(qLayers, { clipPath: qClip(640) });
+        gsap.set(aLayers, { clipPath: aClip(505) });
+        gsap.set(pill, { opacity: 0, x: -43.2 });
+
+        // ---- callout scramble table (seeded mulberry32 20260927, built once) ----
+        var FINAL = pill.getAttribute("data-text");
+        var FPS = 30;
+        var CALLOUT_START = 0.62;
+        var chars = Array.from(FINAL);
+        var rows = (function () {
+          var a = 20260927 >>> 0;
+          function rand() {
+            a = (a + 0x6d2b79f5) >>> 0;
+            var t = a;
+            t = Math.imul(t ^ (t >>> 15), t | 1);
+            t ^= t + Math.imul(t ^ (t >>> 7), t | 61);
+            return ((t ^ (t >>> 14)) >>> 0) / 4294967296;
+          }
+          var glyphs = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
+          var firstLock = 3;
+          var lastLock = 21;
+          var lockAt = chars.map(function (c, i) {
+            if (/\s/.test(c)) return 0;
+            return Math.round(firstLock + (i / Math.max(1, chars.length - 1)) * (lastLock - firstLock));
+          });
+          var out = [];
+          for (var f = 0; f <= lastLock; f += 1) {
+            out.push(
+              chars
+                .map(function (c, i) {
+                  if (/\s/.test(c) || f >= lockAt[i]) return c;
+                  var g = glyphs.charAt(Math.floor(rand() * glyphs.length));
+                  return g === c ? glyphs.charAt((glyphs.indexOf(g) + 1) % glyphs.length) : g;
+                })
+                .join("")
+            );
+          }
+          out[out.length - 1] = FINAL;
+          return out;
+        })();
+        live.textContent = rows[0];
+
+        var tl = gsap.timeline({ paused: true });
+
+        // Scene 1 (0.0-0.6): the drawer slides in from the right with the site's
+        // open curve (cubic-bezier(0.16,1,0.3,1) ~ expo.out); the page glides aside.
+        tl.fromTo(slider, { x: SLOT_W }, { x: 0, duration: 0.55, ease: "expo.out", immediateRender: false }, 0.05);
+        tl.fromTo(pageProjects, { x: 0, y: 0 }, { x: DX, y: DY, duration: 0.55, ease: "expo.out", immediateRender: false }, 0.05);
+        tl.fromTo(pageOpen, { x: -DX, y: -DY }, { x: 0, y: 0, duration: 0.55, ease: "expo.out", immediateRender: false }, 0.05);
+        tl.fromTo(pageOpen, { opacity: 0 }, { opacity: 1, duration: 0.4, ease: "power1.inOut", immediateRender: false }, 0.08);
+
+        // Scene 2 (0.6-1.3): card-morph-anchor. The panel appears pixel-identical
+        // over the drawer's crop region, then lifts to the locked pop-out geometry
+        // on one tween (uniform scale + radius + ring/shadow); the window dims.
+        tl.set(panel, { opacity: 1 }, 0.6);
+        tl.fromTo(
+          panel,
+          { x: PANEL_AT_SLOT.x, y: PANEL_AT_SLOT.y, scale: PANEL_AT_SLOT.scale, borderRadius: 0, boxShadow: RING_OFF },
+          { x: 0, y: 0, scale: 1, borderRadius: 15, boxShadow: RING_ON, duration: 0.7, ease: "power2.inOut", immediateRender: false },
+          0.6
+        );
+        tl.fromTo(dim, { opacity: 0 }, { opacity: 1, duration: 0.6, ease: "power2.inOut", immediateRender: false }, 0.6);
+
+        // Callout: scramble-reveal (slide from the left, glyphs lock left to right).
+        tl.fromTo(pill, { opacity: 0 }, { opacity: 1, duration: 0.3, ease: "power2.out", immediateRender: false }, CALLOUT_START);
+        tl.fromTo(pill, { x: -43.2 }, { x: 0, duration: 0.35, ease: "power3.out", immediateRender: false }, CALLOUT_START);
+        rows.forEach(function (row, f) {
+          tl.set(live, { textContent: row }, CALLOUT_START + f / FPS);
+        });
+
+        // Scene 3 (1.3-1.95): submit. The starter chips clear, then the real gold
+        // question bubble is unmasked left to right in stepped increments (typed look).
+        tl.fromTo(clears, { opacity: 0 }, { opacity: 1, duration: 0.14, ease: "power1.out", immediateRender: false }, 1.3);
+        tl.fromTo(
+          qLayers,
+          { clipPath: qClip(640) },
+          { clipPath: qClip(0), duration: 0.6, ease: "steps(26)", immediateRender: false },
+          1.36
+        );
+
+        // Scene 4 (2.0-3.6): the real answer unmasks top to bottom, one bullet group per step.
+        var steps = [
+          { from: 505, to: 884, at: 2.0, dur: 0.38 },
+          { from: 884, to: 1084, at: 2.44, dur: 0.32 },
+          { from: 1084, to: 1286, at: 2.86, dur: 0.32 },
+          { from: 1286, to: 1800, at: 3.26, dur: 0.34 },
+        ];
+        steps.forEach(function (s) {
+          tl.fromTo(
+            aLayers,
+            { clipPath: aClip(s.from) },
+            { clipPath: aClip(s.to), duration: s.dur, ease: "power1.inOut", immediateRender: false },
+            s.at
+          );
+        });
+
+        // Scene 5 (3.6-4.15): held read of the full answer.
+
+        // Scene 6 (4.15-4.6): the panel settles back onto the drawer slot (which has
+        // mirrored every reveal) and the dim lifts; all done by duration - 0.4 s.
+        tl.fromTo(
+          panel,
+          { x: 0, y: 0, scale: 1, borderRadius: 15, boxShadow: RING_ON },
+          {
+            x: PANEL_AT_SLOT.x,
+            y: PANEL_AT_SLOT.y,
+            scale: PANEL_AT_SLOT.scale,
+            borderRadius: 0,
+            boxShadow: RING_OFF,
+            duration: 0.42,
+            ease: "power2.inOut",
+            immediateRender: false,
+          },
+          4.15
+        );
+        tl.fromTo(dim, { opacity: 1 }, { opacity: 0, duration: 0.42, ease: "power2.inOut", immediateRender: false }, 4.15);
+        tl.set(panel, { opacity: 0 }, 4.57);
+
+        // 4.6-5.0: window static at the handoff state (x 48, y 262, w 984, h 655).
+        tl.set({}, {}, 5);
+
+        tl.seek(0);
+        window.__timelines = window.__timelines || {};
+        window.__timelines["04-chat"] = tl;
+      })();
+    </script>
+  </div>
+</template>

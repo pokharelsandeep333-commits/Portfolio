@@ -1,0 +1,32 @@
+{
+  "lines": [
+    {
+      "id": "01",
+      "sfx": [
+        "electric-zap"
+      ]
+    },
+    {
+      "id": "03",
+      "sfx": [
+        "whoosh-short"
+      ]
+    },
+    {
+      "id": "04",
+      "sfx": [
+        "click-soft"
+      ]
+    },
+    {
+      "id": "06",
+      "sfx": [
+        "glitch-2",
+        "electric-zap"
+      ]
+    }
+  ],
+  "bgm": {
+    "mode": "none"
+  }
+}
