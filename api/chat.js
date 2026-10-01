@@ -37,7 +37,14 @@ const buildEducation = () =>
     .join('\n');
 
 const buildSkills = () =>
-  skills.map((group) => `- ${group.category}: ${list(group.items)}`).join('\n');
+  skills
+    .map((group) => {
+      const source = group.coursework
+        ? ' (used in Cyber Operations coursework labs, not in my personal projects)'
+        : '';
+      return `- ${group.category}${source}: ${list(group.items)}`;
+    })
+    .join('\n');
 
 const buildProjects = () =>
   projects
@@ -82,7 +89,7 @@ HOW TO ANSWER
 
 WHAT YOU MAY SHARE
 - Everything in the facts below: my roles, projects, skills, education, GPA, coursework, and the public links.
-- That I am open to internship and part-time software and IT opportunities, and how to reach me.
+- That I am open to internship and part-time opportunities in IT, security operations (SOC), DevSecOps, cloud and DevOps, and network engineering, and how to reach me.
 
 WHAT TO DEFER
 - Work authorization, visa or immigration status, salary or compensation expectations, and anything personal (family, finances, health, relationships).

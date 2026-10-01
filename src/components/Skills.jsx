@@ -60,7 +60,10 @@ export default function Skills() {
           className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5"
         >
           {skills.map((group) => (
-            <div key={group.category} className="glass-card p-6 sm:p-8">
+            <div
+              key={group.category}
+              className={`glass-card p-6 sm:p-8 ${group.wide ? 'sm:col-span-2 lg:col-span-3' : ''}`}
+            >
               {/* Icon + category header */}
               <div className="flex items-center gap-3 mb-5">
                 <span className="text-2xl" aria-hidden="true">{group.icon}</span>
