@@ -168,7 +168,7 @@ export default function Hero({ onToggleTerminal }) {
 
       <div ref={contentRef} className="hero-content flex flex-col items-start text-left">
         <p className="section-label justify-start mb-3 sm:mb-4">
-          IT Support Desk · CS @ DSU · Madison, SD
+          IT Support Desk · Cyber Ops @ DSU · Madison, SD
         </p>
 
         <h1 className="hero-name font-outfit font-black text-white leading-none mb-2">
@@ -186,7 +186,7 @@ export default function Hero({ onToggleTerminal }) {
         </h1>
 
         <p className="hero-tagline font-inter text-white/65 mt-4 mb-8 sm:mt-5 sm:mb-10 max-w-xl leading-relaxed">
-          IT Support Technician by day, building web apps and cloud infrastructure by night.
+          IT Support Technician by day, building secure web apps and cloud infrastructure by night.
         </p>
 
         <div className="hero-ctas flex flex-wrap gap-3 sm:gap-4 mt-2 justify-start">

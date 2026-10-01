@@ -3,9 +3,21 @@
 //  Sourced from actual project usage across Molecular
 //  Zettelkasten, SandeepCloud, DQA Suite, LLM-Wiki, and
 //  Portfolio. No "learning" labels — these are all used skills.
+//  Exception: "Security & Networking" comes from Cyber Operations
+//  coursework labs, not personal projects. `coursework` makes the
+//  chatbot say so; `wide` renders it full-width so the 3-column
+//  grid has no orphan card.
 // ============================================================
 
 export const skills = [
+  {
+    category: "Security & Networking",
+    icon: "🛡",
+    wide: true,
+    coursework: true,
+    items: ["Kali Linux", "Wireshark", "Nmap", "Cisco Packet Tracer", "Metasploit", "Burp Suite", "Splunk", "Suricata", "Zeek", "Cowrie"],
+    highlight: ["Kali Linux", "Wireshark", "Nmap", "Cowrie"],
+  },
   {
     category: "Languages",
     icon: "⌨",
@@ -45,13 +57,18 @@ export const skills = [
 ];
 
 // ============================================================
-//  DATA — Resume-only Skills (6 strict 1-line categories)
+//  DATA — Resume-only Skills (7 strict 1-line categories)
 //  Used exclusively by ResumeView.jsx.
 // ============================================================
 export const resumeSkills = [
   {
     category: "Languages",
     items: ["JavaScript / TypeScript", "PowerShell", "Python", "Java", "C/C++", "SQL", "HTML / CSS"],
+  },
+  {
+    category: "Security",
+    // Short names keep this row on one line; the web card spells them out.
+    items: ["Kali", "Wireshark", "Nmap", "Packet Tracer", "Metasploit", "Burp Suite", "Splunk", "Suricata", "Cowrie"],
   },
   {
     category: "Tools",
@@ -78,21 +95,21 @@ export const resumeSkills = [
 export const about = {
   name: "Sandeep Pokharel",
   title: "IT Support Desk Technician",
-  subtitle: "Computer Science · Dakota State University",
+  subtitle: "Cyber Operations · Dakota State University",
   bio: [
-    "Computer Science sophomore at Dakota State University, originally from Kathmandu, Nepal. I like building things that work and figuring out why things break.",
+    "Cyber Operations sophomore at Dakota State University, originally from Kathmandu, Nepal. I like building things that work and figuring out why things break.",
     "My day job is IT Support at DSU \u2014 deploying hardware, troubleshooting networks, managing Intune enrollment, and making sure students and faculty can actually get work done. I also run the live broadcasts for DSU athletics and esports — switching cameras, mixing audio, and keeping the stream up while the game is happening. It's hands-on, fast-paced, and I learn something new every shift.",
     "After hours, I build my own infrastructure. Self-hosted cloud storage on AWS, an AI platform that talks to my personal notes, automation tools for the helpdesk \u2014 all containerized, all deployed on servers I manage. The projects section below has the details.",
   ],
   details: [
-    { label: "Education", val: "B.S. Computer Science", sub: "Dakota State University · Fall 2025 to Present" },
+    { label: "Education", val: "B.S. Cyber Operations", sub: "Dakota State University · Fall 2025 to Present" },
     { label: "Current Role", val: "IT Support Desk Technician", sub: "DSU Information Technology Services · May 2026 to Present" },
     { label: "Also At DSU", val: "Multimedia Streaming Technician", sub: "DSU Information Technology Services · August 2026 to Present" },
     { label: "Location", val: "Madison, South Dakota", sub: "Originally from Kathmandu, Nepal" },
     { label: "Languages", val: "English · Nepali · Hindi", sub: "Trilingual" },
-    { label: "Interests", val: "Web Development · Cloud · AI", sub: "Building and shipping personal projects" },
+    { label: "Interests", val: "DevOps · Cloud · DevSecOps · SOC · AI · Network Engineering", sub: "Career focus areas" },
   ],
-  tags: ["Problem Solver", "IT Support", "Self-Taught Builder", "Cloud Enthusiast", "Fast Learner", "Cross-Cultural Communicator"],
+  tags: ["Problem Solver", "IT Support", "Security-Minded", "Self-Taught Builder", "Cloud Enthusiast", "Fast Learner", "Cross-Cultural Communicator"],
   contact: {
     email: "pokharelsandeep333@gmail.com",
     linkedin: "https://www.linkedin.com/in/sandeeppokharel333",
@@ -151,13 +168,13 @@ export const experience = [
 // ============================================================
 export const education = [
   {
-    degree: "B.S. Computer Science",
+    degree: "B.S. Cyber Operations",
     school: "Dakota State University",
     period: "Fall 2025 to Present",
     location: "Madison, SD",
     bullets: [
-      "Pursuing a B.S. in Computer Science with a minor in Mathematics (4.0 GPA), focused on cloud and AI.",
-      "Relevant Coursework: Software Engineering, AI, Data Structures, OOP, Systems Analysis & Design, Calculus",
+      "Pursuing a B.S. in Cyber Operations with a minor in Network Security Administration, maintaining a 4.0 GPA, with interests in DevOps, cloud, DevSecOps, security operations (SOC), AI, and network engineering.",
+      "Relevant Coursework: Networking, Reverse Engineering, Malware Analysis, Routing and Switching, Windows and Linux Administration, Operating Environments",
     ],
   },
 ];
