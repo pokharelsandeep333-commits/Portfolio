@@ -112,6 +112,7 @@ Server-side guards: 10 req/min per IP via Upstash Redis sliding window, `maxOutp
 - Sandeep is an **IT Support Desk Technician** at DSU ITS and a Cyber Operations sophomore (minor in Network Security Administration). Do not inflate the title to "Full Stack Developer" or "Cloud Engineer" anywhere in the bio or resume.
 - Only shipped, production-grade personal projects. No planned work, no academic group projects.
 - Banned AI-fluff vocabulary — *leveraging, seamlessly, fostering, delving, synergizing, tapestry, unlocking, spearheading*. Use direct action verbs (Built, Deployed, Architected, Configured, Engineered) and name concrete tools. The same ban is encoded in the system prompt in `api/chat.js`.
+- No em dashes (—) or en dashes (–) in anything a visitor reads: `src/data/`, page text, `index.html` and `public/` meta, and the chat greeting. Use a comma, colon, period or parentheses. The `api/chat.js` prompt tells the model the same and formats its data lines without them. Code comments are exempt.
 - Skills listed must be ones actually used in those projects; no "learning" labels. The one exception is the "Security & Networking" category (resume row "Security"), which lists tools from Cyber Operations coursework labs.
 
 ## Resume printing is a hard constraint

@@ -11,7 +11,7 @@ export const projects = [
     status: "Production",
     badge: "badge-production",
     description:
-      "I got tired of trusting Google and Microsoft with my files, so I built my own cloud drive. It runs Nextcloud on an AWS EC2 instance I manage, backed by a Docker Compose stack with MariaDB and Nginx, all routed through Cloudflare with strict end-to-end encryption. I use it daily from my laptop and phone — same workflow as Google Drive, except every byte stays on my own server.",
+      "I got tired of trusting Google and Microsoft with my files, so I built my own cloud drive. It runs Nextcloud on an AWS EC2 instance I manage, backed by a Docker Compose stack with MariaDB and Nginx, all routed through Cloudflare with strict end-to-end encryption. I use it daily from my laptop and phone: same workflow as Google Drive, except every byte stays on my own server.",
     highlights: [
       "Deployed a Docker Compose stack containing Nextcloud, MariaDB, and Nginx on an AWS EC2 instance.",
       "Configured Cloudflare CDN with Full Strict SSL and an Origin Certificate for edge-level DDoS protection.",
@@ -41,7 +41,7 @@ export const projects = [
       "Projected the week's total before it happens and warned at 80%, 90%, and 100% of the cap, so a limit never gets crossed by surprise.",
       "Calculated gross pay, taxes, and deductions per job, then charted net earnings history over time with Recharts.",
       "Kept every user's data private to their own account with Supabase Row Level Security, enforced by the database itself rather than by app code.",
-      "Ran a GitHub Actions CI/CD pipeline on every push — unit tests, type-checking, linting, secret scanning, and CodeQL security analysis — before any release ships.",
+      "Ran a GitHub Actions CI/CD pipeline on every push (unit tests, type-checking, linting, secret scanning, and CodeQL security analysis) before any release ships.",
     ],
     stack: ["Next.js 16", "React 19", "TypeScript", "Supabase Auth", "PostgreSQL", "Row Level Security", "Prisma 7", "Tailwind CSS v4", "Recharts", "Zod", "Docker", "GitHub Actions", "CodeQL", "Android TWA"],
     github: "https://github.com/pokharelsandeep333-commits/ShiftSentry",
@@ -58,7 +58,7 @@ export const projects = [
     status: "Production",
     badge: "badge-production",
     description:
-      "I wanted an AI that actually knows what I know — not the internet's version of it. This app reads my private Obsidian vault on EC2, runs semantic search against my notes using local vector embeddings, and feeds the matched context to Gemini so every answer is grounded in things I've actually written. The whole stack auto-deploys through GitHub Actions and Watchtower — push code, and it's live in five minutes.",
+      "I wanted an AI that actually knows what I know, not the internet's version of it. This app reads my private Obsidian vault on EC2, runs semantic search against my notes using local vector embeddings, and feeds the matched context to Gemini so every answer is grounded in things I've actually written. The whole stack auto-deploys through GitHub Actions and Watchtower: push code, and it's live in five minutes.",
     highlights: [
       "Engineered a zero-database RAG pipeline running entirely in-process on the server.",
       "Embedded search keywords locally using Transformers.js to match against pre-computed Obsidian vault vectors.",
@@ -71,7 +71,7 @@ export const projects = [
     demo: "https://wiki.sandeeppokharel.com.np/",
     resumeStack: ["Next.js 16", "Google Gemini API", "Docker", "AWS EC2"],
     resumeTitle: "Private RAG Search Engine",
-    resumeDescription: "Engineered a self-hosted AI chat platform on AWS EC2 that queries my personal Obsidian vault using Gemini API and local vector search — no external databases.",
+    resumeDescription: "Engineered a self-hosted AI chat platform on AWS EC2 that queries my personal Obsidian vault using Gemini API and local vector search, with no external databases.",
     resumeHighlights: [
       "Engineered a zero-database RAG pipeline on AWS EC2, embedding queries locally with Transformers.js.",
       "Implemented secure user authentication and protected API routes using Firebase Auth and JWT validation.",
@@ -105,7 +105,7 @@ export const projects = [
     badge: "badge-production",
     hideOnResume: true,
     description:
-      "Laptop inspections at the DSU helpdesk used to be fully manual — technicians typed serial numbers, battery stats, and storage info by hand for every single machine. I wrote a PowerShell tool with a WPF interface that pulls all of that from WMI automatically the moment it launches. One file, no installer, no database — the script stores its own inspection records inside itself.",
+      "Laptop inspections at the DSU helpdesk used to be fully manual: technicians typed serial numbers, battery stats, and storage info by hand for every single machine. I wrote a PowerShell tool with a WPF interface that pulls all of that from WMI automatically the moment it launches. One file, no installer, no database. The script stores its own inspection records inside itself.",
     highlights: [
       "Automated hardware detection using WMI/CIM queries to eliminate manual data entry for technicians.",
       "Compiled inline C# at runtime to interact with the Windows Core Audio API for hardware testing.",
@@ -128,7 +128,7 @@ export const projects = [
     badge: "badge-production",
     hideOnResume: true,
     description:
-      "I open-sourced the vault structure behind Molecular Zettelkasten so anyone can clone it and have a knowledge base that AI agents can read, write, and maintain out of the box. Drop raw notes into a folder, point an AI agent at it, and it processes them into clean, interlinked wiki entries with proper frontmatter and backlinks. Ships with pre-built agent skills, Python automation scripts, and strict schema enforcement — no prompt engineering or manual setup required.",
+      "I open-sourced the vault structure behind Molecular Zettelkasten so anyone can clone it and have a knowledge base that AI agents can read, write, and maintain out of the box. Drop raw notes into a folder, point an AI agent at it, and it processes them into clean, interlinked wiki entries with proper frontmatter and backlinks. Ships with pre-built agent skills, Python automation scripts, and strict schema enforcement. No prompt engineering or manual setup required.",
     highlights: [
       "Structured the vault to separate raw collected material from AI-extracted, polished knowledge.",
       "Automated the extraction of atomic notes with proper frontmatter and wikilinks back to original sources.",
