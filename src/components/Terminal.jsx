@@ -15,7 +15,7 @@ const STARTER_QUESTIONS = [
 // One source for the opening message — rendered on first load, restored by
 // "Clear chat", and asserted verbatim in Terminal.test.jsx.
 const GREETING_TEXT =
-  "Hi — I'm Digital Sandeep, an AI version of Sandeep. Ask me anything about my work, projects, or experience.";
+  "Hi, I'm Digital Sandeep, an AI version of Sandeep. Ask me anything about my work, projects, or experience.";
 const makeGreeting = () => [{ role: 'bot', content: GREETING_TEXT }];
 
 const Terminal = ({ isOpen, onClose }) => {

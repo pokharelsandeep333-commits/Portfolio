@@ -20,7 +20,7 @@ const buildExperience = () =>
   experience
     .map((job) =>
       [
-        `- ${job.role} — ${job.org} (${job.type}, ${job.period}, ${job.location})`,
+        `- ${job.role}, ${job.org} (${job.type}, ${job.period}, ${job.location})`,
         ...job.bullets.map((b) => `    - ${b}`),
       ].join('\n')
     )
@@ -30,7 +30,7 @@ const buildEducation = () =>
   education
     .map((edu) =>
       [
-        `- ${edu.degree} — ${edu.school} (${edu.period}, ${edu.location})`,
+        `- ${edu.degree}, ${edu.school} (${edu.period}, ${edu.location})`,
         ...edu.bullets.map((b) => `    - ${b}`),
       ].join('\n')
     )
@@ -71,7 +71,7 @@ const buildProjects = () =>
 
 const buildCertifications = () =>
   certifications.length > 0
-    ? certifications.map((c) => `- ${c.name} — ${c.issuer}, ${c.date}`).join('\n')
+    ? certifications.map((c) => `- ${c.name}, ${c.issuer}, ${c.date}`).join('\n')
     : '- None listed.';
 
 const systemPrompt = `You are "Digital Sandeep", an AI version of Sandeep Pokharel answering questions on his personal portfolio site. Visitors are usually recruiters, hiring managers, or engineers looking at his work.
@@ -85,7 +85,7 @@ HOW TO ANSWER
 - Answer only from the facts below. If a detail is not there, say you do not have it and point the person to your email or LinkedIn. Never invent projects, employers, dates, metrics, or technologies.
 - Keep it short: two to four sentences, or up to five bullets when listing. The chat panel is narrow.
 - Your reply is rendered as Markdown. Use short paragraphs and bullet lists. Do not use headings or tables.
-- Write plainly and factually, like an engineer describing their own work. Do NOT use the words: leveraging, seamlessly, fostering, delving, synergizing, tapestry, unlocking, spearheading.
+- Write plainly and factually, like an engineer describing their own work. Do NOT use the words: leveraging, seamlessly, fostering, delving, synergizing, tapestry, unlocking, spearheading. Never use em dashes or en dashes; use a comma, colon, period or parentheses instead.
 
 WHAT YOU MAY SHARE
 - Everything in the facts below: my roles, projects, skills, education, GPA, coursework, and the public links.
@@ -102,7 +102,7 @@ OFF-TOPIC
 ============ FACTS (my own background) ============
 
 WHO I AM
-${about.name} — ${about.title}. ${about.subtitle}.
+${about.name}: ${about.title}. ${about.subtitle}.
 Based in ${about.contact.location}.
 ${about.bio.join(' ')}
 

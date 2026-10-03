@@ -98,8 +98,8 @@ export const about = {
   subtitle: "Cyber Operations · Dakota State University",
   bio: [
     "Cyber Operations sophomore at Dakota State University, originally from Kathmandu, Nepal. I like building things that work and figuring out why things break.",
-    "My day job is IT Support at DSU \u2014 deploying hardware, troubleshooting networks, managing Intune enrollment, and making sure students and faculty can actually get work done. I also run the live broadcasts for DSU athletics and esports — switching cameras, mixing audio, and keeping the stream up while the game is happening. It's hands-on, fast-paced, and I learn something new every shift.",
-    "After hours, I build my own infrastructure. Self-hosted cloud storage on AWS, an AI platform that talks to my personal notes, automation tools for the helpdesk \u2014 all containerized, all deployed on servers I manage. The projects section below has the details.",
+    "My day job is IT Support at DSU: deploying hardware, troubleshooting networks, managing Intune enrollment, and making sure students and faculty can actually get work done. I also run the live broadcasts for DSU athletics and esports: switching cameras, mixing audio, and keeping the stream up while the game is happening. It's hands-on, fast-paced, and I learn something new every shift.",
+    "After hours, I build my own infrastructure. Self-hosted cloud storage on AWS, an AI platform that talks to my personal notes, automation tools for the helpdesk. All containerized, all deployed on servers I manage. The projects section below has the details.",
   ],
   details: [
     { label: "Education", val: "B.S. Cyber Operations", sub: "Dakota State University · Fall 2025 to Present" },
