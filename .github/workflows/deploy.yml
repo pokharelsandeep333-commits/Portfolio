@@ -3,7 +3,7 @@
 # ============================================================
 # GATES:
 #   1. Lint        → ESLint checks code quality
-#   2. Audit       → npm audit checks for vulnerable packages
+#   2. Audit       → npm audit checks shipped (non-dev) packages
 #   3. Secrets     → Gitleaks scans for exposed credentials
 #   4. Test        → Vitest runs unit tests
 #   5. Build+Push  → Docker image to Docker Hub
@@ -66,8 +66,11 @@ jobs:
       - name: 📦 Install dependencies
         run: npm ci
 
+      # Production dependencies only. Build tools (Vite, Tailwind, PostCSS)
+      # are devDependencies: they run in CI and the Docker build stage but
+      # never reach the Nginx bundle or the Vercel function.
       - name: 🔍 Run npm audit
-        run: npm audit
+        run: npm audit --omit=dev
 
   # ================================================================
   # JOB 3: SECRET SCANNING — Detect exposed credentials
