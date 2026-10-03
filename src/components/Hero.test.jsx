@@ -71,31 +71,11 @@ describe('Hero media', () => {
     expect(container.querySelector('img[src="/hero-portrait.webp"]')).toBeInTheDocument()
   })
 
-  it('uses the static portrait without mounting video when reduced motion is requested', () => {
+  it('mounts the video even when reduced motion is requested', () => {
     mockMediaQueries({ reduceMotion: true })
     const { container } = render(<Hero onToggleTerminal={vi.fn()} />)
 
-    expect(container.querySelector('video')).not.toBeInTheDocument()
-    expect(container.querySelector('img[src="/hero-portrait.webp"]')).toBeInTheDocument()
-  })
-
-  it('responds to motion preference changes and restores the loading fallback', () => {
-    const { container } = render(<Hero onToggleTerminal={vi.fn()} />)
-    fireEvent.playing(container.querySelector('video'))
-    const preference = window.matchMedia('(prefers-reduced-motion: reduce)')
-
-    act(() => preference.setMatches(true))
-    expect(container.querySelector('video')).not.toBeInTheDocument()
-    expect(container.querySelector('.hero-portrait')).not.toHaveClass('hero-portrait--hidden')
-    expect(window.HTMLMediaElement.prototype.pause).toHaveBeenCalled()
-
-    act(() => preference.setMatches(false))
-    const video = container.querySelector('video')
-    expect(video).toBeInTheDocument()
-    fireEvent.loadStart(video)
-    expect(container.querySelector('.hero-portrait')).not.toHaveClass('hero-portrait--hidden')
-    fireEvent.playing(video)
-    expect(container.querySelector('.hero-portrait')).toHaveClass('hero-portrait--hidden')
+    expect(container.querySelector('video')).toBeInTheDocument()
   })
 
   it('does not mark playback failed when pausing interrupts a play request', async () => {

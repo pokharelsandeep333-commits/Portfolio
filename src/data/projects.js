@@ -156,7 +156,7 @@ export const projects = [
       "Built a Gemini-powered AI chatbot scoped strictly to my actual projects and professional experience.",
       "Validated serverless API requests with Zod and enforced per-IP rate limiting using Upstash Redis.",
       "Orchestrated scroll-triggered animations and magnetic buttons using GSAP.",
-      "Served a silent lightning video loop to desktop visitors only, paused off-screen with an IntersectionObserver, while phones and reduced-motion users get a responsive WebP portrait and never download the video.",
+      "Served a silent lightning video loop to desktop visitors only, paused off-screen with an IntersectionObserver, while phones get a responsive WebP portrait and never download the video.",
       "Containerized the frontend using a multi-stage Docker build and deployed via an automated CI/CD pipeline.",
     ],
     stack: ["React 19", "Vite 8", "Google Gemini API", "Tailwind CSS", "GSAP", "Upstash Redis", "Zod", "Docker", "Nginx", "Vercel"],

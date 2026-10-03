@@ -1058,8 +1058,7 @@ body {
 
 /* Gold edge sweep — a short beam of light runs down the drawer's left edge
    as the panel arrives, echoing the hero's power line. Keyframe-driven, so
-   it only plays on open (the rule is scoped to `.is-open`) and the global
-   reduced-motion block already collapses it to nothing. */
+   it only plays on open (the rule is scoped to `.is-open`). */
 .chat-drawer::before {
   content: '';
   position: absolute;
@@ -1169,37 +1168,6 @@ body {
 
   .resume-skill-label {
     min-width: 0;
-  }
-}
-
-/* ============================================================
-   REDUCED MOTION
-   ============================================================ */
-@media (prefers-reduced-motion: reduce) {
-  html {
-    scroll-behavior: auto;
-  }
-
-  *, *::before, *::after {
-    animation-duration: 0.01ms !important;
-    animation-iteration-count: 1 !important;
-    transition-duration: 0.01ms !important;
-  }
-
-  /* The drawer keeps a short, plain slide. A panel easing in from the edge is
-     not the vestibular trigger the hero's tilt and glitch are, and a 20rem
-     panel appearing in a single frame is its own jolt. No expo settle, no
-     edge sweep (the block above already removes that). Note: Windows'
-     "Animation effects" toggle sets this media query, so this is also what
-     a dev machine with it off sees. */
-  .chat-drawer,
-  .chat-drawer.is-open,
-  .page-shell,
-  body.chat-open .page-shell,
-  .navbar-pill,
-  body.chat-open .navbar-pill {
-    transition-duration: 0.35s !important;
-    transition-timing-function: ease-out !important;
   }
 }
 

@@ -3,8 +3,6 @@ import { gsap } from 'gsap'
 import MagneticButton from './MagneticButton'
 import { MOBILE_QUERY, useMediaQuery } from '../hooks/useMediaQuery'
 
-const REDUCED_MOTION_QUERY = '(prefers-reduced-motion: reduce)'
-
 export default function Hero({ onToggleTerminal }) {
   const sectionRef = useRef(null)
   const mediaRef = useRef(null)
@@ -15,10 +13,10 @@ export default function Hero({ onToggleTerminal }) {
   const scrollIndRef = useRef(null)
 
   const isMobile = useMediaQuery(MOBILE_QUERY)
-  const reduceMotion = useMediaQuery(REDUCED_MOTION_QUERY)
   const [videoFailed, setVideoFailed] = useState(false)
   const [videoReady, setVideoReady] = useState(false)
-  const useVideo = !isMobile && !reduceMotion && !videoFailed
+  // Motion plays whatever the visitor's reduced-motion setting (Sandeep's call).
+  const useVideo = !isMobile && !videoFailed
 
   useLayoutEffect(() => {
     const ctx = gsap.context(() => {
@@ -35,13 +33,6 @@ export default function Hero({ onToggleTerminal }) {
           scrub: true,
         },
       })
-
-      if (window.matchMedia(REDUCED_MOTION_QUERY).matches) {
-        gsap.set(veilRef.current, { display: 'none' })
-        gsap.set(copy, { y: 0, opacity: 1 })
-        gsap.set(scrollIndRef.current, { opacity: 1 })
-        return
-      }
 
       const boot = gsap.timeline({
         defaults: { ease: 'power2.out' },

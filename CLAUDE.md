@@ -26,16 +26,18 @@ There is no separate vitest config — test settings live in the `test` block of
 
 The frontend and the AI backend deploy to **different hosts**:
 
-- **Frontend**: multi-stage Docker build (`Dockerfile`) → Nginx image → Docker Hub → pulled onto AWS EC2 by Watchtower. Pushed by `.github/workflows/deploy.yml` after lint / npm audit / Gitleaks / vitest all pass.
+- **Frontend**: multi-stage Docker build (`Dockerfile`) → Nginx image → Docker Hub → pulled onto AWS EC2 by Watchtower. Pushed by `.github/workflows/deploy.yml` after lint / npm audit / Gitleaks / vitest all pass. The audit is `npm audit --omit=dev`: build-only tools (Vite, Tailwind, PostCSS, Autoprefixer) belong in `devDependencies`, and anything that reaches the browser bundle or `api/` belongs in `dependencies`, where the audit sees it.
 - **Backend**: `api/chat.js` is a **Vercel serverless function**, deployed separately from this pipeline. See `docs/adr/0001-vercel-serverless-for-ai-agent.md`.
 
 Because the EC2 bundle is static, `VITE_API_URL` is **baked in at build time**: GitHub Actions passes it as a Docker `--build-arg`, the Dockerfile promotes it to an env var before `npm run build`. `Terminal.jsx` falls back to a relative `/api/chat` when it is unset, which is what makes the Vercel-hosted copy of the site work same-origin. Changing the API URL means rebuilding the image, not editing a config on the server.
 
 ### Single-page app, no router
 
-`App.jsx` composes every section in order and owns the two overlays as state: the resume modal (`ResumeView`, mounted on demand) and the AI chat drawer (`Terminal`, always mounted, translated off-canvas). The drawer toggles on `Ctrl+\` and sets `body.chat-open`; from `lg` up that pads `.page-shell` (the content wrapper) so the page glides aside. The drawer's open/close durations and curves are the `--drawer-*` tokens in `src/index.css`, and the drawer, the padding and the reduced-motion override all read them — change the feel there, not in JSX. Under `prefers-reduced-motion` the drawer keeps a plain 0.35 s slide (the hero effects do not).
+`App.jsx` composes every section in order and owns the two overlays as state: the resume modal (`ResumeView`, mounted on demand) and the AI chat drawer (`Terminal`, always mounted, translated off-canvas). The drawer toggles on `Ctrl+\` and sets `body.chat-open`; from `lg` up that pads `.page-shell` (the content wrapper) so the page glides aside. The drawer's open/close durations and curves are the `--drawer-*` tokens in `src/index.css`, and the drawer and the padding both read them — change the feel there, not in JSX.
 
-`Hero` has no audio. Desktop and laptop layouts conditionally mount the silent `public/hero-static-lightning.mp4` loop with `hero-static-lightning-poster.webp`; a native `IntersectionObserver` pauses it off-screen and resumes it when the hero returns. Phones and reduced-motion users receive the responsive `hero-portrait` WebP without requesting the MP4, and changes to the motion preference update this choice immediately. Loading, playback failures, and autoplay failures also show the portrait. The character is static in both paths. The short GSAP boot sequence respects the initial reduced-motion preference by skipping the veil, gold power line, copy entrance, and scroll cue animation.
+**Motion ignores `prefers-reduced-motion`** (Sandeep's choice, 2026-10-02). Windows' "Animation effects" toggle sets that query, and he wants every effect visible without switching it on. There is no reduced-motion block in `src/index.css` and no reduced-motion check in `Hero.jsx`; `Hero.test.jsx` pins that the video still mounts when the query matches. Do not add reduced-motion gates back.
+
+`Hero` has no audio. Desktop and laptop layouts conditionally mount the silent `public/hero-static-lightning.mp4` loop with `hero-static-lightning-poster.webp`; a native `IntersectionObserver` pauses it off-screen and resumes it when the hero returns. Phones receive the responsive `hero-portrait` WebP without requesting the MP4. Loading, playback failures, and autoplay failures also show the portrait. The character is static in both paths. The short GSAP boot sequence (veil, gold power line, copy entrance, scroll cue) always runs.
 
 ### The scroll container is `<body>`, not the window
 
