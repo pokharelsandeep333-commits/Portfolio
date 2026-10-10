@@ -111,7 +111,7 @@ export const about = {
   ],
   tags: ["Problem Solver", "IT Support", "Security-Minded", "Self-Taught Builder", "Cloud Enthusiast", "Fast Learner", "Cross-Cultural Communicator"],
   contact: {
-    email: "pokharelsandeep333@gmail.com",
+    email: "contact@sandeeppokharel.com.np",
     linkedin: "https://www.linkedin.com/in/sandeeppokharel333",
     github: "https://github.com/pokharelsandeep333-commits",
     portfolio: "https://portfolio.sandeeppokharel.com.np/",

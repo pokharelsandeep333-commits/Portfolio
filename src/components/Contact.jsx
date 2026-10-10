@@ -52,7 +52,7 @@ export default function Contact() {
   const [isCopied, setIsCopied] = useState(false)
 
   const handleEmailCopy = () => {
-    navigator.clipboard.writeText('pokharelsandeep333@gmail.com').catch(() => {})
+    navigator.clipboard.writeText(about.contact.email).catch(() => {})
     setIsCopied(true)
     setTimeout(() => setIsCopied(false), 2000)
   }
@@ -260,13 +260,13 @@ export default function Contact() {
                 <p className="text-white/35 text-xs font-inter text-left">
                   Or email directly:{' '}
                   <a
-                    href="mailto:pokharelsandeep333@gmail.com"
+                    href={`mailto:${about.contact.email}`}
                     onClick={handleEmailCopy}
                     className={`font-medium transition-colors ${
                       isCopied ? 'text-white/70' : 'text-dsuGold hover:text-yellow-300'
                     }`}
                   >
-                    {isCopied ? '✓ Copied!' : 'pokharelsandeep333@gmail.com'}
+                    {isCopied ? '✓ Copied!' : about.contact.email}
                   </a>
                 </p>
               </form>
