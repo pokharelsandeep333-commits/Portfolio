@@ -42,7 +42,7 @@ This portfolio showcases five production-grade projects:
 
 ### Backend & AI
 - **[Vercel Serverless](https://vercel.com/docs/functions)** – Hosts the `/api/chat` serverless backend.
-- **[Google Gemini API](https://ai.google.dev/)** – `gemini-3.5-flash` model for the AI chatbot.
+- **[Google Gemini API](https://ai.google.dev/)**: `gemini-3.8-flash` for the AI chatbot, with `gemini-3.5-flash-lite` as the fallback when the primary is unavailable.
 - **[Upstash Redis](https://upstash.com/)** – Handles IP-based rate limiting for the chat API.
 - **[Zod](https://zod.dev/)** – Strict schema validation for chat requests.
 

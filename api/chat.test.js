@@ -104,6 +104,55 @@ describe('API Route /api/chat', () => {
     expect(ratelimitLimitMock).toHaveBeenCalledWith('127.0.0.1');
     expect(res.status).toHaveBeenCalledWith(429);
     expect(res.json).toHaveBeenCalledWith({ error: 'Too many requests' });
+    expect(res.setHeader).toHaveBeenCalledWith('Retry-After', '60');
+    expect(sendMessageMock).not.toHaveBeenCalled();
+  });
+
+  it('blocks the installed limiter default timeout before calling either Gemini model', async () => {
+    const { Ratelimit } = await vi.importActual('@upstash/ratelimit');
+    let finishRedisCheck;
+    const pendingRedisCheck = new Promise((resolve) => { finishRedisCheck = resolve; });
+    const limiter = new Ratelimit({
+      redis: {},
+      limiter: () => ({ limit: () => pendingRedisCheck }),
+    });
+    ratelimitLimitMock.mockImplementationOnce((ip) => limiter.limit(ip));
+
+    vi.useFakeTimers();
+    try {
+      const request = handler(req, res);
+      await vi.advanceTimersByTimeAsync(5000);
+      await request;
+
+      expect(res.status).toHaveBeenCalledWith(503);
+      expect(res.setHeader).toHaveBeenCalledWith('Retry-After', '60');
+      expect(res.json).toHaveBeenCalledWith({
+        error: 'The assistant is unavailable right now. Please try again in a moment.',
+      });
+      expect(getGenerativeModelMock).not.toHaveBeenCalled();
+      expect(sendMessageMock).not.toHaveBeenCalled();
+    } finally {
+      finishRedisCheck({ success: true, pending: Promise.resolve() });
+      vi.useRealTimers();
+    }
+  });
+
+  it('keeps timeout responses blocked even when success is false', async () => {
+    ratelimitLimitMock.mockResolvedValueOnce({ success: false, reason: 'timeout' });
+    await handler(req, res);
+    expect(res.status).toHaveBeenCalledWith(503);
+    expect(getGenerativeModelMock).not.toHaveBeenCalled();
+    expect(sendMessageMock).not.toHaveBeenCalled();
+  });
+
+  it('keeps rejected Redis checks blocked with the existing 500 response', async () => {
+    vi.spyOn(console, 'error').mockImplementation(() => {});
+    ratelimitLimitMock.mockRejectedValueOnce(new Error('Redis unavailable'));
+    await handler(req, res);
+    expect(res.status).toHaveBeenCalledWith(500);
+    expect(res.json).toHaveBeenCalledWith({ error: 'Internal Server Error' });
+    expect(getGenerativeModelMock).not.toHaveBeenCalled();
+    expect(sendMessageMock).not.toHaveBeenCalled();
   });
 
   it('should parse x-forwarded-for header and use the first IP', async () => {
@@ -113,6 +162,8 @@ describe('API Route /api/chat', () => {
   });
 
   it('should call Gemini API and return response', async () => {
+    // A confirmed allowance can consume the last token in the window.
+    ratelimitLimitMock.mockResolvedValueOnce({ success: true, remaining: 0 });
     await handler(req, res);
     expect(res.status).toHaveBeenCalledWith(200);
     expect(res.json).toHaveBeenCalledWith({ response: 'Mocked Gemini Response' });
@@ -140,7 +191,7 @@ describe('API Route /api/chat', () => {
     it('answers from the primary model alone when it succeeds', async () => {
       await handler(req, res);
       expect(sendMessageMock).toHaveBeenCalledTimes(1);
-      expect(sendMessageMock).toHaveBeenCalledWith('gemini-3.5-flash', 'Tell me about Sandeep');
+      expect(sendMessageMock).toHaveBeenCalledWith('gemini-3.8-flash', 'Tell me about Sandeep');
     });
 
     it.each([
@@ -150,9 +201,9 @@ describe('API Route /api/chat', () => {
       ['timing out (504)', 504],
       ['retired (404)', 404],
       ['unreachable (network error, no status)', undefined],
-    ])('falls back to gemini-2.5-flash when the primary is %s', async (_label, status) => {
+    ])('falls back to gemini-3.5-flash-lite when the primary is %s', async (_label, status) => {
       sendMessageMock.mockImplementation((model) =>
-        model === 'gemini-3.5-flash'
+        model === 'gemini-3.8-flash'
           ? Promise.reject(upstreamError(status))
           : Promise.resolve(reply('Fallback answer'))
       );
@@ -162,14 +213,14 @@ describe('API Route /api/chat', () => {
       expect(res.status).toHaveBeenCalledWith(200);
       expect(res.json).toHaveBeenCalledWith({ response: 'Fallback answer' });
       expect(getGenerativeModelMock).toHaveBeenLastCalledWith(
-        expect.objectContaining({ model: 'gemini-2.5-flash' })
+        expect.objectContaining({ model: 'gemini-3.5-flash-lite' })
       );
       expect(sendMessageMock).toHaveBeenCalledTimes(2);
     });
 
     it('gives the fallback the same system prompt and generation limits', async () => {
       sendMessageMock.mockImplementation((model) =>
-        model === 'gemini-3.5-flash' ? Promise.reject(upstreamError(503)) : Promise.resolve(reply('ok'))
+        model === 'gemini-3.8-flash' ? Promise.reject(upstreamError(503)) : Promise.resolve(reply('ok'))
       );
 
       await handler(req, res);
@@ -180,7 +231,7 @@ describe('API Route /api/chat', () => {
     });
 
     it('returns the generic 502 without upstream detail when both models fail', async () => {
-      sendMessageMock.mockRejectedValue(upstreamError(503, 'models/gemini-2.5-flash quota key=AIzaSECRET'));
+      sendMessageMock.mockRejectedValue(upstreamError(503, 'models/gemini-3.5-flash-lite quota key=AIzaSECRET'));
 
       await handler(req, res);
 
@@ -204,19 +255,19 @@ describe('API Route /api/chat', () => {
     });
 
     it('uses GEMINI_FALLBACK_MODEL when it is set', async () => {
-      process.env.GEMINI_FALLBACK_MODEL = ' gemini-2.5-flash-lite ';
+      process.env.GEMINI_FALLBACK_MODEL = ' gemini-3.6-flash ';
       sendMessageMock.mockImplementation((model) =>
-        model === 'gemini-3.5-flash' ? Promise.reject(upstreamError(503)) : Promise.resolve(reply('Lite answer'))
+        model === 'gemini-3.8-flash' ? Promise.reject(upstreamError(503)) : Promise.resolve(reply('Lite answer'))
       );
 
       await handler(req, res);
 
-      expect(sendMessageMock).toHaveBeenLastCalledWith('gemini-2.5-flash-lite', 'Tell me about Sandeep');
+      expect(sendMessageMock).toHaveBeenLastCalledWith('gemini-3.6-flash', 'Tell me about Sandeep');
       expect(res.json).toHaveBeenCalledWith({ response: 'Lite answer' });
     });
 
     it('does not call the same model twice when the fallback is set to the primary', async () => {
-      process.env.GEMINI_FALLBACK_MODEL = 'gemini-3.5-flash';
+      process.env.GEMINI_FALLBACK_MODEL = 'gemini-3.8-flash';
       sendMessageMock.mockRejectedValue(upstreamError(503));
 
       await handler(req, res);
@@ -227,13 +278,13 @@ describe('API Route /api/chat', () => {
 
     it('logs which model failed and which one answered', async () => {
       sendMessageMock.mockImplementation((model) =>
-        model === 'gemini-3.5-flash' ? Promise.reject(upstreamError(503)) : Promise.resolve(reply('ok'))
+        model === 'gemini-3.8-flash' ? Promise.reject(upstreamError(503)) : Promise.resolve(reply('ok'))
       );
 
       await handler(req, res);
 
       const logged = console.warn.mock.calls.map((args) => args.join(' ')).join('\n');
-      expect(logged).toMatch(/gemini-3\.5-flash.*503.*gemini-2\.5-flash/);
+      expect(logged).toMatch(/gemini-3\.8-flash.*503.*gemini-3\.5-flash-lite/);
     });
   });
 });

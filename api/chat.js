@@ -154,8 +154,9 @@ const FORWARDED_TURNS = 16;
 // Gemini sheds load per model: on 2026-09-26/27 the primary returned 503 "high
 // demand" for over a day while the key and quota were fine. A second model keeps
 // the assistant answering. Override the fallback with GEMINI_FALLBACK_MODEL.
-const PRIMARY_MODEL = 'gemini-3.5-flash';
-const DEFAULT_FALLBACK_MODEL = 'gemini-2.5-flash';
+const PRIMARY_MODEL = 'gemini-3.8-flash';
+// The 2.5 models are unavailable to this account; use a current stable fallback.
+const DEFAULT_FALLBACK_MODEL = 'gemini-3.5-flash-lite';
 
 // Upstream failures another model may still survive: rate limit, server error,
 // overload, timeout, a retired model id (404), or a network error with no status.
@@ -218,7 +219,15 @@ export default async function handler(req, res) {
   try {
     const rawIp = req.headers['x-forwarded-for'] || req.socket?.remoteAddress || '127.0.0.1';
     const ip = rawIp.split(',')[0].trim();
-    const { success } = await ratelimit.limit(ip);
+    const { success, reason } = await ratelimit.limit(ip);
+
+    // Upstash allows timed-out checks by default; require a confirmed allowance.
+    if (reason === 'timeout') {
+      res.setHeader('Retry-After', '60');
+      return res
+        .status(503)
+        .json({ error: 'The assistant is unavailable right now. Please try again in a moment.' });
+    }
 
     if (!success) {
       res.setHeader('Retry-After', '60');
