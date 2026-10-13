@@ -5,8 +5,9 @@
 //  Portfolio. No "learning" labels — these are all used skills.
 //  Exception: "Security & Networking" comes from Cyber Operations
 //  coursework labs, not personal projects. `coursework` makes the
-//  chatbot say so; `wide` renders it full-width so the 3-column
-//  grid has no orphan card.
+//  chatbot say so, and `projectItems` lists the exceptions it must
+//  not label as coursework (Wazuh runs in the Home SOC Lab project);
+//  `wide` renders it full-width so the 3-column grid has no orphan card.
 // ============================================================
 
 export const skills = [
@@ -15,8 +16,9 @@ export const skills = [
     icon: "🛡",
     wide: true,
     coursework: true,
-    items: ["Kali Linux", "Wireshark", "Nmap", "Cisco Packet Tracer", "Metasploit", "Burp Suite", "Splunk", "Suricata", "Zeek", "Cowrie"],
-    highlight: ["Kali Linux", "Wireshark", "Nmap", "Cowrie"],
+    projectItems: ["Wazuh"],
+    items: ["Wazuh", "Kali Linux", "Wireshark", "Nmap", "Cisco Packet Tracer", "Metasploit", "Burp Suite", "Splunk", "Suricata", "Zeek", "Cowrie"],
+    highlight: ["Wazuh", "Kali Linux", "Wireshark", "Nmap", "Cowrie"],
   },
   {
     category: "Languages",
@@ -68,7 +70,7 @@ export const resumeSkills = [
   {
     category: "Security",
     // Short names keep this row on one line; the web card spells them out.
-    items: ["Kali", "Wireshark", "Nmap", "Packet Tracer", "Metasploit", "Burp Suite", "Splunk", "Suricata", "Cowrie"],
+    items: ["Wazuh", "Kali", "Wireshark", "Nmap", "Packet Tracer", "Metasploit", "Burp Suite", "Cowrie"],
   },
   {
     category: "Tools",
