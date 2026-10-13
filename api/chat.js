@@ -39,8 +39,13 @@ const buildEducation = () =>
 const buildSkills = () =>
   skills
     .map((group) => {
+      // `projectItems` names the exceptions in a coursework card that I also
+      // run in a personal project, so the label doesn't contradict a project.
+      const exceptions = group.projectItems?.length
+        ? `, except ${list(group.projectItems)}, which I also use in my personal projects`
+        : '';
       const source = group.coursework
-        ? ' (used in Cyber Operations coursework labs, not in my personal projects)'
+        ? ` (used in Cyber Operations coursework labs, not in my personal projects${exceptions})`
         : '';
       return `- ${group.category}${source}: ${list(group.items)}`;
     })

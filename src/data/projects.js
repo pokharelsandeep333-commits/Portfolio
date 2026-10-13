@@ -10,6 +10,7 @@ export const projects = [
     title: "SandeepCloud",
     status: "Production",
     badge: "badge-production",
+    hideOnResume: true,
     description:
       "I got tired of trusting Google and Microsoft with my files, so I built my own cloud drive. It runs Nextcloud on an AWS EC2 instance I manage, backed by a Docker Compose stack with MariaDB and Nginx, all routed through Cloudflare with strict end-to-end encryption. I use it daily from my laptop and phone: same workflow as Google Drive, except every byte stays on my own server.",
     highlights: [
@@ -28,6 +29,32 @@ export const projects = [
       "Deployed a self-hosted 1TB Nextcloud server on AWS EC2, cutting $120/year in third-party storage costs.",
       "Architected a Docker Compose stack (Nextcloud, MariaDB, Nginx) on Ubuntu 24.04 with automated orchestration.",
       "Configured Cloudflare CDN with Full Strict SSL and an Origin Certificate, hiding the server IP from attackers.",
+    ],
+  },
+  {
+    title: "Home SOC Lab (Wazuh SIEM)",
+    status: "Production",
+    badge: "badge-production",
+    description:
+      "Once I had two servers and an AWS account on the public internet, I noticed a break-in would only ever be found by luck. So I built my own home SOC. Wazuh runs in Docker on my laptop as the manager, indexer, and dashboard, and agents on both of my EC2 servers report to it over a private Tailscale network. It also reads my AWS account's CloudTrail logs and watches the Docker containers on each server. I wrote my own detection rules for the risks in my setup, tuned out the false alarms, and every serious alert lands in a private Discord channel.",
+    highlights: [
+      "Deployed a single-node Wazuh 4.14.8 stack in Docker and enrolled agents on two AWS EC2 servers over Tailscale, with port 1514 the only one open and reachable only through the tailnet.",
+      "Integrated AWS CloudTrail through a read-only IAM user and wrote rules for root console logins, new IAM users and keys, MFA removal, and CloudTrail tampering.",
+      "Built custom detections for bots probing for .env and .git secrets, escalating when a probe gets a 2xx response or one IP keeps trying.",
+      "Tuned out false positives (AppArmor denials, a Rust coreutils rootcheck flag, about 14,000 Docker health-check alerts a day) only after proving each was harmless, with tests showing real attacks still alert.",
+      "Proved detection with live attack simulations: a brute force followed by a new user correlated into one level-15 alert, and an AWS root sign-in alerted within minutes.",
+      "Raised the SandeepCloud CIS benchmark score from 53% to 65%, added real-time file integrity monitoring, and routed every level 10+ alert to Discord with a written triage playbook.",
+    ],
+    stack: ["Wazuh 4.14.8", "Docker", "Tailscale", "AWS CloudTrail", "AWS S3", "AWS IAM", "CloudFormation", "Ubuntu", "CIS Benchmarks", "MITRE ATT&CK", "Discord Webhooks", "WSL2"],
+    github: null,
+    // The dashboard is bound to localhost on purpose, so there is nothing public to link.
+    demo: null,
+    resumeStack: ["Wazuh", "Tailscale", "AWS CloudTrail", "Docker"],
+    resumeDescription: "Built a home SOC with Wazuh SIEM monitoring two AWS EC2 servers, the AWS account through CloudTrail, and Docker containers over a zero-trust Tailscale network.",
+    resumeHighlights: [
+      "Deployed Wazuh SIEM in Docker, monitoring two AWS EC2 servers over a zero-trust Tailscale network.",
+      "Wrote custom detection rules for AWS root logins, IAM changes, and .env secret probes via CloudTrail.",
+      "Tuned out ~14,000 daily false-positive alerts and raised the server's CIS benchmark score from 53% to 65%.",
     ],
   },
   {
