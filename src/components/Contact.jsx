@@ -121,9 +121,9 @@ export default function Contact() {
           <p className="section-label">Contact</p>
           <h2 className="section-heading">Let's <span>connect</span></h2>
           <p className="font-inter text-white/45 text-base mt-3 max-w-lg">
-            I am actively looking for internships in SOC analysis, DevSecOps, cloud and
-            DevOps, and network engineering. If you're working on something interesting,
-            I'd love to hear about it.
+            I'm looking for internships in SOC analysis, DevSecOps, cloud and DevOps, or
+            network engineering. If you're working on something interesting, I'd like to
+            hear about it.
           </p>
         </div>
 
