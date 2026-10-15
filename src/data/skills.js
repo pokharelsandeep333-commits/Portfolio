@@ -100,8 +100,8 @@ export const about = {
   subtitle: "Cyber Operations · Dakota State University",
   bio: [
     "Cyber Operations sophomore at Dakota State University, originally from Kathmandu, Nepal. I like building things that work and figuring out why things break.",
-    "My day job is IT Support at DSU: deploying hardware, troubleshooting networks, managing Intune enrollment, and making sure students and faculty can actually get work done. I also run the live broadcasts for DSU athletics and esports: switching cameras, mixing audio, and keeping the stream up while the game is happening. It's hands-on, fast-paced, and I learn something new every shift.",
-    "After hours, I build my own infrastructure. Self-hosted cloud storage on AWS, an AI platform that talks to my personal notes, automation tools for the helpdesk. All containerized, all deployed on servers I manage. The projects section below has the details.",
+    "My day job is IT Support at DSU: deploying hardware, troubleshooting networks, managing Intune enrollment, and making sure students and faculty can actually get work done. I also run the live broadcasts for DSU athletics and esports: switching cameras, mixing audio, and keeping the stream up while the game is happening.",
+    "After hours I build my own infrastructure: self-hosted cloud storage on AWS, an AI platform that answers from my personal notes, automation tools for the helpdesk, and a home SOC that watches my servers. Most of it runs in Docker on servers I manage.",
   ],
   details: [
     { label: "Education", val: "B.S. Cyber Operations", sub: "Dakota State University · Fall 2025 to Present" },
@@ -111,7 +111,7 @@ export const about = {
     { label: "Languages", val: "English · Nepali · Hindi", sub: "Trilingual" },
     { label: "Interests", val: "DevOps · Cloud · DevSecOps · SOC · AI · Network Engineering", sub: "Career focus areas" },
   ],
-  tags: ["Problem Solver", "IT Support", "Security-Minded", "Self-Taught Builder", "Cloud Enthusiast", "Fast Learner", "Cross-Cultural Communicator"],
+  tags: ["IT Support", "Security-Minded", "Self-Taught Builder", "Cross-Cultural Communicator"],
   contact: {
     email: "contact@sandeeppokharel.com.np",
     linkedin: "https://www.linkedin.com/in/sandeeppokharel333",
@@ -134,8 +134,8 @@ export const experience = [
     type: "Part-time",
     bullets: [
       "Provide technical support for students and faculty, troubleshooting hardware, software, and network connectivity issues across university devices.",
-      "Manage device imaging workflows using FOG Project and Microsoft Intune to securely configure and enroll workstations.",
-      "Administer Active Directory user accounts, configuring multi-factor authentication (MFA) and performing secure password resets.",
+      "Image, configure, and enroll workstations securely with FOG Project and Microsoft Intune.",
+      "Administer Active Directory user accounts, set up multi-factor authentication (MFA), and reset passwords securely.",
     ],
     resumeBullets: [
       "Troubleshoot hardware, software, and network issues for students and faculty across university devices.",
@@ -151,9 +151,9 @@ export const experience = [
     location: "Madison, SD",
     type: "Part-time",
     bullets: [
-      "Operate live broadcasts for DSU athletics and esports using vMix, OBS, Companion, and Stream Deck during scheduled events.",
-      "Manage video switching, audio mixing, cameras, graphics, and crew communications throughout live athletic and esports broadcasts.",
-      "Build reusable vMix and OBS scenes with Stream Deck layouts to simplify event setup and improve the production workflow.",
+      "Operate live broadcasts for DSU athletics and esports with vMix, OBS, Companion, and Stream Deck.",
+      "Run video switching, audio mixing, cameras, graphics, and crew communications during each broadcast.",
+      "Build reusable vMix and OBS scenes and Stream Deck layouts so each event takes less time to set up.",
       "Set up and troubleshoot cameras, cabling, capture, encoding, and streaming equipment before and during live events.",
     ],
     // Condensed to three single-line bullets so the PDF resume stays on one page.
@@ -175,7 +175,7 @@ export const education = [
     period: "Fall 2025 to Present",
     location: "Madison, SD",
     bullets: [
-      "Pursuing a B.S. in Cyber Operations with a minor in Network Security Administration, maintaining a 4.0 GPA, with interests in DevOps, cloud, DevSecOps, security operations (SOC), AI, and network engineering.",
+      "Pursuing a B.S. in Cyber Operations with a minor in Network Security Administration (4.0 GPA). Interests: DevOps, cloud, DevSecOps, security operations (SOC), AI, and network engineering.",
       "Relevant Coursework: Networking, Reverse Engineering, Malware Analysis, Routing and Switching, Windows and Linux Administration, Operating Environments",
     ],
   },
