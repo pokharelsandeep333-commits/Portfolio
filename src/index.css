@@ -207,11 +207,17 @@ body {
   transition: opacity 0.35s ease;
 }
 
-@media (hover: hover) and (pointer: fine) {
-  .project-card:hover::before {
-    opacity: 1;
-  }
+/* The gold line is deliberately NOT behind the hover/pointer gate below:
+   Chrome on a touchscreen laptop reports `hover: none` even with a mouse
+   plugged in, which hid the line there. On phones a touch leaves `:hover`
+   on the card, so the line lights up as you scroll past; a line staying
+   lit is harmless, unlike the card lift, which stays gated. */
+.project-card:hover::before,
+.project-card:active::before {
+  opacity: 1;
+}
 
+@media (hover: hover) and (pointer: fine) {
   .project-card:hover {
     border-color: rgba(255, 199, 44, 0.2) !important;
     transform: translateX(4px);
