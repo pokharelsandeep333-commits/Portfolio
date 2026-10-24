@@ -1,4 +1,5 @@
 import { useCallback, useEffect, useMemo, useState } from 'react'
+import { ScrollTrigger } from 'gsap/ScrollTrigger'
 import Hero from './components/Hero'
 import Navbar from './components/Navbar'
 import About from './components/About'
@@ -36,16 +37,10 @@ export default function App() {
 
   // Fix for ScrollTrigger not firing on programmatic scrollIntoView
   useEffect(() => {
-    import('gsap/ScrollTrigger').then(({ ScrollTrigger }) => {
-      // Force a refresh once layout is fully painted
-      setTimeout(() => ScrollTrigger.refresh(), 500)
-      
-      // Ensure ScrollTrigger gets body scroll events (fixes smooth scroll missed updates)
-      const handleScroll = () => ScrollTrigger.update()
-      document.body.addEventListener('scroll', handleScroll, { passive: true })
-      
-      return () => document.body.removeEventListener('scroll', handleScroll)
-    })
+    // Hero refreshes after fonts/layout settle, before starting its intro.
+    const handleScroll = () => ScrollTrigger.update()
+    document.body.addEventListener('scroll', handleScroll, { passive: true })
+    return () => document.body.removeEventListener('scroll', handleScroll)
   }, [])
 
   const openResume  = useCallback(() => setIsResumeOpen(true),  [])

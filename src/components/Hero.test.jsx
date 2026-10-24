@@ -1,6 +1,8 @@
 import { act, fireEvent, render, waitFor } from '@testing-library/react'
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 import Hero from './Hero'
+import { gsap } from 'gsap'
+import { ScrollTrigger } from 'gsap/ScrollTrigger'
 
 let observerCallback
 
@@ -140,5 +142,89 @@ describe('Hero media', () => {
 
     await waitFor(() => expect(container.querySelector('video')).not.toBeInTheDocument())
     expect(container.querySelector('img[src="/hero-portrait.webp"]')).toBeInTheDocument()
+  })
+})
+
+describe('Hero startup scheduling', () => {
+  let frames
+  let fontsReady
+  let resolveFonts
+  let fontsDescriptor
+
+  beforeEach(() => {
+    mockMediaQueries({ mobile: true })
+    frames = new Map()
+    let nextFrame = 0
+    vi.spyOn(window, 'requestAnimationFrame').mockImplementation(callback => {
+      frames.set(++nextFrame, callback)
+      return nextFrame
+    })
+    vi.spyOn(window, 'cancelAnimationFrame').mockImplementation(id => frames.delete(id))
+    fontsReady = new Promise(resolve => { resolveFonts = resolve })
+    fontsDescriptor = Object.getOwnPropertyDescriptor(document, 'fonts')
+    Object.defineProperty(document, 'fonts', { configurable: true, value: { ready: fontsReady } })
+    vi.mocked(gsap.context).mockImplementationOnce(callback => {
+      callback()
+      return { revert: vi.fn() }
+    })
+    vi.mocked(ScrollTrigger.refresh).mockClear()
+  })
+
+  afterEach(() => {
+    if (fontsDescriptor) Object.defineProperty(document, 'fonts', fontsDescriptor)
+    else delete document.fonts
+    vi.restoreAllMocks()
+  })
+
+  function nextFrame() {
+    const pending = [...frames.values()]
+    frames.clear()
+    pending.forEach(callback => callback())
+  }
+
+  it('settles fonts and refreshes layout before playing the intro on the next frame', async () => {
+    render(<Hero />)
+    const boot = vi.mocked(gsap.timeline).mock.results.at(-1).value
+    expect(gsap.timeline).toHaveBeenLastCalledWith(expect.objectContaining({ paused: true }))
+    expect(boot.play).not.toHaveBeenCalled()
+    expect(frames.size).toBe(0)
+
+    await act(async () => resolveFonts())
+    act(nextFrame)
+    expect(ScrollTrigger.refresh).toHaveBeenCalledOnce()
+    expect(boot.play).not.toHaveBeenCalled()
+
+    act(nextFrame)
+    expect(boot.play).toHaveBeenCalledWith(0)
+  })
+
+  it('does not start an intro after unmounting while fonts load', async () => {
+    const { unmount } = render(<Hero />)
+    const boot = vi.mocked(gsap.timeline).mock.results.at(-1).value
+    unmount()
+    await act(async () => resolveFonts())
+    act(nextFrame)
+    expect(boot.play).not.toHaveBeenCalled()
+    expect(ScrollTrigger.refresh).not.toHaveBeenCalled()
+  })
+
+  it('cancels a queued intro frame when unmounted', async () => {
+    const { unmount } = render(<Hero />)
+    const boot = vi.mocked(gsap.timeline).mock.results.at(-1).value
+    await act(async () => resolveFonts())
+    act(nextFrame)
+    unmount()
+    act(nextFrame)
+    expect(boot.play).not.toHaveBeenCalled()
+  })
+
+  it('signals analytics only after the intro finishes', () => {
+    const ready = vi.fn()
+    window.addEventListener('portfolio:hero-ready', ready, { once: true })
+    render(<Hero />)
+    expect(ready).not.toHaveBeenCalled()
+    const options = vi.mocked(gsap.timeline).mock.calls.at(-1)[0]
+    act(() => options.onComplete())
+    expect(ready).toHaveBeenCalledOnce()
   })
 })
