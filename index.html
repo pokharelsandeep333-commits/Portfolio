@@ -2,12 +2,25 @@
 <html lang="en">
   <head>
     <!-- Google tag (gtag.js) -->
-    <script async src="https://www.googletagmanager.com/gtag/js?id=G-TR2YHSDHBN"></script>
     <script>
       window.dataLayer = window.dataLayer || [];
       function gtag(){dataLayer.push(arguments);}
       gtag('js', new Date());
       gtag('config', 'G-TR2YHSDHBN');
+      // Keep third-party script evaluation out of the hero's opening frames.
+      window.addEventListener('portfolio:hero-ready', function () {
+        const loadAnalytics = function () {
+          const script = document.createElement('script');
+          script.async = true;
+          script.src = 'https://www.googletagmanager.com/gtag/js?id=G-TR2YHSDHBN';
+          document.head.appendChild(script);
+        };
+        if ('requestIdleCallback' in window) {
+          window.requestIdleCallback(loadAnalytics, { timeout: 2000 });
+        } else {
+          window.setTimeout(loadAnalytics, 0);
+        }
+      }, { once: true });
     </script>
     <meta charset="UTF-8" />
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />

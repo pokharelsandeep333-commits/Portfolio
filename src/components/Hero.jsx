@@ -1,5 +1,6 @@
 import { useEffect, useLayoutEffect, useRef, useState } from 'react'
 import { gsap } from 'gsap'
+import { ScrollTrigger } from 'gsap/ScrollTrigger'
 import MagneticButton from './MagneticButton'
 import { MOBILE_QUERY, useMediaQuery } from '../hooks/useMediaQuery'
 
@@ -19,6 +20,8 @@ export default function Hero({ onToggleTerminal }) {
   const useVideo = !isMobile && !videoFailed
 
   useLayoutEffect(() => {
+    let cancelled = false
+    let frame
     const ctx = gsap.context(() => {
       const copy = contentRef.current.children
 
@@ -35,8 +38,12 @@ export default function Hero({ onToggleTerminal }) {
       })
 
       const boot = gsap.timeline({
+        paused: true,
         defaults: { ease: 'power2.out' },
-        onComplete: () => gsap.set(veilRef.current, { display: 'none' }),
+        onComplete: () => {
+          gsap.set(veilRef.current, { display: 'none' })
+          window.dispatchEvent(new Event('portfolio:hero-ready'))
+        },
       })
 
       boot
@@ -54,9 +61,25 @@ export default function Hero({ onToggleTerminal }) {
         .to(copy, { y: 0, opacity: 1, duration: 1, stagger: 0.12, ease: 'power3.out' }, 0.9)
         .to(scrollIndRef.current, { opacity: 1, duration: 0.7 }, 1.5)
 
+      // Font swaps and the other sections' ScrollTriggers can force a full
+      // page layout. Finish that work before the gold line starts moving.
+      Promise.resolve(document.fonts?.ready).then(() => {
+        if (cancelled) return
+        frame = requestAnimationFrame(() => {
+          if (cancelled) return
+          ScrollTrigger.refresh()
+          frame = requestAnimationFrame(() => {
+            if (!cancelled) boot.play(0)
+          })
+        })
+      })
     }, sectionRef)
 
-    return () => ctx.revert()
+    return () => {
+      cancelled = true
+      cancelAnimationFrame(frame)
+      ctx.revert()
+    }
   }, [])
 
   useEffect(() => {

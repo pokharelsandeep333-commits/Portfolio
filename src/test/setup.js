@@ -37,6 +37,7 @@ vi.mock('gsap', () => {
       call: vi.fn().mockReturnThis(),
       timeScale: vi.fn().mockReturnThis(),
       paused: vi.fn().mockReturnThis(),
+      play: vi.fn().mockReturnThis(),
       kill: vi.fn(),
     })),
   };
@@ -51,5 +52,6 @@ vi.mock('gsap/ScrollTrigger', () => ({
     register: vi.fn(),
     create: vi.fn(),
     refresh: vi.fn(),
+    update: vi.fn(),
   }
 }))
