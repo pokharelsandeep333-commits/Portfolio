@@ -26,10 +26,11 @@ There is no separate vitest config — test settings live in the `test` block of
 
 The frontend and the AI backend deploy to **different hosts**:
 
-- **Frontend**: multi-stage Docker build (`Dockerfile`) → Nginx image → Docker Hub → pulled onto AWS EC2 by Watchtower. Pushed by `.github/workflows/deploy.yml` after lint / npm audit / Gitleaks / vitest all pass. The audit is `npm audit --omit=dev`: build-only tools (Vite, Tailwind, PostCSS, Autoprefixer) belong in `devDependencies`, and anything that reaches the browser bundle or `api/` belongs in `dependencies`, where the audit sees it.
+- **Frontend**: multi-stage Docker build (`Dockerfile`) → Nginx image → Docker Hub → pulled onto the SandeepCloud server by Watchtower (polls every 5 minutes). Pushed by `.github/workflows/deploy.yml` after lint / npm audit / Gitleaks / vitest all pass. The audit is `npm audit --omit=dev`: build-only tools (Vite, Tailwind, PostCSS, Autoprefixer) belong in `devDependencies`, and anything that reaches the browser bundle or `api/` belongs in `dependencies`, where the audit sees it.
+  - Moved 2026-10-28: the server left AWS EC2 for a Hyper-V VM on the homelab laptop, behind a Cloudflare Tunnel (no public IP, no open ports). Temporary until a cloud provider is picked. SSH is Tailscale-only: `ssh ubuntu@sandeepcloud-1`, renamed to `sandeepcloud` around 2026-11-04. Public URLs and this pipeline are unchanged; if an update doesn't show up, the laptop may be off. Source of truth: the SandeepCloud-IAC repo.
 - **Backend**: `api/chat.js` is a **Vercel serverless function**, deployed separately from this pipeline. See `docs/adr/0001-vercel-serverless-for-ai-agent.md`.
 
-Because the EC2 bundle is static, `VITE_API_URL` is **baked in at build time**: GitHub Actions passes it as a Docker `--build-arg`, the Dockerfile promotes it to an env var before `npm run build`. `Terminal.jsx` falls back to a relative `/api/chat` when it is unset, which is what makes the Vercel-hosted copy of the site work same-origin. Changing the API URL means rebuilding the image, not editing a config on the server.
+Because the self-hosted bundle is static, `VITE_API_URL` is **baked in at build time**: GitHub Actions passes it as a Docker `--build-arg`, the Dockerfile promotes it to an env var before `npm run build`. `Terminal.jsx` falls back to a relative `/api/chat` when it is unset, which is what makes the Vercel-hosted copy of the site work same-origin. Changing the API URL means rebuilding the image, not editing a config on the server.
 
 ### Single-page app, no router
 
