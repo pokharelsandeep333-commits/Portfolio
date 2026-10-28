@@ -27,6 +27,10 @@ dist-ssr
 
 # Agent context
 .agents/
+.claude/
+.superpowers/
+/CLAUDE.md
+/AGENTS.md
 # HyperFrames promo (promo/): keep media, captures and build output out of git.
 # The media provenance ledger stays tracked so licenses remain provable.
 promo/node_modules/

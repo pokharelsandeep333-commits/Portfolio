@@ -26,8 +26,8 @@ This portfolio showcases five production-grade projects:
 
 | Project | Stack | Description |
 |---|---|---|
-| **Molecular Zettelkasten** | Next.js 16, Gemini API, Firebase, Docker, AWS EC2 | AI-powered knowledge management platform with Semantic RAG, deployed via GitHub Actions CI/CD |
-| **SandeepCloud** | AWS EC2, Docker Compose, Nginx, MariaDB, Cloudflare | Self-hosted Nextcloud cloud storage with enterprise-grade SSL and CDN |
+| **Molecular Zettelkasten** | Next.js 16, Gemini API, Firebase, Docker, self-hosted server | AI-powered knowledge management platform with Semantic RAG, deployed via GitHub Actions CI/CD |
+| **SandeepCloud** | Self-hosted Ubuntu server, Docker Compose, Nginx, MariaDB, Cloudflare | Self-hosted Nextcloud cloud storage with enterprise-grade SSL and CDN |
 | **DQA Automation Suite** | PowerShell 5.1, WPF/XAML, WMI/CIM, SQLite | Zero-prompt hardware QA tool iterated through 11 versions at DSU IT |
 | **LLM-Wiki** | Python, Obsidian, AI Agents, Git | AI-agent-powered personal knowledge base with 125+ concept notes |
 | **This Portfolio** | React 19, Vite 8, GSAP, Tailwind CSS, Docker | Cinematic hero, integrated AI assistant, custom cursor, scroll animations |
@@ -52,9 +52,9 @@ This portfolio showcases five production-grade projects:
 
 ### Architecture & Deployment
 This project utilizes a **hybrid deployment architecture**:
-- **AWS EC2 / Docker** – The frontend UI is containerized using a multi-stage Docker build (Alpine Node + Nginx) and hosted on AWS EC2.
-- **Vercel Serverless** – The AI backend (`/api/chat`) runs as a Vercel Serverless Function to abstract API keys and offload processing from the EC2 instance.
-- **GitHub Actions CI/CD** – Automatically injects the `VITE_API_URL` secret during the Docker build so the EC2 static site can communicate with the Vercel backend.
+- **Self-hosted Docker** – The frontend UI is containerized using a multi-stage Docker build (Alpine Node + Nginx) and hosted on my own server, where Watchtower pulls new images from Docker Hub. Moved 2026-10-28: the server left AWS EC2 and now sits behind a Cloudflare Tunnel.
+- **Vercel Serverless** – The AI backend (`/api/chat`) runs as a Vercel Serverless Function to abstract API keys and offload processing from the self-hosted server.
+- **GitHub Actions CI/CD** – Automatically injects the `VITE_API_URL` secret during the Docker build so the self-hosted static site can communicate with the Vercel backend.
 
 ## 📁 Project Structure
 
