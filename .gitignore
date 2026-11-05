@@ -29,6 +29,9 @@ dist-ssr
 .agents/
 .claude/
 .superpowers/
+.impeccable/
+/DESIGN.md
+/PRODUCT.md
 /CLAUDE.md
 /AGENTS.md
 # HyperFrames promo (promo/): keep media, captures and build output out of git.

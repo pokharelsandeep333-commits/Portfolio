@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useMemo, useState } from 'react'
+import { lazy, Suspense, useCallback, useEffect, useMemo, useState } from 'react'
 import { ScrollTrigger } from 'gsap/ScrollTrigger'
 import Hero from './components/Hero'
 import Navbar from './components/Navbar'
@@ -11,6 +11,8 @@ import Contact from './components/Contact'
 import Footer from './components/Footer'
 import ResumeView from './components/ResumeView'
 import Terminal from './components/Terminal'
+
+const HomelabMap = lazy(() => import('./components/HomelabMap'))
 
 export default function App() {
   const [isResumeOpen, setIsResumeOpen] = useState(false)
@@ -71,6 +73,9 @@ export default function App() {
       <About />
       <Experience />
       <Skills />
+      <Suspense fallback={<section id="homelab" aria-label="Loading homelab map" style={{ minHeight: 1100 }} />}>
+        <HomelabMap />
+      </Suspense>
       <Projects />
       <Certifications />
       <Contact />
