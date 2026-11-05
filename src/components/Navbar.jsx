@@ -6,6 +6,7 @@ const NAV_LINKS = [
   { label: 'About',          id: 'about'          },
   { label: 'Experience',     id: 'experience'     },
   { label: 'Skills',         id: 'skills'         },
+  { label: 'Homelab',        id: 'homelab'        },
   { label: 'Projects',       id: 'projects'       },
   ...(certifications && certifications.length > 0 ? [{ label: 'Credentials', id: 'certifications' }] : []),
   { label: 'Contact',        id: 'contact'        },
