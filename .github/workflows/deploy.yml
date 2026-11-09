@@ -6,7 +6,7 @@
 #   2. Audit       → npm audit checks shipped (non-dev) packages
 #   3. Secrets     → Gitleaks scans for exposed credentials
 #   4. Test        → Vitest runs unit tests
-#   5. Build+Push  → Docker image to Docker Hub
+#   5. Build+Push  → Build image, Trivy scan (report-only), push to Docker Hub
 #   6. Deploy      → Watchtower auto-detects (no action needed)
 # ============================================================
 
@@ -131,6 +131,23 @@ jobs:
     # Only push on main branch (not on pull requests)
     if: ${{ github.ref == 'refs/heads/main' && github.event_name != 'pull_request' }}
 
+    # Uploading Trivy SARIF to the Security tab needs security-events: write.
+    permissions:
+      contents: read
+      security-events: write
+
+    env:
+      IMAGE: pokharelsandeep333/my-portfolio-app
+      # Trivy v0.76.1, pinned by digest (identical on Docker Hub, GHCR and ECR Public).
+      # Do NOT replace with aquasecurity/trivy-action or setup-trivy: their tags were
+      # hijacked in the March 2026 supply-chain attack.
+      TRIVY_IMAGE: aquasec/trivy@sha256:790fd66d1697395d8693d1acaa1ea702406a20f109b6fc7bac8db623eca6c06c
+      # ── Scan gate ─────────────────────────────────────────────────────────
+      # '0' = REPORT-ONLY (current): findings are logged and uploaded, the push still happens.
+      # '1' = BLOCKING: any fixable CRITICAL/HIGH fails the job and the image is NOT pushed.
+      # Flip to '1' once the current findings are fixed.
+      TRIVY_GATE_EXIT_CODE: '0'
+
     steps:
       - name: 📥 Checkout code
         uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
@@ -144,12 +161,15 @@ jobs:
           username: ${{ secrets.DOCKERHUB_USERNAME }}
           password: ${{ secrets.DOCKERHUB_TOKEN }}
 
-      - name: 🐳 Build and Push Docker Image
+      # Build into the local Docker daemon only. Nothing reaches Docker Hub
+      # (and so Watchtower) until the scan below has run.
+      - name: 🐳 Build Docker Image (local, not pushed)
         uses: docker/build-push-action@10e90e3645eae34f1e60eeb005ba3a3d33f178e8 # v6
         with:
           context: .
           file: ./Dockerfile
-          push: true
+          load: true
+          push: false
           tags: |
             pokharelsandeep333/my-portfolio-app:latest
             pokharelsandeep333/my-portfolio-app:${{ github.sha }}
@@ -158,6 +178,55 @@ jobs:
             VITE_FORMSPREE_URL=${{ secrets.VITE_FORMSPREE_URL }}
           cache-from: type=gha
           cache-to: type=gha,mode=max
+
+      # Trivy reads the image from a tarball, so the Docker socket is never mounted.
+      - name: 📦 Export image for scanning
+        run: docker save "$IMAGE:$GITHUB_SHA" -o image.tar
+
+      # The vuln DB is ~1.6 GB unpacked. Keyed per day; restore-keys falls back to the
+      # newest older copy and Trivy refreshes it if stale.
+      - name: 📅 Trivy DB cache key
+        id: trivy-db-date
+        run: echo "date=$(date -u +%Y-%m-%d)" >> "$GITHUB_OUTPUT"
+
+      - name: 💾 Cache Trivy DB
+        uses: actions/cache@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6.1.0
+        with:
+          path: .trivy-cache/db
+          key: trivy-db-${{ runner.os }}-${{ steps.trivy-db-date.outputs.date }}
+          restore-keys: trivy-db-${{ runner.os }}-
+
+      # Runs as the runner's uid so the cache files stay readable for actions/cache
+      # (as root, Trivy leaves root-owned 0700 dirs behind). Always exits 0: the SARIF
+      # must be produced even when the gate below blocks.
+      - name: 🛡️ Trivy scan (SARIF)
+        run: |
+          docker run --rm --user "$(id -u):$(id -g)" -v "$PWD:/w" "$TRIVY_IMAGE" \
+            image --scanners vuln --input /w/image.tar --severity CRITICAL,HIGH --ignore-unfixed \
+            --cache-dir /w/.trivy-cache --exit-code 0 --format sarif --output /w/trivy.sarif
+
+      - name: 📤 Upload Trivy results to GitHub Security
+        uses: github/codeql-action/upload-sarif@33d7b85da1a04171e211befe2c739303b9a4c066 # v4.39.3
+        with:
+          sarif_file: trivy.sarif
+          category: trivy-image-build
+
+      # Human-readable table in the log, and the gate: exits with TRIVY_GATE_EXIT_CODE
+      # when fixable CRITICAL/HIGH findings exist. In blocking mode a failure here
+      # skips the push step below.
+      - name: 🚦 Trivy scan gate (table)
+        run: |
+          docker run --rm --user "$(id -u):$(id -g)" -v "$PWD:/w" "$TRIVY_IMAGE" \
+            image --scanners vuln --input /w/image.tar --severity CRITICAL,HIGH --ignore-unfixed \
+            --cache-dir /w/.trivy-cache --skip-db-update \
+            --exit-code "$TRIVY_GATE_EXIT_CODE" --format table
+
+      # Pushes the exact image that was scanned (no rebuild). SHA tag first, then
+      # :latest, which is the tag Watchtower deploys.
+      - name: 🚀 Push Docker Image to Docker Hub
+        run: |
+          docker push "$IMAGE:$GITHUB_SHA"
+          docker push "$IMAGE:latest"
 
       - name: 📋 Deployment Summary
         run: |

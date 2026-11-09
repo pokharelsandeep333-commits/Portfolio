@@ -1,0 +1,89 @@
+# ============================================================
+# 🛡️ Weekly Trivy scan of the image production runs
+# ============================================================
+# deploy.yml scans each image before it is pushed. This catches CVEs
+# published AFTER deploy, in the :latest image Watchtower is serving.
+# Results land in Security → Code scanning under category
+# "trivy-image-published".
+# ============================================================
+
+name: 🛡️ Scan Published Image (Trivy)
+
+on:
+  schedule:
+    - cron: '17 6 * * 1' # Mondays 06:17 UTC
+  workflow_dispatch: {}
+
+permissions:
+  contents: read
+
+jobs:
+  scan:
+    name: 🛡️ Trivy scan of Docker Hub :latest
+    runs-on: ubuntu-latest
+
+    # Uploading SARIF to the Security tab needs security-events: write.
+    permissions:
+      contents: read
+      security-events: write
+
+    env:
+      # The tag production runs (Watchtower on sandeepcloud deploys :latest).
+      IMAGE: pokharelsandeep333/my-portfolio-app:latest
+      # Trivy v0.76.1, pinned by digest (identical on Docker Hub, GHCR and ECR Public).
+      # Do NOT replace with aquasecurity/trivy-action or setup-trivy: their tags were
+      # hijacked in the March 2026 supply-chain attack.
+      TRIVY_IMAGE: aquasec/trivy@sha256:790fd66d1697395d8693d1acaa1ea702406a20f109b6fc7bac8db623eca6c06c
+      # '0' = REPORT-ONLY (current): findings go to the Security tab, the run stays green.
+      # '1' = the run fails (and GitHub emails you) when the deployed image has fixable
+      #       CRITICAL/HIGH findings. Flip once the current findings are fixed.
+      TRIVY_GATE_EXIT_CODE: '0'
+
+    steps:
+      # Gives upload-sarif the repository context for the results.
+      - name: 📥 Checkout code
+        uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
+
+      # The Docker Hub repo is public, so no login. If it ever goes private, add
+      # docker/login-action (same pinned SHA and DOCKERHUB_* secrets as deploy.yml)
+      # before this step.
+      - name: 📥 Pull published image
+        run: |
+          docker pull "$IMAGE"
+          echo "Scanning $(docker inspect --format '{{index .RepoDigests 0}}' "$IMAGE")"
+
+      # Trivy reads the image from a tarball, so the Docker socket is never mounted.
+      - name: 📦 Export image for scanning
+        run: docker save "$IMAGE" -o image.tar
+
+      - name: 📅 Trivy DB cache key
+        id: trivy-db-date
+        run: echo "date=$(date -u +%Y-%m-%d)" >> "$GITHUB_OUTPUT"
+
+      # Same key scheme as deploy.yml, so the two workflows share cached DBs.
+      - name: 💾 Cache Trivy DB
+        uses: actions/cache@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6.1.0
+        with:
+          path: .trivy-cache/db
+          key: trivy-db-${{ runner.os }}-${{ steps.trivy-db-date.outputs.date }}
+          restore-keys: trivy-db-${{ runner.os }}-
+
+      # Runs as the runner's uid so the cache files stay readable for actions/cache.
+      - name: 🛡️ Trivy scan (SARIF)
+        run: |
+          docker run --rm --user "$(id -u):$(id -g)" -v "$PWD:/w" "$TRIVY_IMAGE" \
+            image --scanners vuln --input /w/image.tar --severity CRITICAL,HIGH --ignore-unfixed \
+            --cache-dir /w/.trivy-cache --exit-code 0 --format sarif --output /w/trivy.sarif
+
+      - name: 📤 Upload Trivy results to GitHub Security
+        uses: github/codeql-action/upload-sarif@33d7b85da1a04171e211befe2c739303b9a4c066 # v4.39.3
+        with:
+          sarif_file: trivy.sarif
+          category: trivy-image-published
+
+      - name: 🚦 Trivy scan gate (table)
+        run: |
+          docker run --rm --user "$(id -u):$(id -g)" -v "$PWD:/w" "$TRIVY_IMAGE" \
+            image --scanners vuln --input /w/image.tar --severity CRITICAL,HIGH --ignore-unfixed \
+            --cache-dir /w/.trivy-cache --skip-db-update \
+            --exit-code "$TRIVY_GATE_EXIT_CODE" --format table
