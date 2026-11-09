@@ -18,7 +18,13 @@ ENV VITE_FORMSPREE_URL=$VITE_FORMSPREE_URL
 RUN npm run build
 
 # --- Stage 2: Production Environment (Nginx) ---
-FROM nginx:alpine
+# Pinned by digest (nginx 1.31.8, Alpine 3.24.4, built 2026-11-05) so a retag upstream
+# cannot change what ships. Bump the digest deliberately when moving to a newer base.
+FROM nginx:1.31-alpine@sha256:713fc2ebfd92e8217db451477182ee91944b123d2b1ee9fd5a8c6e91ca6c3a11
+# Pull Alpine security fixes released after the base was built, then drop curl:
+# nothing in this image uses it, and the compose healthcheck uses busybox wget.
+RUN apk upgrade --no-cache \
+ && apk del --no-cache curl
 # Copy your compiled Vite files from Stage 1 into Nginx's serving directory
 COPY --from=builder /app/dist /usr/share/nginx/html
 # Document the port Nginx runs on
