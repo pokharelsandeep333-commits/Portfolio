@@ -18,7 +18,7 @@ Cross-checked November 4, 2026 using the user's local sibling projects and their
 | --- | --- |
 | SandeepCloud runs in a separate Hyper-V Ubuntu VM; EC2 servers retired; public tunnel and private Tailscale paths | `SandeepCloud-IAC/README.md`, `CLAUDE.md`, `server/homelab/hyperv/README.md`, and `envs/cloudflare/tunnel.tf`; vault `Raw/Files/SandeepCloud IaC/00 IaC - Project Hub.md` and `05 IaC - Task Board.md` |
 | Nginx fronts Nextcloud, Portfolio, ShiftSentry, and the RAG app; Watchtower image delivery; Kuma in VM | IaC README architecture and portfolio `.github/workflows/deploy.yml`; existing project data |
-| Portfolio AI backend remains a separate Vercel function | `docs/adr/0001-vercel-serverless-for-ai-agent.md` and portfolio AGENTS.md; the ADR's EC2 wording describes the former frontend host |
+| Portfolio AI backend runs as a separate Node container beside the static frontend on SandeepCloud | `docs/adr/0002-sandeepcloud-chat.md`, `server/`, and the `api` target in the portfolio `Dockerfile` (updated 2026-11-27; ADR-0001's Vercel function is superseded) |
 | WSL hosts Wazuh, Beszel, Portainer, calendar feed, and rest-server; native Windows agents and Jellyfin | `Homelab/CLAUDE.md`, `docs/architecture-review-2026-11-03.md`; vault `Raw/Files/Homelab projects/00 Homelab - Project Hub.md` |
 | Beszel reports Windows, WSL, VM, and Dell separately; Linux agents use filtered statistics gateways | Vault `Raw/Files/Homelab projects/Beszel/00 Beszel - Project Hub.md`, including its November 1 Dell update |
 | Jellyfin is native Windows; Roku uses restricted LAN; own devices use private Tailscale HTTPS | Vault `Raw/Files/Homelab projects/Jellyfin/00 Jellyfin - Project Hub.md` and Homelab working guide |
@@ -34,7 +34,7 @@ The four routes are deliberately selected explanations rather than an exhaustive
 
 GuardDuty, AWS Config, Authentik, Semaphore, Velociraptor, GPU acceleration, full reboot recovery, and full homelab backup coverage are not presented as completed features. The retired Ad-Blocker is not shown as running.
 
-The remainder of the existing portfolio project copy still contains older AWS descriptions. This feature does not rewrite that independent content or the resume. When refreshing the project descriptions, verify them against their owning projects and update both web and resume variants together.
+The SandeepCloud, Home SOC and RAG project copy (web and resume) was refreshed on 2026-11-27 to match the move off EC2. The Private Encrypted DNS Server entry still describes its EC2 deployment. When refreshing project descriptions, verify them against their owning projects and update both web and resume variants together.
 
 ## Verification
 

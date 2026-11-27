@@ -46,9 +46,9 @@ export const labNodes = {
   },
   portfolio: {
     name: 'Portfolio', caption: 'The site you are on', icon: 'code', location: 'SandeepCloud VM / Docker',
-    description: 'Nginx serves this React site as a static Docker image. Its Digital Sandeep chat backend runs separately as a Vercel function.',
-    decision: 'The frontend stays small and static. The Vercel function keeps the Gemini API key server-side and rate-limits chat requests with Upstash Redis.',
-    facts: ['GitHub Actions builds the frontend image after its quality gates.', 'Watchtower pulls published images into the VM.'],
+    description: 'Nginx serves this React site as a static Docker image. Its Digital Sandeep chat backend runs beside it in a separate Node container.',
+    decision: 'The frontend stays small and static. The chat API keeps the Gemini API key server-side, and a private Redis instance enforces per-visitor rate limits and daily budgets.',
+    facts: ['GitHub Actions builds the frontend and chat API images after their quality gates.', 'Watchtower pulls published images into the VM.'],
     links: [{ label: 'View the portfolio source', href: 'https://github.com/pokharelsandeep333-commits/Portfolio' }],
   },
   shiftsentry: {
