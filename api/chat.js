@@ -156,12 +156,12 @@ const allowedOrigins = process.env.ALLOWED_ORIGINS
 const MAX_MESSAGES = 50;
 const FORWARDED_TURNS = 16;
 
-// Gemini sheds load per model: on 2026-09-26/27 the primary returned 503 "high
-// demand" for over a day while the key and quota were fine. A second model keeps
-// the assistant answering. Override the fallback with GEMINI_FALLBACK_MODEL.
-const PRIMARY_MODEL = 'gemini-4-hydrogen';
-// The 2.5 models are unavailable to this account; use a current stable fallback.
-const DEFAULT_FALLBACK_MODEL = 'gemini-3.5-flash-lite';
+const CHAT_MODELS = [
+  'gemini-4-hydrogen',
+  'gemini-3.8-flash',
+  'gemini-3.6-flash',
+  'gemini-3.5-flash-lite',
+];
 
 // Upstream failures another model may still survive: rate limit, server error,
 // overload, timeout, a retired model id (404), or a network error with no status.
@@ -253,7 +253,6 @@ export default async function handler(req, res) {
 
   try {
     const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY);
-    const fallbackModel = process.env.GEMINI_FALLBACK_MODEL?.trim() || DEFAULT_FALLBACK_MODEL;
 
     // Only the most recent turns are forwarded — older context adds tokens
     // without improving answers about a fixed set of facts.
@@ -269,19 +268,19 @@ export default async function handler(req, res) {
       history.shift();
     }
 
-    let text;
-    try {
-      text = await generateReply(genAI, PRIMARY_MODEL, history, latestMessage.content);
-    } catch (error) {
-      if (!shouldFallBack(error) || fallbackModel === PRIMARY_MODEL) throw error;
-      console.warn(
-        `Model ${PRIMARY_MODEL} failed (${error.status ?? 'network error'}); falling back to ${fallbackModel}`
-      );
-      text = await generateReply(genAI, fallbackModel, history, latestMessage.content);
-      console.warn(`Answered by fallback model ${fallbackModel}`);
+    for (const [index, model] of CHAT_MODELS.entries()) {
+      let text;
+      try {
+        text = await generateReply(genAI, model, history, latestMessage.content);
+      } catch (error) {
+        const nextModel = CHAT_MODELS[index + 1];
+        if (!nextModel || !shouldFallBack(error)) throw error;
+        console.warn(`Model ${model} failed (${error.status ?? 'network error'}); falling back to ${nextModel}`);
+        continue;
+      }
+      if (index > 0) console.warn(`Answered by fallback model ${model}`);
+      return res.status(200).json({ response: text });
     }
-
-    return res.status(200).json({ response: text });
   } catch (error) {
     // Log the real cause, return a generic message — upstream errors can carry
     // model names, quota details, and key metadata that must not reach a browser.

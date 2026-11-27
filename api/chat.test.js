@@ -63,7 +63,6 @@ describe('API Route /api/chat', () => {
       end: vi.fn()
     };
     process.env.GEMINI_API_KEY = 'test_key';
-    delete process.env.GEMINI_FALLBACK_MODEL;
 
     // Default mock behavior for rate limiting (success)
     ratelimitLimitMock.mockResolvedValue({ success: true });
@@ -201,7 +200,7 @@ describe('API Route /api/chat', () => {
       ['timing out (504)', 504],
       ['retired (404)', 404],
       ['unreachable (network error, no status)', undefined],
-    ])('falls back to gemini-3.5-flash-lite when the primary is %s', async (_label, status) => {
+    ])('falls back to 3.8 Flash when Hydrogen is %s', async (_label, status) => {
       sendMessageMock.mockImplementation((model) =>
         model === 'gemini-4-hydrogen'
           ? Promise.reject(upstreamError(status))
@@ -213,7 +212,7 @@ describe('API Route /api/chat', () => {
       expect(res.status).toHaveBeenCalledWith(200);
       expect(res.json).toHaveBeenCalledWith({ response: 'Fallback answer' });
       expect(getGenerativeModelMock).toHaveBeenLastCalledWith(
-        expect.objectContaining({ model: 'gemini-3.5-flash-lite' })
+        expect.objectContaining({ model: 'gemini-3.8-flash' })
       );
       expect(sendMessageMock).toHaveBeenCalledTimes(2);
     });
@@ -230,12 +229,12 @@ describe('API Route /api/chat', () => {
       expect(fallbackArgs.generationConfig).toEqual(primaryArgs.generationConfig);
     });
 
-    it('returns the generic 502 without upstream detail when both models fail', async () => {
+    it('returns the generic 502 without upstream detail when all models fail', async () => {
       sendMessageMock.mockRejectedValue(upstreamError(503, 'models/gemini-3.5-flash-lite quota key=AIzaSECRET'));
 
       await handler(req, res);
 
-      expect(sendMessageMock).toHaveBeenCalledTimes(2);
+      expect(sendMessageMock).toHaveBeenCalledTimes(4);
       expect(res.status).toHaveBeenCalledWith(502);
       expect(res.json).toHaveBeenCalledWith(GENERIC_502);
     });
@@ -254,25 +253,25 @@ describe('API Route /api/chat', () => {
       expect(res.json).toHaveBeenCalledWith(GENERIC_502);
     });
 
-    it('uses GEMINI_FALLBACK_MODEL when it is set', async () => {
-      process.env.GEMINI_FALLBACK_MODEL = ' gemini-3.6-flash ';
-      sendMessageMock.mockImplementation((model) =>
-        model === 'gemini-4-hydrogen' ? Promise.reject(upstreamError(503)) : Promise.resolve(reply('Lite answer'))
-      );
+    it.each([2, 3])('reaches fallback number %i after consecutive upstream rate limits', async (failures) => {
+      const models = ['gemini-4-hydrogen', 'gemini-3.8-flash', 'gemini-3.6-flash', 'gemini-3.5-flash-lite'];
+      for (let i = 0; i < failures; i++) sendMessageMock.mockRejectedValueOnce(upstreamError(429));
+      sendMessageMock.mockResolvedValueOnce(reply('Available model answered'));
 
       await handler(req, res);
 
-      expect(sendMessageMock).toHaveBeenLastCalledWith('gemini-3.6-flash', 'Tell me about Sandeep');
-      expect(res.json).toHaveBeenCalledWith({ response: 'Lite answer' });
+      expect(sendMessageMock.mock.calls).toEqual(
+        models.slice(0, failures + 1).map((model) => [model, 'Tell me about Sandeep'])
+      );
+      expect(res.json).toHaveBeenCalledWith({ response: 'Available model answered' });
     });
 
-    it('does not call the same model twice when the fallback is set to the primary', async () => {
-      process.env.GEMINI_FALLBACK_MODEL = 'gemini-4-hydrogen';
-      sendMessageMock.mockRejectedValue(upstreamError(503));
+    it('stops on an authentication error partway through the chain', async () => {
+      sendMessageMock.mockRejectedValueOnce(upstreamError(429)).mockRejectedValueOnce(upstreamError(403));
 
       await handler(req, res);
 
-      expect(sendMessageMock).toHaveBeenCalledTimes(1);
+      expect(sendMessageMock).toHaveBeenCalledTimes(2);
       expect(res.status).toHaveBeenCalledWith(502);
     });
 
@@ -284,7 +283,7 @@ describe('API Route /api/chat', () => {
       await handler(req, res);
 
       const logged = console.warn.mock.calls.map((args) => args.join(' ')).join('\n');
-      expect(logged).toMatch(/gemini-4-hydrogen.*503.*gemini-3\.5-flash-lite/);
+      expect(logged).toMatch(/gemini-4-hydrogen.*503.*gemini-3\.8-flash/);
     });
   });
 });
