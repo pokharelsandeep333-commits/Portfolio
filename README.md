@@ -1,10 +1,10 @@
 <div align="center">
 
-# Sandeep Pokharel | Personal Portfolio
+# 🖥️ Sandeep Pokharel | Personal Portfolio
 
-I work as an IT Support Desk Technician at Dakota State University, where I study Cyber Operations. Outside the help desk, I build tools for problems I run into at work and run a homelab on my laptop.
+I study Cyber Operations at Dakota State University and work there as an IT Support Desk Technician. I wrote a tool for the laptops we inspect at the help desk. My own laptop hosts this site.
 
-**[Visit the portfolio](https://portfolio.sandeeppokharel.com.np/)** · [Explore the homelab](https://portfolio.sandeeppokharel.com.np/#homelab) · [Browse projects](https://portfolio.sandeeppokharel.com.np/#projects)
+<h3><a href="https://portfolio.sandeeppokharel.com.np/">View Live Site »</a></h3>
 
 [![Portfolio CI](https://github.com/pokharelsandeep333-commits/Portfolio/actions/workflows/deploy.yml/badge.svg?branch=main)](https://github.com/pokharelsandeep333-commits/Portfolio/actions/workflows/deploy.yml)
 ![React 19](https://img.shields.io/badge/React-19-149ECA?logo=react&logoColor=white)
@@ -13,22 +13,22 @@ I work as an IT Support Desk Technician at Dakota State University, where I stud
 
 </div>
 
-## Inside the portfolio
+## 🧭 Inside the portfolio
 
-- **Trace a backup.** Open **Homelab → Backups** and select **Cloudflare R2**. The map shows why I keep a nightly copy off the laptop as well as a weekly local copy. Switch to **Security events** to follow a different route through Wazuh.
-- **Ask about the work.** Open **Chat with Digital Sandeep** and ask “Why did you build ShiftSentry?” The AI assistant builds its answers from the same project and experience records the site uses.
-- **Take a one-page resume.** Open **Resume** and use the print control to save a PDF with selectable text. Project entries carry separate web and resume copy, so a project walkthrough can be detailed and its resume entry can stay short.
+- In **Homelab → Backups**, select **Cloudflare R2**. My weekly backup lives on the same laptop as the VM. The nightly copy in R2 is the one I can restore if I lose the laptop. Select **Security events** to trace alerts through Wazuh.
+- Ask **Digital Sandeep** “Why did you build ShiftSentry?” The assistant gets its project and experience details from the same files I edit for the site.
+- Under **Resume**, choose **Download PDF** to save a one-page resume with selectable text. Each project has room for a full walkthrough on the site and a shorter description on the resume.
 
-## Selected projects
+## 🧰 Selected projects
 
 | Project | What I built |
 | --- | --- |
-| [ShiftSentry](https://github.com/pokharelsandeep333-commits/ShiftSentry) | A shift planner I built while juggling campus jobs. It combines scheduled and worked hours so I can see whether another shift would put me over my weekly cap. |
-| [DQA Automation Suite](https://github.com/pokharelsandeep333-commits/DQA-Automation) | A PowerShell and WPF tool for laptop inspections at the DSU help desk. It reads serial numbers, battery stats, and storage details through WMI/CIM to save technicians from typing them by hand. |
-| [Home SOC Lab](https://github.com/pokharelsandeep333-commits/wazuh-home-soc) | A Wazuh setup with custom detection rules for my servers and AWS account. The repository includes test events I replay to check that the rules still alert. |
-| [Private RAG Search Engine](https://github.com/pokharelsandeep333-commits/Molecular-Zettelkasten) | A search tool for my Obsidian notes. It matches a question against local embeddings and sends the matching notes to Gemini to answer it. |
+| 🛡️ [ShiftSentry](https://github.com/pokharelsandeep333-commits/ShiftSentry) | I needed to know whether I could pick up another campus shift. ShiftSentry adds my scheduled hours to the hours I've worked and checks the total against my weekly cap. |
+| 💻 [DQA Automation Suite](https://github.com/pokharelsandeep333-commits/DQA-Automation) | We used to type serial numbers, battery stats, and storage details by hand. My PowerShell and WPF tool reads them through WMI/CIM when a technician starts a laptop inspection. |
+| 🔎 [Home SOC Lab](https://github.com/pokharelsandeep333-commits/wazuh-home-soc) | I write Wazuh detection rules for my servers and AWS account. The repo includes the test events I replay to check that the rules still catch what they should. |
+| 📚 [Private RAG Search Engine](https://github.com/pokharelsandeep333-commits/Molecular-Zettelkasten) | I can ask a question about my Obsidian vault. The app searches local embeddings for relevant notes and sends those notes to Gemini with my question. |
 
-## How a request reaches the site
+## 🗺️ How a request reaches the site
 
 ```mermaid
 flowchart LR
@@ -40,11 +40,13 @@ flowchart LR
     chat -->|Generate reply| gemini["Google Gemini"]
 ```
 
-**The page.** Vite builds the React site into static files. Nginx serves them from a Docker container on my Ubuntu Hyper-V VM. Desktop visitors see a silent video loop that pauses off-screen. Phones load a WebP portrait and skip the video download.
+Vite builds the React site into static files. Nginx serves them from a Docker container on my Ubuntu Hyper-V VM. On desktop, the opening video plays silently and pauses when you scroll past it. Phones download a WebP portrait instead.
 
-**The chat.** The browser sends a message to a Vercel function. Upstash limits each IP to 10 requests per minute. Zod validates the conversation, and the handler forwards at most 16 recent messages with an 800-token output cap. Each request starts with **Gemini 4 Hydrogen**, then tries **3.8 Flash → 3.6 Flash → 3.5 Flash Lite** on upstream rate limits and other retryable failures. The first successful reply ends the chain. [Chat handler](api/chat.js) · [Fallback tests](api/chat.test.js)
+Chat runs on Vercel. The function uses Upstash to limit each IP to 10 requests per minute and Zod to check incoming messages. It sends Gemini up to 16 recent messages and caps each reply at 800 tokens.
 
-## Run locally
+The function tries Gemini 4 Hydrogen first. If Google rate-limits it or returns another retryable error, the function tries 3.8 Flash, then 3.6 Flash, then 3.5 Flash Lite. It returns the first successful reply. [Chat handler](api/chat.js) · [Fallback tests](api/chat.test.js)
+
+## 🚀 Run locally
 
 Use a current Node.js 22 LTS release and npm. The portfolio, homelab map, and printable resume run locally without service credentials.
 
@@ -55,11 +57,11 @@ npm ci
 npm run dev
 ```
 
-Open [localhost:5173](http://localhost:5173). To exercise chat or contact submissions, configure the relevant integration below.
+Open [localhost:5173](http://localhost:5173). To send a chat message, point the frontend at a running chat function. To send a contact form, set the Formspree URL.
 
 | Variable | Where it belongs | Purpose |
 | --- | --- | --- |
-| `VITE_API_URL` | Vite build environment, or local `.env.local` | Full URL of the chat endpoint. When omitted, the frontend calls `/api/chat` on its own origin. The plain Vite dev server serves the frontend. |
+| `VITE_API_URL` | Vite build environment, or local `.env.local` | Full URL of the chat endpoint. Leave it unset to use `/api/chat` on the same origin. The Vite dev server runs only the frontend. |
 | `VITE_FORMSPREE_URL` | Vite build environment, or local `.env.local` | Public Formspree endpoint for contact submissions. |
 | `GEMINI_API_KEY` | Vercel function environment | Authenticates server-side requests to Gemini. |
 | `UPSTASH_REDIS_REST_URL`, `UPSTASH_REDIS_REST_TOKEN` | Vercel function environment | Connect the chat rate limiter to Redis. |
@@ -67,7 +69,7 @@ Open [localhost:5173](http://localhost:5173). To exercise chat or contact submis
 
 To run the function locally, supply its server variables to `vercel dev`. Keep credentials out of `VITE_*` variables, which Vite embeds in the browser bundle. Updating the production Gemini key takes a Vercel redeploy. Changing the self-hosted frontend's API URL takes a new Docker build.
 
-## Checks and delivery
+## 🔄 Checks and deployment
 
 ```sh
 npm run lint
@@ -77,7 +79,7 @@ npm run build
 
 Pull requests run ESLint, a production dependency audit, Gitleaks, and Vitest. On `main`, GitHub Actions builds the Nginx image, runs a report-only Trivy scan, and pushes the scanned image to Docker Hub. Watchtower on SandeepCloud checks for an update every five minutes. Vercel deploys the chat function separately. [Release workflow](.github/workflows/deploy.yml) · [Weekly image scan](.github/workflows/scan-published-image.yml)
 
-## Where to make a change
+## 📁 Where to make a change
 
 | To change | Start here |
 | --- | --- |
