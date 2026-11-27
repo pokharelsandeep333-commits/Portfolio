@@ -35,16 +35,16 @@ flowchart LR
     browser["Visitor's browser"]
     browser -->|Page and assets| tunnel["Cloudflare Tunnel"]
     tunnel --> web["Nginx on SandeepCloud"]
-    browser -->|Chat message| chat["Vercel /api/chat"]
-    chat -->|Rate limit| redis["Upstash Redis"]
+    web -->|POST /api/chat| chat["Portfolio Node API"]
+    chat -->|Limits and budgets| redis["Private Redis"]
     chat -->|Generate reply| gemini["Google Gemini"]
 ```
 
 Vite builds the React site into static files. Nginx serves them from a Docker container on my Ubuntu Hyper-V VM. On desktop, the opening video plays silently and pauses when you scroll past it. Phones download a WebP portrait instead.
 
-Chat runs on Vercel. The function uses Upstash to limit each IP to 10 requests per minute and Zod to check incoming messages. It sends Gemini up to 16 recent messages and caps each reply at 800 tokens.
+The Node API runs beside the static site on SandeepCloud. Nginx supplies the visitor address. Private Redis admits 10 requests per rolling minute per IP and counts Gemini attempts against daily budgets. If Redis is unavailable, the API returns 503 and the static site still works. Published project overviews and selected starter questions can be answered from portfolio data. Other questions send up to 16 recent messages to Gemini with an 800-token output cap.
 
-The function tries Gemini 4 Hydrogen first. If Google rate-limits it or returns another retryable error, the function tries 3.8 Flash, then 3.6 Flash, then 3.5 Flash Lite. It returns the first successful reply. [Chat handler](api/chat.js) · [Fallback tests](api/chat.test.js)
+The API tries Gemini 4 Hydrogen first. Transient errors can fall back to 3.8 Flash, 3.6 Flash, and 3.5 Flash Lite within a 35-second deadline. Each attempt uses the Interactions API with storage disabled. [Model calls](server/gemini.js) · [HTTP and fallback tests](server/chat.test.js)
 
 ## 🚀 Run locally
 
@@ -57,17 +57,14 @@ npm ci
 npm run dev
 ```
 
-Open [localhost:5173](http://localhost:5173). To send a chat message, point the frontend at a running chat function. To send a contact form, set the Formspree URL.
+Open [localhost:5173](http://localhost:5173). For chat, also start a private Redis instance and run `npm run dev:api` in a second terminal. Vite proxies `/api/chat` to port 3001. The API reads the ignored `.env.chat` file locally.
 
 | Variable | Where it belongs | Purpose |
 | --- | --- | --- |
-| `VITE_API_URL` | Vite build environment, or local `.env.local` | Full URL of the chat endpoint. Leave it unset to use `/api/chat` on the same origin. The Vite dev server runs only the frontend. |
-| `VITE_FORMSPREE_URL` | Vite build environment, or local `.env.local` | Public Formspree endpoint for contact submissions. |
-| `GEMINI_API_KEY` | Vercel function environment | Authenticates server-side requests to Gemini. |
-| `UPSTASH_REDIS_REST_URL`, `UPSTASH_REDIS_REST_TOKEN` | Vercel function environment | Connect the chat rate limiter to Redis. |
-| `ALLOWED_ORIGINS` | Vercel function environment, optional | Comma-separated browser origins allowed to read cross-origin chat responses. |
-
-To run the function locally, supply its server variables to `vercel dev`. Keep credentials out of `VITE_*` variables, which Vite embeds in the browser bundle. Updating the production Gemini key takes a Vercel redeploy. Changing the self-hosted frontend's API URL takes a new Docker build.
+| `GEMINI_API_KEY` | API runtime | Portfolio-specific Gemini key. |
+| `REDIS_URL` | API runtime | Defaults to local Redis on port 6379. Compose supplies the private Redis service address. |
+| `CHAT_DAILY_PER_IP`, `CHAT_DAILY_TOTAL` | API runtime, optional | Gemini attempts per UTC day. Defaults are 30 per visitor IP and 300 overall. |
+| `VITE_FORMSPREE_URL` | Frontend build | Public contact form endpoint. |
 
 ## 🔄 Checks and deployment
 
@@ -77,7 +74,7 @@ npm test
 npm run build
 ```
 
-Pull requests run ESLint, a production dependency audit, Gitleaks, and Vitest. On `main`, GitHub Actions builds the Nginx image, runs a report-only Trivy scan, and pushes the scanned image to Docker Hub. Watchtower on SandeepCloud checks for an update every five minutes. Vercel deploys the chat function separately. [Release workflow](.github/workflows/deploy.yml) · [Weekly image scan](.github/workflows/scan-published-image.yml)
+Pull requests run ESLint, a production dependency audit, Gitleaks, and Vitest. On `main`, GitHub Actions builds the Nginx and Node images, runs a report-only Trivy scan on each, and pushes both images to Docker Hub. Watchtower on SandeepCloud checks for an update every five minutes. [Release workflow](.github/workflows/deploy.yml) · [Weekly image scan](.github/workflows/scan-published-image.yml)
 
 ## 📁 Where to make a change
 
@@ -87,4 +84,4 @@ Pull requests run ESLint, a production dependency audit, Gitleaks, and Vitest. O
 | Project cards, resume descriptions, or the project facts available to chat | [Project data](src/data/projects.js) |
 | Homelab services and routes | [Map data](src/data/homelab.js) · [Map design notes](docs/homelab-map.md) |
 | Resume layout or print styles | [Resume view](src/components/ResumeView.jsx) · [Stylesheet](src/index.css) |
-| Chat behavior or model order | [Chat function](api/chat.js) · [Hosting decision](docs/adr/0001-vercel-serverless-for-ai-agent.md) |
+| Chat behavior or model order | [Chat API](server/app.js) · [Hosting decision](docs/adr/0002-sandeepcloud-chat.md) |

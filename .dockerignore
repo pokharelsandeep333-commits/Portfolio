@@ -7,3 +7,10 @@ npm-debug.log
 .gitignore
 README.md
 promo
+
+.scratch
+.agents
+.codex
+.claude
+**/.env*
+**/*.test.*

@@ -1,0 +1,2 @@
+export const CHAT_CONTEXT_MESSAGES = 16;
+export const CHAT_MESSAGE_CHARACTERS = 2000;

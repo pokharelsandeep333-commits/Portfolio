@@ -101,7 +101,7 @@ export const about = {
   bio: [
     "Cyber Operations sophomore at Dakota State University, originally from Kathmandu, Nepal. I like building things that work and figuring out why things break.",
     "My day job is IT Support at DSU: deploying hardware, troubleshooting networks, managing Intune enrollment, and making sure students and faculty can actually get work done. I also run the live broadcasts for DSU athletics and esports: switching cameras, mixing audio, and keeping the stream up while the game is happening.",
-    "After hours I build my own infrastructure: self-hosted cloud storage on AWS, an AI platform that answers from my personal notes, automation tools for the helpdesk, and a home SOC that watches my servers. Most of it runs in Docker on servers I manage.",
+    "After hours I build my own infrastructure: self-hosted cloud storage on my homelab, an AI platform that answers from my personal notes, automation tools for the helpdesk, and a home SOC that watches my servers. Most of it runs in Docker on servers I manage.",
   ],
   details: [
     { label: "Education", val: "B.S. Cyber Operations", sub: "Dakota State University · Fall 2025 to Present" },

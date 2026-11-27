@@ -4,7 +4,7 @@ Date: 2026-07-19
 
 ## Status
 
-Accepted
+Superseded by [ADR-0002](0002-sandeepcloud-chat.md).
 
 ## Context
 

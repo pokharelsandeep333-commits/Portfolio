@@ -1,6 +1,7 @@
 import { useState, useRef, useEffect } from 'react';
 import gsap from 'gsap';
 import ReactMarkdown from 'react-markdown';
+import { CHAT_CONTEXT_MESSAGES, CHAT_MESSAGE_CHARACTERS } from '../data/chatLimits.js';
 
 // Shown only on an empty conversation — a blank input gets ignored, whereas a
 // tappable question gives visitors an obvious first move. Each one is
@@ -99,21 +100,24 @@ const Terminal = ({ isOpen, onClose }) => {
     setIsLoading(true);
 
     try {
-      const apiUrl = import.meta.env.VITE_API_URL || '/api/chat';
-      const response = await fetch(apiUrl, {
+      const response = await fetch('/api/chat', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify({ messages: newMessages }),
+        body: JSON.stringify({
+          messages: newMessages.slice(-CHAT_CONTEXT_MESSAGES).map(({ role, content }) => ({
+            role,
+            content: content.slice(0, CHAT_MESSAGE_CHARACTERS),
+          })),
+        }),
       });
 
-      if (response.status === 429) {
+      const data = await response.json();
+      if (response.status === 429 && data.error === 'Too many requests') {
         setMessages(prev => [...prev, { role: 'bot', content: 'Too many requests. Please slow down and try again in a minute.' }]);
         return;
       }
-
-      const data = await response.json();
 
       setMessages(prev => [...prev, { role: 'bot', content: data.response || data.error || 'Error' }]);
     } catch {
@@ -227,6 +231,7 @@ const Terminal = ({ isOpen, onClose }) => {
         >
           <input
             type="text"
+            maxLength={CHAT_MESSAGE_CHARACTERS}
             role="textbox"
             value={input}
             onChange={(e) => setInput(e.target.value)}
