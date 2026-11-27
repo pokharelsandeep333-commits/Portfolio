@@ -1,4 +1,5 @@
 import { randomUUID } from 'node:crypto';
+import { untilAborted } from './abort.js';
 
 // One sorted set per visitor. Expire idle keys and make concurrent decisions atomic.
 const minuteWindow = `
@@ -30,18 +31,21 @@ const dailyBudget = `
 `;
 
 export function createLimits(redis, visitorBudget, totalBudget) {
-  const connection = () => redis.withAbortSignal(AbortSignal.timeout(1500));
+  function command(run) {
+    const signal = AbortSignal.timeout(1500);
+    return untilAborted(signal, () => run(redis.withAbortSignal(signal)));
+  }
   return {
-    async ready() { return await connection().ping() === 'PONG'; },
+    async ready() { return await command((client) => client.ping()) === 'PONG'; },
     async admit(ip) {
-      return await connection().eval(minuteWindow, {
+      return await command((client) => client.eval(minuteWindow, {
         keys: [`minute:${ip}`], arguments: [randomUUID()],
-      }) === 1;
+      })) === 1;
     },
     async reserve(ip) {
-      return connection().eval(dailyBudget, {
+      return command((client) => client.eval(dailyBudget, {
         keys: [`visitor:${ip}`, 'total'], arguments: [String(visitorBudget), String(totalBudget)],
-      });
+      }));
     },
   };
 }
