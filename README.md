@@ -4,7 +4,7 @@
 
 I work as an IT Support Desk Technician at Dakota State University, where I study Cyber Operations. Outside the help desk, I build tools for problems I run into at work and run a homelab on my laptop.
 
-**[Visit the portfolio](https://portfolio.sandeeppokharel.com.np/)** · [Explore the homelab](https://portfolio.sandeeppokharel.com.np/#homelab) · [Browse projects](https://portfolio.sandeeppokharel.com.np/#projects)
+**[Visit the portfolio](https://portfolio.sandeeppokharel.com.np/)**
 
 [![Portfolio CI](https://github.com/pokharelsandeep333-commits/Portfolio/actions/workflows/deploy.yml/badge.svg?branch=main)](https://github.com/pokharelsandeep333-commits/Portfolio/actions/workflows/deploy.yml)
 ![React 19](https://img.shields.io/badge/React-19-149ECA?logo=react&logoColor=white)
