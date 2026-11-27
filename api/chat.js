@@ -159,7 +159,7 @@ const FORWARDED_TURNS = 16;
 // Gemini sheds load per model: on 2026-09-26/27 the primary returned 503 "high
 // demand" for over a day while the key and quota were fine. A second model keeps
 // the assistant answering. Override the fallback with GEMINI_FALLBACK_MODEL.
-const PRIMARY_MODEL = 'gemini-3.8-flash';
+const PRIMARY_MODEL = 'gemini-4-hydrogen';
 // The 2.5 models are unavailable to this account; use a current stable fallback.
 const DEFAULT_FALLBACK_MODEL = 'gemini-3.5-flash-lite';
 

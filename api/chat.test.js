@@ -191,7 +191,7 @@ describe('API Route /api/chat', () => {
     it('answers from the primary model alone when it succeeds', async () => {
       await handler(req, res);
       expect(sendMessageMock).toHaveBeenCalledTimes(1);
-      expect(sendMessageMock).toHaveBeenCalledWith('gemini-3.8-flash', 'Tell me about Sandeep');
+      expect(sendMessageMock).toHaveBeenCalledWith('gemini-4-hydrogen', 'Tell me about Sandeep');
     });
 
     it.each([
@@ -203,7 +203,7 @@ describe('API Route /api/chat', () => {
       ['unreachable (network error, no status)', undefined],
     ])('falls back to gemini-3.5-flash-lite when the primary is %s', async (_label, status) => {
       sendMessageMock.mockImplementation((model) =>
-        model === 'gemini-3.8-flash'
+        model === 'gemini-4-hydrogen'
           ? Promise.reject(upstreamError(status))
           : Promise.resolve(reply('Fallback answer'))
       );
@@ -220,7 +220,7 @@ describe('API Route /api/chat', () => {
 
     it('gives the fallback the same system prompt and generation limits', async () => {
       sendMessageMock.mockImplementation((model) =>
-        model === 'gemini-3.8-flash' ? Promise.reject(upstreamError(503)) : Promise.resolve(reply('ok'))
+        model === 'gemini-4-hydrogen' ? Promise.reject(upstreamError(503)) : Promise.resolve(reply('ok'))
       );
 
       await handler(req, res);
@@ -257,7 +257,7 @@ describe('API Route /api/chat', () => {
     it('uses GEMINI_FALLBACK_MODEL when it is set', async () => {
       process.env.GEMINI_FALLBACK_MODEL = ' gemini-3.6-flash ';
       sendMessageMock.mockImplementation((model) =>
-        model === 'gemini-3.8-flash' ? Promise.reject(upstreamError(503)) : Promise.resolve(reply('Lite answer'))
+        model === 'gemini-4-hydrogen' ? Promise.reject(upstreamError(503)) : Promise.resolve(reply('Lite answer'))
       );
 
       await handler(req, res);
@@ -267,7 +267,7 @@ describe('API Route /api/chat', () => {
     });
 
     it('does not call the same model twice when the fallback is set to the primary', async () => {
-      process.env.GEMINI_FALLBACK_MODEL = 'gemini-3.8-flash';
+      process.env.GEMINI_FALLBACK_MODEL = 'gemini-4-hydrogen';
       sendMessageMock.mockRejectedValue(upstreamError(503));
 
       await handler(req, res);
@@ -278,13 +278,13 @@ describe('API Route /api/chat', () => {
 
     it('logs which model failed and which one answered', async () => {
       sendMessageMock.mockImplementation((model) =>
-        model === 'gemini-3.8-flash' ? Promise.reject(upstreamError(503)) : Promise.resolve(reply('ok'))
+        model === 'gemini-4-hydrogen' ? Promise.reject(upstreamError(503)) : Promise.resolve(reply('ok'))
       );
 
       await handler(req, res);
 
       const logged = console.warn.mock.calls.map((args) => args.join(' ')).join('\n');
-      expect(logged).toMatch(/gemini-3\.8-flash.*503.*gemini-3\.5-flash-lite/);
+      expect(logged).toMatch(/gemini-4-hydrogen.*503.*gemini-3\.5-flash-lite/);
     });
   });
 });
