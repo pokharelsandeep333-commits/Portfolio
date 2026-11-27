@@ -58,6 +58,26 @@ describe('SandeepCloud chat API', () => {
       await new Promise((resolve) => provider.close(resolve));
     }
   });
+  it('falls back when the provider leaves its promise pending after cancellation', async () => {
+    vi.useFakeTimers();
+    try {
+      create.mockImplementationOnce(() => new Promise(() => {}));
+      const result = generateReply({ interactions: { create } }, [user('Projects?')], new AbortController().signal, () => 0);
+      await vi.advanceTimersByTimeAsync(10_001);
+      expect(await result).toEqual({ response: 'Generated answer' });
+      expect(create.mock.calls[0][1].signal.aborted).toBe(true);
+      expect(create.mock.calls[1][0].model).toBe('gemini-3.8-flash');
+    } finally {
+      vi.useRealTimers();
+    }
+  });
+  it('stops on disconnect even while a budget reservation is pending', async () => {
+    const controller = new AbortController();
+    const result = generateReply({ interactions: { create } }, [user('Projects?')], controller.signal, () => new Promise(() => {}));
+    controller.abort(new Error('Disconnected'));
+    await expect(result).rejects.toThrow('Disconnected');
+    expect(create).not.toHaveBeenCalled();
+  });
   it('serves readiness without contacting Google', async () => {
     const response = await fetch(new URL('/readyz', url));
     expect(await response.json()).toEqual({ ready: true });
@@ -100,7 +120,9 @@ describe('SandeepCloud chat API', () => {
   it('stops after the configured fallback chain', async () => {
     create.mockRejectedValue(Object.assign(new Error(), { status: 503 }));
     expect((await post([user('My projects?')])).status).toBe(503);
-    expect(create).toHaveBeenCalledTimes(4);
+    expect(create.mock.calls.map(([args]) => args.model)).toEqual([
+      'gemini-4-hydrogen', 'gemini-3.8-flash', 'gemini-3.6-flash', 'gemini-3.5-flash-lite',
+    ]);
   });
   it('stops before the next model when a daily budget runs out', async () => {
     limits.reserve.mockResolvedValueOnce(0).mockResolvedValueOnce(120);

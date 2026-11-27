@@ -44,7 +44,7 @@ Vite builds the React site into static files. Nginx serves them from a Docker co
 
 The Node API runs beside the static site on SandeepCloud. Nginx supplies the visitor address. Private Redis admits 10 requests per rolling minute per IP and counts Gemini attempts against daily budgets. If Redis is unavailable, the API returns 503 and the static site still works. Published project overviews and selected starter questions can be answered from portfolio data. Other questions send up to 16 recent messages to Gemini with an 800-token output cap.
 
-The API tries Gemini 4 Hydrogen first. Transient errors can fall back to 3.8 Flash, 3.6 Flash, and 3.5 Flash Lite within a 35-second deadline. Each attempt uses the Interactions API with storage disabled. [Model calls](server/gemini.js) · [HTTP and fallback tests](server/chat.test.js)
+The API tries Gemini 4 Hydrogen first. Transient errors can fall back to 3.8 Flash, 3.6 Flash, and 3.5 Flash Lite. Each attempt has 10 seconds within a 35-second overall deadline. Each attempt uses the Interactions API with storage disabled. [Model calls](server/gemini.js) · [HTTP and fallback tests](server/chat.test.js)
 
 ## 🚀 Run locally
 
