@@ -4,7 +4,6 @@ import { gsap } from 'gsap'
 import { ScrollTrigger } from 'gsap/ScrollTrigger'
 import './index.css'
 import App from './App.jsx'
-import { Analytics } from '@vercel/analytics/react'
 
 // Register GSAP plugins globally — must happen before any component mounts
 gsap.registerPlugin(ScrollTrigger)
@@ -25,6 +24,5 @@ ScrollTrigger.defaults({
 createRoot(document.getElementById('root')).render(
   <StrictMode>
     <App />
-    <Analytics />
   </StrictMode>,
 )

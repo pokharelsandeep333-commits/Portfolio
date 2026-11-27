@@ -17,6 +17,7 @@ export default defineConfig({
     fileParallelism: false,
   },
   server: {
+    proxy: { '/api/chat': 'http://127.0.0.1:3001' },
     watch: {
       // Exclude large media files in public/ from the file watcher.
       // OneDrive locks .mp4/.mov/.webm while syncing, causing EBUSY crashes.

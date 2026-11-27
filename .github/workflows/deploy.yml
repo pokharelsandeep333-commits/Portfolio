@@ -68,7 +68,7 @@ jobs:
 
       # Production dependencies only. Build tools (Vite, Tailwind, PostCSS)
       # are devDependencies: they run in CI and the Docker build stage but
-      # never reach the Nginx bundle or the Vercel function.
+      # never reach the Nginx bundle or the chat API.
       - name: 🔍 Run npm audit
         run: npm audit --omit=dev
 
@@ -117,8 +117,6 @@ jobs:
 
       - name: 🧪 Run tests
         run: npm test
-        env:
-          VITE_API_URL: ${{ secrets.VITE_API_URL }}
 
   # ================================================================
   # JOB 5: BUILD & PUSH — Docker image to Docker Hub
@@ -131,12 +129,24 @@ jobs:
     # Only push on main branch (not on pull requests)
     if: ${{ github.ref == 'refs/heads/main' && github.event_name != 'pull_request' }}
 
+    strategy:
+      matrix:
+        include:
+          - target: web
+            tag: latest
+            sha_prefix: ''
+          - target: api
+            tag: api-latest
+            sha_prefix: api-
+
     # Uploading Trivy SARIF to the Security tab needs security-events: write.
     permissions:
       contents: read
       security-events: write
 
     env:
+      RELEASE_TAG: ${{ matrix.tag }}
+      SHA_TAG: ${{ matrix.sha_prefix }}${{ github.sha }}
       IMAGE: pokharelsandeep333/my-portfolio-app
       # Trivy v0.76.1, pinned by digest (identical on Docker Hub, GHCR and ECR Public).
       # Do NOT replace with aquasecurity/trivy-action or setup-trivy: their tags were
@@ -168,20 +178,20 @@ jobs:
         with:
           context: .
           file: ./Dockerfile
+          target: ${{ matrix.target }}
           load: true
           push: false
           tags: |
-            pokharelsandeep333/my-portfolio-app:latest
-            pokharelsandeep333/my-portfolio-app:${{ github.sha }}
+            pokharelsandeep333/my-portfolio-app:${{ matrix.tag }}
+            pokharelsandeep333/my-portfolio-app:${{ matrix.sha_prefix }}${{ github.sha }}
           build-args: |
-            VITE_API_URL=${{ secrets.VITE_API_URL }}
             VITE_FORMSPREE_URL=${{ secrets.VITE_FORMSPREE_URL }}
-          cache-from: type=gha
-          cache-to: type=gha,mode=max
+          cache-from: type=gha,scope=${{ matrix.target }}
+          cache-to: type=gha,mode=max,scope=${{ matrix.target }}
 
       # Trivy reads the image from a tarball, so the Docker socket is never mounted.
       - name: 📦 Export image for scanning
-        run: docker save "$IMAGE:$GITHUB_SHA" -o image.tar
+        run: docker save "$IMAGE:$SHA_TAG" -o image.tar
 
       # The vuln DB is ~1.6 GB unpacked. Keyed per day; restore-keys falls back to the
       # newest older copy and Trivy refreshes it if stale.
@@ -209,7 +219,7 @@ jobs:
         uses: github/codeql-action/upload-sarif@33d7b85da1a04171e211befe2c739303b9a4c066 # v4.39.3
         with:
           sarif_file: trivy.sarif
-          category: trivy-image-build
+          category: trivy-image-build-${{ matrix.target }}
 
       # Human-readable table in the log, and the gate: exits with TRIVY_GATE_EXIT_CODE
       # when fixable CRITICAL/HIGH findings exist. In blocking mode a failure here
@@ -225,15 +235,15 @@ jobs:
       # :latest, which is the tag Watchtower deploys.
       - name: 🚀 Push Docker Image to Docker Hub
         run: |
-          docker push "$IMAGE:$GITHUB_SHA"
-          docker push "$IMAGE:latest"
+          docker push "$IMAGE:$SHA_TAG"
+          docker push "$IMAGE:$RELEASE_TAG"
 
       - name: 📋 Deployment Summary
         run: |
           echo "============================================="
           echo "✅ All quality gates passed!"
           echo "✅ Image pushed to Docker Hub!"
-          echo "   Image: pokharelsandeep333/my-portfolio-app:latest"
+          echo "   Image: pokharelsandeep333/my-portfolio-app:${{ matrix.tag }}"
           echo "   Commit: ${{ github.sha }}"
           echo ""
           echo "⏳ Watchtower will auto-deploy within ~5 minutes"

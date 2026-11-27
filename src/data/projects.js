@@ -12,7 +12,7 @@ export const projects = [
     badge: "badge-production",
     hideOnResume: true,
     description:
-      "I got tired of trusting Google and Microsoft with my files, so I built my own cloud drive. It runs Nextcloud on an AWS EC2 instance I manage, in a Docker Compose stack with MariaDB and Nginx, behind Cloudflare with Full Strict SSL. I use it every day from my laptop and phone. It works like Google Drive, except the files stay on my own server.",
+      "I got tired of trusting Google and Microsoft with my files, so I built my own cloud drive. I first hosted it on AWS EC2. Today it runs Nextcloud on my Hyper-V homelab VM, in a Docker Compose stack with MariaDB and Nginx, behind a Cloudflare Tunnel with Full Strict SSL. I use it every day from my laptop and phone. It works like Google Drive, except the files stay on my own server.",
     highlights: [
       "Deployed a Docker Compose stack with Nextcloud, MariaDB, and Nginx on an AWS EC2 instance.",
       "Configured Cloudflare CDN with Full Strict SSL and an Origin Certificate, with DDoS protection at Cloudflare's edge.",
@@ -24,7 +24,7 @@ export const projects = [
     github: null,
     demo: "https://sandeeppokharel.com.np/",
     resumeStack: ["AWS EC2", "Docker Compose", "Nextcloud", "Cloudflare CDN"],
-    resumeDescription: "Built and operate a self-hosted Nextcloud file server on AWS EC2, replacing third-party cloud storage with infrastructure I fully control.",
+    resumeDescription: "Built and operate a self-hosted Nextcloud file server on my homelab, replacing third-party cloud storage with infrastructure I fully control.",
     resumeHighlights: [
       "Deployed a self-hosted 1TB Nextcloud server on AWS EC2, cutting $120/year in third-party storage costs.",
       "Architected a Docker Compose stack (Nextcloud, MariaDB, Nginx) on Ubuntu 24.04.",
@@ -87,7 +87,7 @@ export const projects = [
     status: "Production",
     badge: "badge-production",
     description:
-      "I wanted an AI that answers from my own notes. This app reads my private Obsidian vault on EC2, runs semantic search over it with local vector embeddings, and passes the matching notes to Gemini, so every answer is grounded in something I wrote. It deploys itself through GitHub Actions and Watchtower: I push code, and it's live in five minutes.",
+      "I wanted an AI that answers from my own notes. This app reads my private Obsidian vault on SandeepCloud, runs semantic search over it with local vector embeddings, and passes the matching notes to Gemini, so every answer is grounded in something I wrote. It deploys itself through GitHub Actions and Watchtower: I push code, and it's live in five minutes.",
     highlights: [
       "Built a RAG pipeline with no database: retrieval runs in-process on the server.",
       "Embedded search queries locally with Transformers.js and matched them against vectors precomputed from the vault.",
@@ -180,15 +180,15 @@ export const projects = [
     badge: "badge-production",
     hideOnResume: true,
     description:
-      "This site. It's built with React 19 and Vite, animated with GSAP, and has an AI chatbot (\"Digital Sandeep\") on Gemini that answers questions about my work. It deploys to Vercel and to my own EC2 server as a Docker container, through the same four-gate CI/CD pipeline I use on my other projects.",
+      "This site. It's built with React 19 and Vite, animated with GSAP, and has an AI chatbot (\"Digital Sandeep\") on Gemini that answers questions about my work. I serve the site from a Docker container on SandeepCloud behind a Cloudflare Tunnel.",
     highlights: [
       "Built a Gemini-powered AI chatbot scoped strictly to my actual projects and professional experience.",
-      "Validated serverless API requests with Zod and enforced per-IP rate limiting using Upstash Redis.",
+      "Validated chat requests with Zod and limited requests per visitor with Redis.",
       "Built scroll-triggered animations and magnetic buttons with GSAP.",
       "Served a silent lightning video loop to desktop visitors only, paused off-screen with an IntersectionObserver, while phones get a responsive WebP portrait and never download the video.",
       "Containerized the frontend with a multi-stage Docker build, deployed through an automated CI/CD pipeline.",
     ],
-    stack: ["React 19", "Vite 8", "Google Gemini API", "Tailwind CSS", "GSAP", "Upstash Redis", "Zod", "Docker", "Nginx", "Vercel"],
+    stack: ["React 19", "Vite 8", "Google Gemini API", "Tailwind CSS", "GSAP", "Redis", "Zod", "Docker", "Nginx"],
     github: "https://github.com/pokharelsandeep333-commits/Portfolio",
     demo: "https://portfolio.sandeeppokharel.com.np/",
     resumeStack: ["React 19", "Vite", "GSAP", "Docker"],
