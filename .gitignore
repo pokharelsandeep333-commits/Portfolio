@@ -25,15 +25,22 @@ dist-ssr
 *.sln
 *.sw?
 
-# Agent context
+# AI agent context: local only, never committed. Unanchored so the same
+# files in subfolders (promo/, server/) are ignored too.
 .agents/
 .claude/
+.codex/
+.gemini/
+.cursor/
 .superpowers/
 .impeccable/
+CLAUDE.md
+CLAUDE.local.md
+AGENTS.md
+GEMINI.md
+.cursorrules
 /DESIGN.md
 /PRODUCT.md
-/CLAUDE.md
-/AGENTS.md
 # HyperFrames promo (promo/): keep media, captures and build output out of git.
 # The media provenance ledger stays tracked so licenses remain provable.
 promo/node_modules/
